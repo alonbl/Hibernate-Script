@@ -13,7 +13,7 @@ AddSuspendHook 01 NewKernelFileCheck
 # refuse to hibernate.
 NewKernelFileCheck() {
     if ! [ -f "$NEWKERNELFILE" ]; then
-        return 0 # no file present, so go ahead and hibernate
+	return 0 # no file present, so go ahead and hibernate
     fi
     vecho 0 "$EXE: You have upgraded your kernel, and a suspend image from this"
     vecho 0 "$EXE: kernel will not resume correctly with the new one.  Please"
