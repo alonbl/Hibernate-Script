@@ -55,6 +55,8 @@ syntax keyword hibernate_conf logverbosity contained nextgroup=hibernate_verbosi
 syntax keyword hibernate_conf alwaysforce contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf alwayskill contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf distribution contained nextgroup=hibernate_distribution skipwhite
+syntax keyword hibernate_conf include contained nextgroup=hibernate_filenames skipwhite
+syntax keyword hibernate_conf xdisplay contained nextgroup=hibernate_xdisplay skipwhite
 highlight link hibernate_conf Keyword
 
 syntax match hibernate_filenames /.*$/ contained
@@ -65,6 +67,9 @@ highlight link hibernate_verbosity Constant
 
 syntax keyword hibernate_distribution debian fedora mandrake redhat gentoo suse slackware contained
 highlight link hibernate_distribution Special
+
+syntax match hibernate_xdisplay /[a-zA-Z0-9\-_\.]*:\d\+\(.\d\+\)\?$/ contained
+highlight link hibernate_xdisplay Constant
 
 " bootsplash
 syntax keyword hibernate_conf bootsplash contained nextgroup=hibernate_boolean skipwhite
