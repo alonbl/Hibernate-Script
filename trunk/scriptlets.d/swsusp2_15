@@ -563,7 +563,7 @@ Swsusp2UnloadModules() {
 }
 
 Swsusp2SetupFilewriter() {
-    if ! [ -f "$SWSUSP_ROOT/filewriter_location" ] ; then
+    if ! [ -f "$SWSUSP_ROOT/filewriter_resume2" ] ; then
 	vecho 0 "$EXE: WARNING: Filewriter location given, but kernel does not have filewriter"
 	vecho 0 "$EXE: support. Ignoring."
 	return 0
@@ -585,7 +585,7 @@ Swsusp2SetupFilewriter() {
 	Suspend2)
 	    # We're good to go.
 	    ;;
-	HaveImage)
+	HaveImag)
 	    # Eeek! There's already an image here. Erase it using dd to
 	    # reliably preserve the starting block.
 	    vecho 1 "$EXE: Killing existing filewriter image."
@@ -611,14 +611,20 @@ Swsusp2SetupFilewriter() {
 	    ;;
     esac
 
-    if ! echo "$SWSUSP_FILEWRITER_LOC" > $SWSUSP_ROOT/filewriter_location ; then
+    if ! echo "$SWSUSP_FILEWRITER_LOC" > $SWSUSP_ROOT/filewriter_resume2 ; then
 	vecho 0 "$EXE: Failed to set filewriter location! Aborting."
 	return 2 # abort if forced
     fi
 
-    # Now verify header locations is correct.
-
-    # Coming soon ...
+    # Now verify our resume2 is correct.
+    if ! diff -q -w $SWSUSP_ROOT/resume2 $SWSUSP_ROOT/filewriter_resume2 ; then
+	read filewriter_resume2 < $SWSUSP_ROOT/filewriter_resume2
+	vecho 0 "ABORTING: resume2 is not setup correctly. Unless you have setup your bootloader"
+	vecho 0 "          correctly, resuming will most certainly fail. To correct this, add"
+	vecho 0 "          \"resume2=$filewriter_resume2\" to your kernel command line in your"
+	vecho 0 "          LILO or GRUB configuration file."
+	exit 1
+    fi
 }
 
 # $Id$
