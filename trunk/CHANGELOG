@@ -6,6 +6,8 @@
  - Elaborate on acpid usage in readme. (Erich Schubert)
  - Add options to vbetool to POST and restore a previously saved state.
  - Improve robustness of grub scriptlet. (Martin Krafft)
+ - Bring up the xscreensaver password prompt on resume, if xscreensaver
+   locking is switched on. (Cameron Patrick)
 
 1.05 (9 February 2005)
  - Wait after loading suspend modules until the relevant proc entries are

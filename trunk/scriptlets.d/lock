@@ -94,6 +94,41 @@ LockXScreensaver() {
     return 0
 }
 
+UnlockXScreensaver() {
+    # This function name is kind of bad, it doesn't actually unlock
+    # anything.  It just calls xscreensaver-command -deactivate, which makes
+    # the password prompt appear on the display.
+
+    # FIXME: refactor this code so it looks less obviously like a
+    # cut-n-paste job from LockXScreensaver.
+
+    [ x"$LOCK_XSCREENSAVER" != "x1" ] && return 0
+
+    if ! command -v xscreensaver-command > /dev/null 2>&1 ; then
+	vecho 0 'Cannot lock with xscreensaver. `xscreensaver-command` not found.'
+	return
+    fi
+
+    local xpid
+
+    for xpid in `pidof xscreensaver` ; do
+	local xuser xdisp xauth xhome
+	xuser=`awk 'BEGIN{RS="\\000";FS="="}($1 == "USER"){print $2}' < /proc/$xpid/environ`
+	xdisp=`awk 'BEGIN{RS="\\000";FS="="}($1 == "DISPLAY"){print $2}' < /proc/$xpid/environ`
+	xauth=`awk 'BEGIN{RS="\\000";FS="="}($1 == "XAUTHORITY"){print $2}' < /proc/$xpid/environ`
+	if [ -z "$xauth" ] ; then
+	    xhome=`awk 'BEGIN{RS="\\000";FS="="}($1 == "HOME"){print $2}' < /proc/$xpid/environ`
+	    xauth="$xhome/.Xauthority"
+	fi
+
+	vecho 2 "Unlocking $xuser's xscreensaver on display $xdisp using authority file $xauth"
+	DISPLAY=$xdisp XAUTHORITY=$xauth su $xuser -c "xscreensaver-command -deactivate"
+    done
+
+    # Failing is silly. What would they do about it?
+    return 0
+}
+
 LockConsole() {
     # Prerequistes are tested for in SwitchToLockConsole
 
@@ -159,6 +194,7 @@ LockOptions() {
 	    BoolIsOn "$1" "$2" && LOCK_XSCREENSAVER=1 || LOCK_XSCREENSAVER=0
 	    if [ -z "$XSCREENSAVERLOCK_HOOKED" ]; then
 		AddSuspendHook 91 LockXScreensaver
+		AddResumeHook 30 UnlockXScreensaver
 		XSCREENSAVERLOCK_HOOKED=1
 	    fi
 	    ;;
