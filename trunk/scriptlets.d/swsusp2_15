@@ -600,6 +600,7 @@ Swsusp2SetupFilewriter() {
 		vecho 0 "$EXE: Failed to create filewriter image for suspending!"
 		exit 1
 	    fi
+	    ;;
 	*)
 	    # Something entirely different. We probably don't want to use this file!
 	    vecho 0 "$EXE: Filewriter image ($SWSUSP_FILEWRITER_LOC) is unrecognised."
