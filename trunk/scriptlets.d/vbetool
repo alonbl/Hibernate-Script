@@ -47,12 +47,15 @@ VbetoolRestoreState() {
     # if we're switched off, don't do nuffin
     [ x"$VBETOOL_ENABLED" = "x1" ] || return 0
 
+    # POST if we're asked to
+    [ x"$VBETOOL_POST" = "x1" ] && vbetool post
+
     # switch the screen back on
     vbetool vbestate restore < $VBETOOL_FILE
     rm -f $VBETOOL_FILE
 
-    # POST if we're asked to
-    [ x"$VBETOOL_POST" = "x1" ] && vbetool post
+    # see if we can power on the display too
+    vbetool dpms on
 
     # change back to our original VT
     chvt $VBETOOL_ORIG_VT
