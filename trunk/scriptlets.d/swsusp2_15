@@ -632,8 +632,14 @@ Swsusp2SetupFilewriter() {
 	return 2 # abort even if forced
     fi
 
-    # Now verify our resume2 is correct.
+    # Leave a note so that the file can be cleaned up on a fresh reboot.
+    echo "$SWSUSP_FILEWRITER_LOC" > $HIBERNATE_FILEWRITER_TRAIL
+    chmod 600 $HIBERNATE_FILEWRITER_TRAIL
 
+    # Don't overwrite the resume2 line now.
+    SWSUSP_RESUME2="$new_resume2"
+
+    # Now verify our resume2 is correct unless told otherwise.
     [ x"$SWSUSP_FILEWRITER_NOVERIFY" = "x1" ] && return 0
 
     local new_resume2
@@ -651,13 +657,6 @@ Swsusp2SetupFilewriter() {
 	vecho 0 "          LILO or GRUB configuration file."
 	return 2 # abort even if forced
     fi
-
-    # Don't overwrite the resume2 line now.
-    SWSUSP_RESUME2="$new_resume2"
-
-    # Leave a note so that the file can be cleaned up on a fresh reboot.
-    echo "$SWSUSP_FILEWRITER_LOC" > $HIBERNATE_FILEWRITER_TRAIL
-    chmod 600 $HIBERNATE_FILEWRITER_TRAIL
 
     return 0
 }
