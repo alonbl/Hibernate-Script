@@ -47,6 +47,7 @@ highlight link hibernate_procvalue Constant
 syntax match hibernate_order_num /\d\d/ contained nextgroup=hibernate_filenames
 highlight link hibernate_order_num Constant
 
+
 " Builtins :
 syntax keyword hibernate_conf swsuspvt contained nextgroup=hibernate_integer skipwhite
 syntax keyword hibernate_conf verbosity contained nextgroup=hibernate_verbosity skipwhite
@@ -61,6 +62,9 @@ highlight link hibernate_conf Keyword
 
 syntax match hibernate_filenames /.*$/ contained
 highlight link hibernate_filenames Constant
+
+syntax match hibernate_filewriter_target /[^ \t]\+[ \t]\+\d\+$/ contained
+highlight link hibernate_filewriter_target Constant
 
 syntax match hibernate_verbosity /[0-4]/ contained
 highlight link hibernate_verbosity Constant
@@ -177,7 +181,8 @@ syntax keyword hibernate_conf imagesizelimit contained nextgroup=hibernate_image
 syntax keyword hibernate_conf swsusp2allsettings contained nextgroup=hibernate_swsusp2allsettings skipwhite
 syntax keyword hibernate_conf swsusp2allsettingsfile contained nextgroup=hibernate_filenames skipwhite
 syntax keyword hibernate_conf suspenddevice contained nextgroup=hibernate_filenames skipwhite
-syntax keyword hibernate_conf filewriterlocation contained nextgroup=hibernate_filenames skipwhite
+syntax keyword hibernate_conf filewriterlocation contained nextgroup=hibernate_filewriter_target skipwhite
+syntax keyword hibernate_conf verifyfilewriterresume2 contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf loadsuspendmodules contained nextgroup=hibernate_modules skipwhite
 syntax keyword hibernate_conf unloadsuspendmodulesafterresume contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf powerdownmethod contained nextgroup=hibernate_powerdown_method skipwhite
