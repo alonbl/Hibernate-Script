@@ -10,6 +10,8 @@
    locking is switched on. (Cameron Patrick)
  - Support for Including other files within hibernate.conf. (Cameron Patrick)
  - Introduce an fbsplash scriptlet to replace bootsplash.
+ - Added support for Suspend2's filewriter.
+ - Added init.d script for /etc/rcS.d/ to remove suspend partition signatures.
 
 1.05 (9 February 2005)
  - Wait after loading suspend modules until the relevant proc entries are
