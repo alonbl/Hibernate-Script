@@ -149,7 +149,7 @@ Swsusp2ConfigOptions() {
 		vecho 0 "$EXE: Filewriter location given is a directory!"
 		exit 1
 	    fi
-	    if ! [ -w "$SWSUSP_FILEWRITER_LOC" ] ; then
+	    if [ -e "$SWSUSP_FILEWRITER_LOC" ] && ! [ -w "$SWSUSP_FILEWRITER_LOC" ] ; then
 		vecho 0 "$EXE: Filewriter location is unwritable!"
 		exit 1
 	    fi
@@ -593,15 +593,18 @@ Swsusp2SetupFilewriter() {
     fi
 
     if ! [ -e "$SWSUSP_FILEWRITER_LOC" ] ; then
+	vecho 0 "$EXE: Creating $SWSUSP_FILEWRITER_SIZE MB filewriter target."
 	{
 	    echo Suspend2
 	    dd if=/dev/zero bs=1M count=$SWSUSP_FILEWRITER_SIZE 2>/dev/null
 	} > $SWSUSP_FILEWRITER_LOC
+	sync
     fi
 
-    case "`dd \"if=$SWSUSP_FILEWRITER_LOC\" bs=8 count=1` 2>/dev/null" in
+    case "`dd \"if=$SWSUSP_FILEWRITER_LOC\" bs=8 count=1 2>/dev/null`" in
 	Suspend2)
 	    # We're good to go.
+	    vecho 1 "$EXE: Detected filewriter image ready for use."
 	    ;;
 	HaveImag)
 	    # Eeek! There's already an image here. Erase it using dd to
@@ -618,7 +621,7 @@ Swsusp2SetupFilewriter() {
 	    vecho 0 "$EXE: I'm not even going to attempt to use this file to suspend to."
 	    vecho 0 "$EXE: Please erase the contents of the existing file if you believe it"
 	    vecho 0 "$EXE: to be safe, otherwise, please specify a new file."
-	    exit 1
+	    return 2 # Abort even with force
 	    ;;
     esac
 
@@ -631,7 +634,14 @@ Swsusp2SetupFilewriter() {
 
     [ x"$SWSUSP_FILEWRITER_NOVERIFY" = "x1" ] && return 0
 
-    if ! grep "`$SWSUSP_ROOT/resume2`" /proc/cmdline ; then
+    local new_resume2
+    new_resume2="`cat $SWSUSP_ROOT/resume2`"
+    if [ -z "$new_resume2" ] ; then
+	vecho 0 "ABORTING: $SWSUSP_ROOT/resume2 did not return a valid result."
+	return 2 # abort even if forced
+    fi
+
+    if ! grep "$new_resume2" /proc/cmdline ; then
 	filewriter_target=`cat $SWSUSP_ROOT/resume2`
 	vecho 0 "ABORTING: resume2 is not setup correctly. Unless you have setup your bootloader"
 	vecho 0 "          correctly, resuming will most likely fail. To correct this, add"
@@ -639,6 +649,9 @@ Swsusp2SetupFilewriter() {
 	vecho 0 "          LILO or GRUB configuration file."
 	return 2 # abort even if forced
     fi
+
+    # Don't overwrite the resume2 line now.
+    SWSUSP_RESUME2="$new_resume2"
 }
 
 # $Id$
