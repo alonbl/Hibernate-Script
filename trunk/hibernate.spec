@@ -1,9 +1,9 @@
 Name: hibernate
-Version: 1.05
+Version: 1.06
 Release: 1
 License: GPL
 Group: Applications/System
-URL: http://dagobah.ucc.asn.au/swsusp/script2/hibernate-script-1.05.tar.gz
+URL: http://dagobah.ucc.asn.au/swsusp/script2/hibernate-script-1.06.tar.gz
 Source0: hibernate-script-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 Summary: software suspend 2 hibernate script
@@ -51,6 +51,8 @@ rm -rf $RPM_BUILD_ROOT
 %doc TODO
 
 %changelog
+* Thu Mar 31 2005 Bernard Blackham <bernard@blackham.com.au> -
+- Updated to 1.06 final version
 * Wed Feb  9 2005 Bernard Blackham <bernard@blackham.com.au> -
 - Updated to 1.05 final version
 * Tue Feb  8 2005 Bernard Blackham <bernard@blackham.com.au> -
