@@ -9,6 +9,7 @@
  - Bring up the xscreensaver password prompt on resume, if xscreensaver
    locking is switched on. (Cameron Patrick)
  - Support for Including other files within hibernate.conf. (Cameron Patrick)
+ - Introduce an fbsplash scriptlet to replace bootsplash.
 
 1.05 (9 February 2005)
  - Wait after loading suspend modules until the relevant proc entries are
