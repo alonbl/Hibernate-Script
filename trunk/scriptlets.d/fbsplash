@@ -64,6 +64,10 @@ FBSplashBegin() {
     fi
     TimedFBSplashCtl "progress 0\nset message $@\nrepaint\n"
 
+    # Set console loglevel to KERN_CRIT whilst suspending
+    SAVED_FBSPLASH_PRINTK_LEVEL=`awk '{print $1}' < /proc/sys/kernel/printk`
+    echo 2 > /proc/sys/kernel/printk
+
     # increments the bar to 10 and kicks it all off.
     FBSPLASH_PROGRESS=0
     FBSplashProgress
@@ -86,6 +90,9 @@ FBSplashOff() {
     # Gah, this hack shouldn't be required:
     sleep 0.5
     TimedFBSplashCtl "exit\n"
+
+    [ -n "$SAVED_FBSPLASH_PRINTK_LEVEL" ] && \
+	echo $SAVED_FBSPLASH_PRINTK_LEVEL > /proc/sys/kernel/printk
 
     return 0
 }
@@ -134,4 +141,4 @@ FBSplashOptions() {
     return 0
 }
 
-# $Id: bootsplash 657 2005-01-27 19:01:58Z dagobah $
+# $Id$
