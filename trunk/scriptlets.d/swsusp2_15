@@ -37,6 +37,8 @@ AddConfigHelp "Swsusp2AllSettingsFile <filename> (requires UseSwsusp2 on)" "If s
 
 AddConfigHelp "SuspendDevice <device> (requires UseSwsusp2 on)" "If specified, sets the suspend device by writing to the resume2 entry in $SWSUSP_ROOT. This does not automatically set the resuming device - you will need to make sure your bootloader or initrd script does this."
 
+AddConfigHelp "FilewriterLocation <filename> (requires UseSwsusp2 on)" "This option assumes you are using the filewriter plugin for Software Suspend. It sets up the given file to act as a destination file for writing the suspend image to, and verifies that it can act as a valid destination."
+
 AddConfigHelp "LoadSuspendModules <module name> [...] (requires UseSwsusp2 on)" "Loads the given modules before even detecting Software Suspend. This may be required when Software Suspend is compiled as modules that need to be loaded prior to suspending."
 AddConfigHelp "UnloadSuspendModulesAfterResume <boolean> (requires UseSwsusp2 on)" "If yes, will unload the Software Suspend modules mentioned above after resuming."
 
@@ -133,6 +135,10 @@ Swsusp2ConfigOptions() {
 	    ;;
 	suspenddevice)
 	    SWSUSP_RESUME2=$2
+	    ;;
+	filewriterlocation)
+	    SWSUSP_FILEWRITER_LOC=$2
+	    AddSuspendHook 06 Swsusp2SetupFilewriter
 	    ;;
 	loadsuspendmodules)
 	    AddSuspendHook 05 Swsusp2LoadModules
@@ -554,6 +560,64 @@ Swsusp2UnloadModules() {
 	rmmod `FindModuleDeps $i` > /dev/null 2>&1
     done
     return 0
+}
+
+Swsusp2SetupFilewriter() {
+    if ! [ -f "$SWSUSP_ROOT/filewriter_location" ] ; then
+	vecho 0 "$EXE: WARNING: Filewriter location given, but kernel does not have filewriter"
+	vecho 0 "$EXE: support. Ignoring."
+	return 0
+    fi
+
+    if [ -z "$SWSUSP_FILEWRITER_LOC" ] ; then
+	vecho 0 "$EXE: Empty filewriter location given!"
+	exit 1
+    fi
+    if [ -e "$SWSUSP_FILEWRITER_LOC" ] && [ -d "$SWSUSP_FILEWRITER_LOC" ] ; then
+	vecho 0 "$EXE: Filewriter location given is a directory!"
+	exit 1
+    fi
+    if ! [ -w "$SWSUSP_FILEWRITER_LOC" ] ; then
+	vecho 0 "$EXE: Filewriter location is unwritable!"
+	exit 1
+    fi
+    case "`dd \"if=$SWSUSP_FILEWRITER_LOC\" bs=8 count=1`" in
+	Suspend2)
+	    # We're good to go.
+	    ;;
+	HaveImage)
+	    # Eeek! There's already an image here. Erase it using dd to
+	    # reliably preserve the starting block.
+	    vecho 1 "$EXE: Killing existing filewriter image."
+	    if ! echo "Suspend2" | dd "of=$SWSUSP_FILEWRITER_LOC" bs=8 count=1 2>/dev/null ; then
+		vecho 0 "$EXE: Failed to kill existing image!"
+		exit 1
+	    fi
+	    ;;
+	"")
+	    # An empty file. Capitalise on this.
+	    if ! echo "Suspend2" | dd "of=$SWSUSP_FILEWRITER_LOC" bs=8 count=1 2>/dev/null ; then
+		vecho 0 "$EXE: Failed to create filewriter image for suspending!"
+		exit 1
+	    fi
+	*)
+	    # Something entirely different. We probably don't want to use this file!
+	    vecho 0 "$EXE: Filewriter image ($SWSUSP_FILEWRITER_LOC) is unrecognised."
+	    vecho 0 "$EXE: I'm not even going to attempt to use this file to suspend to."
+	    vecho 0 "$EXE: Please erase the contents of the existing file if you believe it"
+	    vecho 0 "$EXE: to be safe, otherwise, please specify a new file."
+	    exit 1
+	    ;;
+    esac
+
+    if ! echo "$SWSUSP_FILEWRITER_LOC" > $SWSUSP_ROOT/filewriter_location ; then
+	vecho 0 "$EXE: Failed to set filewriter location! Aborting."
+	return 2 # abort if forced
+    fi
+
+    # Now verify header locations is correct.
+
+    # Coming soon ...
 }
 
 # $Id$
