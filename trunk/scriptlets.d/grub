@@ -5,6 +5,7 @@ AddConfigHandler GrubConfigOptions
 AddConfigHelp "ChangeGrubMenu <boolean>" "Change grub's config file to show system is suspended before suspending and restore after resume."
 AddConfigHelp "GrubMenuFile <filename>" "Filename of grub's config file. Default is /boot/grub/grub.conf."
 AddConfigHelp "AlternateGrubMenuFile <filename>" "Filename of the grub config file to put in place when the machine is suspended. If this is not specified, the script will add a small header to the existing grub menu."
+AddConfigHelp "GrubMenuBackupFile <filename>" "Name of the backup file of the grub menu. Defaults to the current grub menu file with '.hibernate.bak' appended."
 
 AddOptionHandler GrubCmdlineOptions
 AddShortOption 'g'
@@ -12,6 +13,9 @@ AddLongOption 'restore-grub'
 AddOptionHelp '-g, --restore-grub' 'Restores the grub menu to normal (use if a resume was not completed sucessfully) and exits the script. A suspend is not performed.'
 
 GRUB_MENU_FILE="/boot/grub/grub.conf"
+
+GRUB_BEGIN_SENTINEL="### BEGIN HIBERNATE SENTINEL"
+GRUB_END_SENTINEL="### END HIBERNATE SENTINEL"
 
 ChangeGrubMenu() {
     if [ x"$CHANGE_GRUB_MENU" = "x1" ] ; then
@@ -21,7 +25,7 @@ ChangeGrubMenu() {
 	    vecho 2 "Changing grub menu..."
 
 	    # Make a backup, and abort if we fail to.
-	    if ! cp "$GRUB_MENU_FILE" "$GRUB_MENU_FILE.hibernate.bak" ; then
+	    if ! cp "$GRUB_MENU_FILE" "${GRUB_MENU_BACKUP_FILE:-$GRUB_MENU_FILE.hibernate.bak}" ; then
 		vecho 0 "Could not make backup of grub menu. Not changing!"
 		return 1 # abort if not forced
 	    fi
@@ -33,11 +37,16 @@ ChangeGrubMenu() {
 		    return 1 # abort if not forced
 		fi
 	    else
-		echo  >> "$GRUB_MENU_FILE"
-		echo "title _____________________________________________________________________" >> "$GRUB_MENU_FILE"
-		echo "configfile dummy" >> "$GRUB_MENU_FILE"
-		echo "title WARNING: "`uname -s -r` "is suspended via Software Suspend!" >> "$GRUB_MENU_FILE"
-		echo "configfile dummy" >> "$GRUB_MENU_FILE"
+		RestoreGrubMenu
+		cat <<-EOF >> $GRUB_MENU_FILE
+		$GRUB_BEGIN_SENTINEL
+		
+		title _____________________________________________________________________
+		configfile dummy
+		title WARNING: "`uname -s -r` "is suspended via Software Suspend!"
+		configfile dummy
+		$GRUB_END_SENTINEL
+		EOF
 	    fi
 	    # Call sync to ensure it is written to disk (do we still need
 	    # double/triple syncs?)
@@ -51,10 +60,9 @@ ChangeGrubMenu() {
 
 RestoreGrubMenu() {
     if [ x"$CHANGE_GRUB_MENU" = "x1" ] ; then
-	if [ -f $GRUB_MENU_FILE.hibernate.bak ] ; then
-	    vecho 2 "Restoring grub menu..."
-	    mv -f "$GRUB_MENU_FILE.hibernate.bak" "$GRUB_MENU_FILE"
-	fi
+	sed -e "/^$GRUB_BEGIN_SENTINEL/,/^$GRUB_END_SENTINEL/d" \
+	    $GRUB_MENU_FILE > $GRUB_MENU_FILE.new \
+	    && mv $GRUB_MENU_FILE.new $GRUB_MENU_FILE
     fi
 }
 
