@@ -124,7 +124,7 @@ XStatusProgressStart_xXmessageHelper() {
     trap xmessage_exit_handler HUP QUIT INT TERM
     su $XUSER -c "xmessage -buttons 'Cancel:44' -default 'Cancel' -center -title Hibernate \"$1\"" < /dev/null > /dev/null 2>&1 &
     xmessage_pid=$!
-    wait %1
+    wait $xmessage_pid
     [ $? -eq 44 ] && kill -INT $pid_to_kill > /dev/null 2>&1
     exit 0
 }
