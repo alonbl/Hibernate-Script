@@ -37,7 +37,7 @@ AddConfigHelp "Swsusp2AllSettingsFile <filename> (requires UseSwsusp2 on)" "If s
 
 AddConfigHelp "SuspendDevice <device> (requires UseSwsusp2 on)" "If specified, sets the suspend device by writing to the resume2 entry in $SWSUSP_ROOT. This does not automatically set the resuming device - you will need to make sure your bootloader or initrd script does this."
 
-AddConfigHelp "FilewriterLocation <filename> (requires UseSwsusp2 on)" "This option assumes you are using the filewriter plugin for Software Suspend. It sets up the given file to act as a destination file for writing the suspend image to, and verifies that it can act as a valid destination."
+AddConfigHelp "FilewriterLocation <filename> (requires UseSwsusp2 on)" "This option sets up the given filename to act as a destination file for writing the suspend image to, and verifies that it can act as a valid destination. It is only relevant if you are using the filewriter plugin for Software Suspend."
 
 AddConfigHelp "LoadSuspendModules <module name> [...] (requires UseSwsusp2 on)" "Loads the given modules before even detecting Software Suspend. This may be required when Software Suspend is compiled as modules that need to be loaded prior to suspending."
 AddConfigHelp "UnloadSuspendModulesAfterResume <boolean> (requires UseSwsusp2 on)" "If yes, will unload the Software Suspend modules mentioned above after resuming."
