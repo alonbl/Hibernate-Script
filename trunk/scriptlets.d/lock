@@ -44,7 +44,7 @@ LockKDE() {
 
 LockXlock() {
     if command -v xlock > /dev/null 2>&1 ; then
-	vecho 0 'Trying xlock instead'
+	vecho 1 'Trying xlock instead'
 	su $XUSER -c "xlock -mode blank &"
 	return 0
     fi
