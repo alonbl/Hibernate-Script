@@ -1,5 +1,19 @@
 #!/bin/sh
 
+# This script invalidates any stale swsusp and Software Suspend 2 images. It
+# searches all swap partitions on your machine, as well as Suspend2's
+# filewriter files (by way of the hibernate script telling it where to find
+# it).
+#
+# It should be called on boot, after mounting filesystems, but before enabling
+# swap or clearing out /var/run. Copy this into /etc/init.d/ (or the appropriate
+# place on your system), then add a symlink at the appropriate point on boot.
+# On a Debian system, you would do this:
+#   update-rc.d hibernate-cleanup.sh start 31 S .
+#
+# On other SysV-based systems, you would do something like:
+#   ln -s ../init.d/hibernate-cleanup.sh /etc/rcS.d/S31hibernate-cleanup.sh
+
 HIBERNATE_FILEWRITER_TRAIL="/var/run/suspend2_filewriter_image_exists"
 
 get_swap_id() {
