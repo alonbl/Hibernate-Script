@@ -589,6 +589,14 @@ ProcessConfigOption() {
 	    DISPLAY="$params"
 	    export DISPLAY
 	    ;;
+        include)
+            if [ -r "$params" ]; then
+                ReadConfigFile "$params"
+            else
+                echo "$EXE: Unable to read configuration file $params (from Include directive)."
+                exit 1
+            fi
+            ;;
 	*)
 	    if ! PluginConfigOption $option $params ; then
 		echo "$EXE: Unknown configuration option ($option)"
@@ -603,8 +611,9 @@ ProcessConfigOption() {
 # appropriate variables in the script. Returns 0 on success, exits on errors
 ReadConfigFile() {
     local option params
-    if [ ! -f "$CONFIG_FILE" ] ; then
-	echo "WARNING: No configuration file found ($CONFIG_FILE)."
+    local file_name="$1"
+    if [ ! -f "${file_name}" ] ; then
+	echo "WARNING: No configuration file found (${file_name})."
 	echo "This script probably won't do anything."
 	return 0
     fi
@@ -616,7 +625,7 @@ ReadConfigFile() {
 	[ -z "$option" ] && continue
 	case $option in ""|\#*) continue ;; esac # avoids a function call (big speed hit)
 	ProcessConfigOption $option $params
-    done < $CONFIG_FILE
+    done < ${file_name}
     return 0
 }
 
@@ -642,6 +651,7 @@ AddInbuiltHelp() {
     AddConfigHelp "AlwaysForce <boolean>" "If set to yes, the script will always run as if --force had been passed."
     AddConfigHelp "AlwaysKill <boolean>" "If set to yes, the script will always run as if --kill had been passed."
     AddConfigHelp "Distribution <debian|fedora|mandrake|redhat|gentoo|suse|slackware>" "If specified, tweaks some scriptlets to be more integrated with the given distribution."
+    AddConfigHelp "Include <filename>" "Read configuration directives from the given file."
     AddConfigHelp "XDisplay <display location>" "Specifies where scriptlets that use the X server should find one. (Default: :0)"
 }
 
@@ -742,7 +752,7 @@ fi
 DISABLE_HELP=1
 
 LoadScriptlets
-ReadConfigFile
+ReadConfigFile "${CONFIG_FILE}"
 ParseOptions "$@"
 
 # Set a logfile if we need one.
