@@ -94,6 +94,7 @@ syntax keyword hibernate_conf mount contained nextgroup=hibernate_filenames skip
 syntax keyword hibernate_conf changegrubmenu contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf grubmenufile contained nextgroup=hibernate_filenames skipwhite
 syntax keyword hibernate_conf alternategrubmenufile contained nextgroup=hibernate_filenames skipwhite
+syntax keyword hibernate_conf backupgrubmenufile contained nextgroup=hibernate_filenames skipwhite
 
 " lilo
 syntax keyword hibernate_conf ensureliloresumes contained nextgroup=hibernate_boolean skipwhite

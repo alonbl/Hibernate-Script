@@ -5,7 +5,7 @@ AddConfigHandler GrubConfigOptions
 AddConfigHelp "ChangeGrubMenu <boolean>" "Change grub's config file to show system is suspended before suspending and restore after resume."
 AddConfigHelp "GrubMenuFile <filename>" "Filename of grub's config file. Default is /boot/grub/grub.conf."
 AddConfigHelp "AlternateGrubMenuFile <filename>" "Filename of the grub config file to put in place when the machine is suspended. If this is not specified, the script will add a small header to the existing grub menu."
-AddConfigHelp "GrubMenuBackupFile <filename>" "Name of the backup file of the grub menu. Defaults to the current grub menu file with '.hibernate.bak' appended."
+AddConfigHelp "BackupGrubMenuFile <filename>" "Where to keep a backup of your real grub menu file. Defaults to the current grub menu file with '.hibernate.bak' appended."
 
 AddOptionHandler GrubCmdlineOptions
 AddShortOption 'g'
@@ -25,7 +25,7 @@ ChangeGrubMenu() {
 	    vecho 2 "Changing grub menu..."
 
 	    # Make a backup, and abort if we fail to.
-	    if ! cp "$GRUB_MENU_FILE" "${GRUB_MENU_BACKUP_FILE:-$GRUB_MENU_FILE.hibernate.bak}" ; then
+	    if ! cp "$GRUB_MENU_FILE" "${BACKUP_GRUB_MENU_FILE:-$GRUB_MENU_FILE.hibernate.bak}" ; then
 		vecho 0 "Could not make backup of grub menu. Not changing!"
 		return 1 # abort if not forced
 	    fi
@@ -61,8 +61,8 @@ ChangeGrubMenu() {
 RestoreGrubMenu() {
     if [ x"$CHANGE_GRUB_MENU" = "x1" ] ; then
 	sed -e "/^$GRUB_BEGIN_SENTINEL/,/^$GRUB_END_SENTINEL/d" \
-	    $GRUB_MENU_FILE > $GRUB_MENU_FILE.new \
-	    && mv $GRUB_MENU_FILE.new $GRUB_MENU_FILE
+	    $GRUB_MENU_FILE > $GRUB_MENU_FILE.hibernate.new \
+	    && mv $GRUB_MENU_FILE.hibernate.new $GRUB_MENU_FILE
     fi
 }
 
@@ -82,6 +82,10 @@ GrubConfigOptions() {
 		return 0
 	    fi
 	    ALT_GRUB_MENU_FILE="$2"
+	    return 0
+	    ;;
+	backupgrubmenufile)
+	    BACKUP_GRUB_MENU_FILE="$2"
 	    return 0
 	    ;;
 	*)
