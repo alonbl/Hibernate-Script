@@ -67,11 +67,23 @@ XHacksResumeHook2() {
 
 XHacksOptions() {
     case $1 in
-	switchtotextmode|leavexbeforesuspend)
+        leavexbeforesuspend)
+            vecho 0 "The LeaveXBeforeSuspend option is deprecated and may disappear in"
+            vecho 0 "future releases.  Please use SwitchToTextMode instead."
+            BoolIsOn "$1" "$2" && XHACKS_LEAVE_X=1 || return 0
+            # only break from case statement if we need something done
+            ;;
+        switchtotextmode)
 	    BoolIsOn "$1" "$2" && XHACKS_LEAVE_X=1 || return 0
 	    # only break from case statement if we need something done
 	    ;;
-	usedummyxserver|nvidiahack)
+        nvidiahack)
+            vecho 0 "The NvidiaHack option is deprecated and may disappear in"
+            vecho 0 "future releases.  Please use UseDummyXServer instead."
+            BoolIsOn "$1" "$2" && XHACKS_NVIDIA=1 || return 0
+            # only break from case statement if we need something done
+            ;;
+        usedummyxserver)
 	    BoolIsOn "$1" "$2" && XHACKS_NVIDIA=1 || return 0
 	    # only break from case statement if we need something done
 	    ;;
