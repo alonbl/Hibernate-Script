@@ -1,4 +1,4 @@
-1.06 (31 March 2004)
+1.06 (4 April 2005)
  - Use rmmod, not modprobe -r. (Ivo Prikryl)
  - Added new kernel safety scriptlet. (Cameron Patrick)
  - Fix /proc/software_suspend/ detection for versions >= 2.1.8.
