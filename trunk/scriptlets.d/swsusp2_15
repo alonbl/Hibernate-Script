@@ -12,6 +12,7 @@ else
 fi
 
 SWSUSP_DEFAULT_ALL_SETTINGS_FILE="$SWSUSP_D/swsusp2-all-settings.conf"
+HIBERNATE_FILEWRITER_TRAIL="/var/run/suspend2_filewriter_image_exists"
 
 AddConfigHandler Swsusp2ConfigEnabler
 AddOptionHandler Swsusp2OptionHandler
@@ -158,6 +159,7 @@ Swsusp2ConfigOptions() {
 		exit 1
 	    fi
 	    AddSuspendHook 06 Swsusp2SetupFilewriter
+	    AddResumeHook 06 Swsusp2CleanupFilewriter
 	    ;;
 	verifyfilewriterresume2)
 	    BoolIsOn "$1" "$2" && return 0
@@ -652,6 +654,16 @@ Swsusp2SetupFilewriter() {
 
     # Don't overwrite the resume2 line now.
     SWSUSP_RESUME2="$new_resume2"
+
+    # Leave a note so that the file can be cleaned up on a fresh reboot.
+    echo "$SWSUSP_FILEWRITER_LOC" > $HIBERNATE_FILEWRITER_TRAIL
+    chmod 600 $HIBERNATE_FILEWRITER_TRAIL
+
+    return 0
+}
+
+Swsusp2CleanupFilewriter() {
+    rm -f $HIBERNATE_FILEWRITER_TRAIL
 }
 
 # $Id$
