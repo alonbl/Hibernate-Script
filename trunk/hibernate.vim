@@ -86,6 +86,10 @@ syntax keyword hibernate_conf incompatibledevices contained nextgroup=hibernate_
 " disk cache
 syntax keyword hibernate_conf disablewritecacheon contained nextgroup=hibernate_filenames skipwhite
 
+" fbsplash
+syntax keyword hibernate_conf fbsplash contained nextgroup=hibernate_boolean skipwhite
+syntax keyword hibernate_conf fbsplashtheme contained nextgroup=hibernate_filenames skipwhite
+
 " filesystems
 syntax match hibernate_filesystem /[a-zA-Z0-9\-_]\+/ contained nextgroup=hibernate_filesystem skipwhite
 highlight link hibernate_filesystem Constant
