@@ -60,9 +60,13 @@ ChangeGrubMenu() {
 
 RestoreGrubMenu() {
     if [ x"$CHANGE_GRUB_MENU" = "x1" ] ; then
-	sed -e "/^$GRUB_BEGIN_SENTINEL/,/^$GRUB_END_SENTINEL/d" \
-	    $GRUB_MENU_FILE > $GRUB_MENU_FILE.hibernate.new \
-	    && mv $GRUB_MENU_FILE.hibernate.new $GRUB_MENU_FILE
+	if [ -z "$ALT_GRUB_MENU_FILE" ]; then
+	    sed -e "/^$GRUB_BEGIN_SENTINEL/,/^$GRUB_END_SENTINEL/d" \
+		$GRUB_MENU_FILE > $GRUB_MENU_FILE.hibernate.new \
+		&& mv $GRUB_MENU_FILE.hibernate.new $GRUB_MENU_FILE
+	else
+	    mv "${BACKUP_GRUB_MENU_FILE:-$GRUB_MENU_FILE.hibernate.bak}" "$GRUB_MENU_FILE"
+	fi
     fi
 }
 

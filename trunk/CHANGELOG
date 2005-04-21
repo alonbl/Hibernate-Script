@@ -1,3 +1,9 @@
+1.07 (21 April 2005)
+ - Fix vbetool scriptlet inverted test condition.
+ - Install ram.conf by default
+ - Add note about init.d script in readme.
+ - Fix GRUB alternate menu bug. (Andrew Barr)
+
 1.06 (4 April 2005)
  - Use rmmod, not modprobe -r. (Ivo Prikryl)
  - Added new kernel safety scriptlet. (Cameron Patrick)

@@ -29,7 +29,7 @@ VbetoolSaveState() {
     fi
 
     # If we already have a saved state, don't bother saving it now.
-    [ -z "$VBETOOL_SAVED_STATE" ] && return 0
+    [ -n "$VBETOOL_SAVED_STATE" ] && return 0
 
     # save our previous VT and switch to a new one
     VBETOOL_ORIG_VT=`fgconsole 2>/dev/null` || VBETOOL_ORIG_VT=1
@@ -50,9 +50,13 @@ VbetoolRestoreState() {
     # POST if we're asked to
     [ x"$VBETOOL_POST" = "x1" ] && vbetool post
 
-    # switch the screen back on
-    vbetool vbestate restore < $VBETOOL_FILE
-    rm -f $VBETOOL_FILE
+    # Restore a saved state.
+    if [ -n "$VBETOOL_SAVED_STATE" ] ; then
+	vbetool vbestate restore < $VBETOOL_SAVED_STATE
+    elif [ -n "$VBETOOL_FILE" ] ; then
+	vbetool vbestate restore < $VBETOOL_FILE
+	rm -f $VBETOOL_FILE
+    fi
 
     # see if we can power on the display too
     vbetool dpms on

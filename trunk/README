@@ -27,6 +27,19 @@ If you already have a configuration file at /etc/hibernate/hibernate.conf, the
 new configuation file will be installed at /etc/hibernate/hibernate.conf.dist
 You will have to merge your changes manually.
 
+AVOIDING DATA LOSS
+------------------
+
+If you are using the hibernate script with vanilla swsusp or Software Suspend
+2, then it is strongly recommended that you install the script
+init.d/hibernate-cleanup.sh into /etc/init.d (or the relevant place on your
+distribution), and arrange for it to be run on boot from rcS.d, somewhere
+before enabling swap or clearing out /var/run, but after mounting your
+filesystems (/var in particular).
+
+This script will invalidate any suspend image on a clean boot so that the image
+cannot be later resumed from (leading to corruption of your filesystems).
+
 CONFIGURATION
 -------------
 

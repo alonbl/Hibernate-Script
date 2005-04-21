@@ -10,6 +10,7 @@
 [ -z "$MAN_DIR" ]       && MAN_DIR=$BASE_DIR$PREFIX/man
 [ -z "$CONFIG_DIR" ]    && CONFIG_DIR=${BASE_DIR}/etc/hibernate
 [ -z "$CONFIG_FILE" ]   && CONFIG_FILE=$CONFIG_DIR/hibernate.conf
+[ -z "$RAM_CONFIG_FILE" ]   && RAM_CONFIG_FILE=$CONFIG_DIR/ram.conf
 [ -z "$BLACKLIST" ]     && BLACKLIST=$CONFIG_DIR/blacklisted-modules
 
 [ -z "$OLD_SCRIPTLET_DIR" ] && OLD_SCRIPTLET_DIR=$CONFIG_DIR/scriptlets.d
@@ -41,9 +42,11 @@ if [ -f $CONFIG_FILE ] ; then
     echo "  ** The new version will be installed to ${CONFIG_FILE}.dist"
     echo "  **"
     cp -a hibernate.conf ${CONFIG_FILE}.dist
+    cp -a ram.conf ${RAM_CONFIG_FILE}.dist
     EXISTING_CONFIG=1
 else
     cp -a hibernate.conf $CONFIG_FILE
+    cp -a ram.conf $RAM_CONFIG_FILE
 fi
 
 cp -a blacklisted-modules $BLACKLIST
