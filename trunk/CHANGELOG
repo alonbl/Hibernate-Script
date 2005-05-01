@@ -1,7 +1,7 @@
 1.08 (unreleased)
  - Fix fbsplash colour weirdness.
  - Make fbsplash/bootsplash automatically select on SwitchToTextMode.
- - Change ":" to "true" for compatibility with some versions of dash (Henrix
+ - Change ":" to "true" for compatibility with some versions of dash (Henrik
    Brix Andersen)
  - Rename a bunch of options with "Suspend2" instead of swsusp, specifically:
     UseSwsusp2 -> UseSuspend2
@@ -40,7 +40,7 @@
  - Avoid making spurious temporary files.
  - Relax permissions on install directory to 755 instead of 700.
  - Include kernel configs in bug reports.
- - New xstatus scriptlet. (merged works of Henrix Brix Andersen and Sebastian
+ - New xstatus scriptlet. (merged works of Henrik Brix Andersen and Sebastian
    Kugler)
  - Activate bootsplash on the right console. (Sergio Cerlesi)
  - Make mktemp calls compatible with RHEL3. (Andreas Mohr)
