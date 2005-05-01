@@ -62,7 +62,7 @@ FBSplashBegin() {
 	vecho 0 "Could not talk to splash daemon. fbsplash disabled."
 	return 0
     fi
-    TimedFBSplashCtl "progress 0\nset message $@\nrepaint\n"
+    TimedFBSplashCtl "set mode silent\nprogress 0\nset message $@\nrepaint\n"
 
     # Set console loglevel to KERN_CRIT whilst suspending
     SAVED_FBSPLASH_PRINTK_LEVEL=`awk '{print $1}' < /proc/sys/kernel/printk`
