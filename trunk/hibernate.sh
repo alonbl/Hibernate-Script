@@ -342,7 +342,7 @@ EnsureHavePrerequisites() {
 	    local D
 	    local FN
 	    CNT=1
-	    while :; do
+	    while true ; do
 		D=`date +%s`
 		FN=/tmp/tmp.hibernate.$$$D$RANDOM$RANDOM$CNT
 		[ -f $FN ] && continue
@@ -617,7 +617,7 @@ ReadConfigFile() {
 	echo "This script probably won't do anything."
 	return 0
     fi
-    while : ; do
+    while true ; do
 	# Doing the read this way allows means we don't require a new-line
 	# at the end of the file.
 	read option params

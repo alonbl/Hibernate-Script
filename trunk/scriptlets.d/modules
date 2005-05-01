@@ -202,7 +202,7 @@ ModulesUnloadBlacklist() {
     # Loop over every line in given file.
     vecho 2 "Unloading blacklisted modules listed $MODULES_BLACKLIST_FILE"
     local failedmods=""
-    while : ; do
+    while true ; do
 	local mod vers use_mod_ver
 	use_mod_ver=
 	read mod vers
@@ -291,7 +291,7 @@ ModulesLoadFromFile() {
     local args
     # Loop over every line in given file.
     vecho 2 "Loading modules listed $MODULES_FROMFILE"
-    while : ; do
+    while true ; do
 	read MOD args
 	[ $? -ne 0 ] && [ -z "$MOD" ] && break
 	case "${MOD}" in

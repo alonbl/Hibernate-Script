@@ -39,7 +39,7 @@ GentooModulesAutoload() {
     local args
     # Loop over every line in $modules_autoload_file.
     vecho 1 "Loading modules listed $modules_autoload_file"
-    while : ; do
+    while true ; do
 	read MOD args
 	[ $? -ne 0 ] && [ -z "$MOD" ] && break
 	case "${MOD}" in

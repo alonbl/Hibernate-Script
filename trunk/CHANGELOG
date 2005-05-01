@@ -1,6 +1,8 @@
 1.08 (unreleased)
  - Fix fbsplash colour weirdness.
  - Make fbsplash/bootsplash automatically select on SwitchToTextMode.
+ - Change ":" to "true" for compatibility with some versions of dash (Henrix
+   Brix Andersen)
  - Rename a bunch of options with "Suspend2" instead of swsusp, specifically:
     UseSwsusp2 -> UseSuspend2
     Swsusp2AllSettings -> Suspend2AllSettings
