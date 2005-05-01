@@ -2,7 +2,7 @@
 # vim:ft=sh:ts=8:sw=4:noet
 
 AddConfigHandler FBSplashOptions
-AddConfigHelp "FBSplash <boolean>" "Showing script progress using fbsplash. No kernel patches are required, but you will need the fbsplash splashutils package installed (distinct from the bootsplash splashutils package). You will almost certainly need to enable SwitchToTextMode as well, else your screen might end up garbled."
+AddConfigHelp "FBSplash <boolean>" "Showing script progress using fbsplash. No kernel patches are required, but you will need the fbsplash splashutils package installed (distinct from the bootsplash splashutils package). This will automatically enable SwitchToTextMode too."
 AddConfigHelp "FBSplashTheme <themename>" "FBSplash theme name (default is \"suspend2\")"
 
 
@@ -136,6 +136,9 @@ FBSplashOptions() {
 	AddResumeHook 15 FBSplashProgress # get it to 100% :)
 	AddResumeHook 12 FBSplashOff
 	FBSPLASH_HOOKED=1
+
+	# Enable SwitchToTextMode too.
+	XHacksOptions switchtotextmode 1
     fi
 
     return 0

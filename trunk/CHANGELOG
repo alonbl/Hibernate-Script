@@ -1,3 +1,7 @@
+1.08 (unreleased)
+ - Fix fbsplash colour weirdness.
+ - Make fbsplash/bootsplash automatically select on SwitchToTextMode.
+
 1.07 (21 April 2005)
  - Fix vbetool scriptlet inverted test condition.
  - Install ram.conf by default
