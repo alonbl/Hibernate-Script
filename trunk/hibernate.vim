@@ -49,7 +49,7 @@ highlight link hibernate_order_num Constant
 
 
 " Builtins :
-syntax keyword hibernate_conf swsuspvt contained nextgroup=hibernate_integer skipwhite
+syntax keyword hibernate_conf hibernatevt contained nextgroup=hibernate_integer skipwhite
 syntax keyword hibernate_conf verbosity contained nextgroup=hibernate_verbosity skipwhite
 syntax keyword hibernate_conf logfile contained nextgroup=hibernate_filenames skipwhite
 syntax keyword hibernate_conf logverbosity contained nextgroup=hibernate_verbosity skipwhite
@@ -166,20 +166,20 @@ syntax keyword hibernate_conf stopservices contained nextgroup=hibernate_service
 syntax keyword hibernate_conf startservices contained nextgroup=hibernate_services skipwhite
 syntax keyword hibernate_conf restartservices contained nextgroup=hibernate_services skipwhite
 
-" swsusp2
-syntax match hibernate_swsusp2allsettings /\d\+\(\s\+\d\+\)\+/ contained skipwhite
-highlight link hibernate_swsusp2allsettings Constant
+" suspend2
+syntax match hibernate_suspend2allsettings /\d\+\(\s\+\d\+\)\+/ contained skipwhite
+highlight link hibernate_suspend2allsettings Constant
 
 syntax match hibernate_imagesizelimit /\(\d\+\|nocache\)/ contained skipwhite
 highlight link hibernate_imagesizelimit Constant
 
-syntax keyword hibernate_conf useswsusp2 contained nextgroup=hibernate_boolean skipwhite
+syntax keyword hibernate_conf usesuspend2 contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf reboot contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf enableescape contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf defaultconsolelevel contained nextgroup=hibernate_integer skipwhite
 syntax keyword hibernate_conf imagesizelimit contained nextgroup=hibernate_imagesizelimit skipwhite
-syntax keyword hibernate_conf swsusp2allsettings contained nextgroup=hibernate_swsusp2allsettings skipwhite
-syntax keyword hibernate_conf swsusp2allsettingsfile contained nextgroup=hibernate_filenames skipwhite
+syntax keyword hibernate_conf suspend2allsettings contained nextgroup=hibernate_suspend2allsettings skipwhite
+syntax keyword hibernate_conf suspend2allsettingsfile contained nextgroup=hibernate_filenames skipwhite
 syntax keyword hibernate_conf suspenddevice contained nextgroup=hibernate_filenames skipwhite
 syntax keyword hibernate_conf filewriterlocation contained nextgroup=hibernate_filewriter_target skipwhite
 syntax keyword hibernate_conf verifyfilewriterresume2 contained nextgroup=hibernate_boolean skipwhite

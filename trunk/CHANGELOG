@@ -1,6 +1,12 @@
 1.08 (unreleased)
  - Fix fbsplash colour weirdness.
  - Make fbsplash/bootsplash automatically select on SwitchToTextMode.
+ - Rename a bunch of options with "Suspend2" instead of swsusp, specifically:
+    UseSwsusp2 -> UseSuspend2
+    Swsusp2AllSettings -> Suspend2AllSettings
+	Swsusp2AllSettingsFile -> Suspend2AllSettingsFile
+    SwsuspVT -> HibernateVT
+   Old options names are still recognised, but not advertised.
 
 1.07 (21 April 2005)
  - Fix vbetool scriptlet inverted test condition.

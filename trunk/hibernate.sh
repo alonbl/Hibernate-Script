@@ -575,7 +575,7 @@ ProcessConfigOption() {
 	logverbosity)
 	    EnsureNumeric "$option" "$params" && LOG_VERBOSITY="$params"
 	    ;;
-	swsuspvt)
+	swsuspvt|hibernatevt)
 	    EnsureNumeric "$option" "$params" && SWSUSPVT="$params"
 	    ;;
 	verbosity)
@@ -639,7 +639,7 @@ AddInbuiltHelp() {
     AddOptionHelp "-F<file>, --config-file=<file>" "Use the given configuration file instead of the default ($CONFIG_FILE)"
     AddOptionHelp "--dry-run" "Don't actually do anything."
 
-    AddConfigHelp "SwsuspVT N" "If specified, output from the suspend script is redirected to the given VT instead of stdout."
+    AddConfigHelp "HibernateVT N" "If specified, output from the suspend script is redirected to the given VT instead of stdout."
     AddConfigHelp "Verbosity N" "Determines how verbose the output from the suspend script should be:
    0: silent except for errors
    1: print steps

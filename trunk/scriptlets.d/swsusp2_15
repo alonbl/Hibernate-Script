@@ -17,50 +17,50 @@ HIBERNATE_FILEWRITER_TRAIL="/var/run/suspend2_filewriter_image_exists"
 AddConfigHandler Swsusp2ConfigEnabler
 AddOptionHandler Swsusp2OptionHandler
 
-AddConfigHelp "UseSwsusp2 <boolean>" "Enable/disable the use of Software Suspend 2 to suspend."
+AddConfigHelp "UseSuspend2 <boolean>" "Enable/disable the use of Software Suspend 2 to suspend."
 
-AddConfigHelp "Reboot <boolean> (requires UseSwsusp2 on)" "Controls whether or not Software Suspend 2 should reboot after suspending. Setting this to yes will force a reboot. Setting this to no will force shutting down. Omitting this option will leave rebooting behaviour unchanged."
+AddConfigHelp "Reboot <boolean> (requires UseSuspend2 on)" "Controls whether or not Software Suspend 2 should reboot after suspending. Setting this to yes will force a reboot. Setting this to no will force shutting down. Omitting this option will leave rebooting behaviour unchanged."
 AddShortOption "r::"
 AddLongOption "reboot::"
-AddOptionHelp "-r[0|1], --reboot[=<0|1>] (requires UseSwsusp2 on)" "If 0 is specified, disables rebooting after suspend, regardless of the Reboot option in the configuration file. If 1 or omitted, will force a reboot after suspending."
+AddOptionHelp "-r[0|1], --reboot[=<0|1>] (requires UseSuspend2 on)" "If 0 is specified, disables rebooting after suspend, regardless of the Reboot option in the configuration file. If 1 or omitted, will force a reboot after suspending."
 
-AddConfigHelp "EnableEscape <boolean> (requires UseSwsusp2 on)" "If specified, allows (or disallows) the use of the escape key to abort a suspend. If this line is not specified, the Escape key's behaviour is unchanged."
+AddConfigHelp "EnableEscape <boolean> (requires UseSuspend2 on)" "If specified, allows (or disallows) the use of the escape key to abort a suspend. If this line is not specified, the Escape key's behaviour is unchanged."
 
-AddConfigHelp "DefaultConsoleLevel <N> (requires UseSwsusp2 on)" "If specified, sets the default console level. 0 gives a progress bar. 1 gives a progress bar with numbers. 2 or higher give increasing amounts of debugging. If this line is not specified, the default console level is unchanged."
+AddConfigHelp "DefaultConsoleLevel <N> (requires UseSuspend2 on)" "If specified, sets the default console level. 0 gives a progress bar. 1 gives a progress bar with numbers. 2 or higher give increasing amounts of debugging. If this line is not specified, the default console level is unchanged."
 
-AddConfigHelp "ImageSizeLimit nocache|<NN> (requires UseSwsusp2 on)" "If specified, sets an upper limit on the size of the suspend image written (in megabytes). If set to \"nocache\", caches and buffers will not be saved - resulting in a faster suspend and resume at the possible expense of system responsiveness immediately after resuming. If set to 0, no limit is imposed. If this line is not specified, the existing image size limit is unchanged."
+AddConfigHelp "ImageSizeLimit nocache|<NN> (requires UseSuspend2 on)" "If specified, sets an upper limit on the size of the suspend image written (in megabytes). If set to \"nocache\", caches and buffers will not be saved - resulting in a faster suspend and resume at the possible expense of system responsiveness immediately after resuming. If set to 0, no limit is imposed. If this line is not specified, the existing image size limit is unchanged."
 
-AddConfigHelp "AsyncIOLimit <N> (requires UseSwsusp2 on)" "Deprecated since 2.1.5.11 (hence won't do anything if set). Limit the number of I/O operations that Software Suspend 2 will have queued at once. Lowering this value has resolved hangs when reading or writing caches for some people. Try values like 64, 32 and 8."
+AddConfigHelp "AsyncIOLimit <N> (requires UseSuspend2 on)" "Deprecated since 2.1.5.11 (hence won't do anything if set). Limit the number of I/O operations that Software Suspend 2 will have queued at once. Lowering this value has resolved hangs when reading or writing caches for some people. Try values like 64, 32 and 8."
 
-AddConfigHelp "Swsusp2AllSettings <params> (requires UseSwsusp2 on)" "If specified, sets all of the settings for Software Suspend 2 at once. The parameter should be the contents of $SWSUSP_ROOT/all_settings after you have set your desired settings manually."
+AddConfigHelp "Swsusp2AllSettings <params> (requires UseSuspend2 on)" "If specified, sets all of the settings for Software Suspend 2 at once. The parameter should be the contents of $SWSUSP_ROOT/all_settings after you have set your desired settings manually."
 
-AddConfigHelp "Swsusp2AllSettingsFile <filename> (requires UseSwsusp2 on)" "If specified, sets all of the settings for Software Suspend 2 and all its plugins at once, from the given file. The parameter should be the path to a file containing the result of \"cat $SWSUSP_ROOT/all_settings > <filename>\"after you have set your desired settings manually."
+AddConfigHelp "Swsusp2AllSettingsFile <filename> (requires UseSuspend2 on)" "If specified, sets all of the settings for Software Suspend 2 and all its plugins at once, from the given file. The parameter should be the path to a file containing the result of \"cat $SWSUSP_ROOT/all_settings > <filename>\"after you have set your desired settings manually."
 
-AddConfigHelp "SuspendDevice <device> (requires UseSwsusp2 on)" "If specified, sets the suspend device by writing to the resume2 entry in $SWSUSP_ROOT. This does not automatically set the resuming device - you will need to make sure your bootloader or initrd script does this."
+AddConfigHelp "SuspendDevice <device> (requires UseSuspend2 on)" "If specified, sets the suspend device by writing to the resume2 entry in $SWSUSP_ROOT. This does not automatically set the resuming device - you will need to make sure your bootloader or initrd script does this."
 
-AddConfigHelp "FilewriterLocation <filename> <size in MB> (requires UseSwsusp2 on)" "This option sets up the given filename to act as a destination file for writing the suspend image to, and verifies that it can act as a valid destination. If the file does not exist, the file is created. This option is only relevant if you are using the filewriter plugin for Software Suspend."
+AddConfigHelp "FilewriterLocation <filename> <size in MB> (requires UseSuspend2 on)" "This option sets up the given filename to act as a destination file for writing the suspend image to, and verifies that it can act as a valid destination. If the file does not exist, the file is created. This option is only relevant if you are using the filewriter plugin for Software Suspend."
 
-AddConfigHelp "VerifyFilewriterResume2 <boolean> (requires UseSwsusp2 on)" "When this option is on, you will be prompted if your current kernel command-line does not match the correct resume2 for the filewriter. This option is on by default."
+AddConfigHelp "VerifyFilewriterResume2 <boolean> (requires UseSuspend2 on)" "When this option is on, you will be prompted if your current kernel command-line does not match the correct resume2 for the filewriter. This option is on by default."
 
-AddConfigHelp "LoadSuspendModules <module name> [...] (requires UseSwsusp2 on)" "Loads the given modules before even detecting Software Suspend. This may be required when Software Suspend is compiled as modules that need to be loaded prior to suspending."
-AddConfigHelp "UnloadSuspendModulesAfterResume <boolean> (requires UseSwsusp2 on)" "If yes, will unload the Software Suspend modules mentioned above after resuming."
+AddConfigHelp "LoadSuspendModules <module name> [...] (requires UseSuspend2 on)" "Loads the given modules before even detecting Software Suspend. This may be required when Software Suspend is compiled as modules that need to be loaded prior to suspending."
+AddConfigHelp "UnloadSuspendModulesAfterResume <boolean> (requires UseSuspend2 on)" "If yes, will unload the Software Suspend modules mentioned above after resuming."
 
-AddConfigHelp "PowerdownMethod <3|4|5> (requires UseSwsusp2 on)" "Allows you to choose what Software Suspend 2 should do after writing its image to disk. This only works if you have ACPI enabled in your kernel. 3/4/5 correspond to the ACPI states S3 (suspend-to-RAM), S4 (suspend-to-disk), and S5 (power off). Choosing 3 will request your machine to enter the S3 Suspend-to-RAM state if it is supported - this allows you drastically cut the resume time waiting for your BIOS but still consumes power whilst hibernated (though the image is not lost should power run out). Choosing 4 will cause your machine to enter an S4 sleep state which may also reduce the resume time without using any power whilst hibernated. Choosing 5 will cause your machine to switch off after suspending (traditional method)."
+AddConfigHelp "PowerdownMethod <3|4|5> (requires UseSuspend2 on)" "Allows you to choose what Software Suspend 2 should do after writing its image to disk. This only works if you have ACPI enabled in your kernel. 3/4/5 correspond to the ACPI states S3 (suspend-to-RAM), S4 (suspend-to-disk), and S5 (power off). Choosing 3 will request your machine to enter the S3 Suspend-to-RAM state if it is supported - this allows you drastically cut the resume time waiting for your BIOS but still consumes power whilst hibernated (though the image is not lost should power run out). Choosing 4 will cause your machine to enter an S4 sleep state which may also reduce the resume time without using any power whilst hibernated. Choosing 5 will cause your machine to switch off after suspending (traditional method)."
 
-AddConfigHelp "ProcSetting <entry name> <value> (requires UseSwsusp2 on)" "Sets the value of $SWSUSP_ROOT/<entry_name> to <value> upon suspending. You can use this setting to set parameters that can't be configured anywhere else in this script. This is executed after all other settings have been set."
+AddConfigHelp "ProcSetting <entry name> <value> (requires UseSuspend2 on)" "Sets the value of $SWSUSP_ROOT/<entry_name> to <value> upon suspending. You can use this setting to set parameters that can't be configured anywhere else in this script. This is executed after all other settings have been set."
 
 AddShortOption "n"
 AddLongOption "no-suspend"
-AddOptionHelp "-n, --no-suspend (requires UseSwsusp2 on)" "Disables actually suspending the system. This is useful for testing the suspend script itself."
+AddOptionHelp "-n, --no-suspend (requires UseSuspend2 on)" "Disables actually suspending the system. This is useful for testing the suspend script itself."
 
 AddLongOption "save-settings::"
-AddOptionHelp "--save-settings [filename] (requires UseSwsusp2 on)" "Saves all the current settings for Software Suspend 2 into a file (default: $SWSUSP_DEFAULT_ALL_SETTINGS_FILE)"
+AddOptionHelp "--save-settings [filename] (requires UseSuspend2 on)" "Saves all the current settings for Software Suspend 2 into a file (default: $SWSUSP_DEFAULT_ALL_SETTINGS_FILE)"
 
 AddLongOption "bug-report"
-AddOptionHelp "--bug-report (requires UseSwsusp2 on)" "Gathers a bunch of information about your machine and writes it to standard output. Please attach this information along with any bug reports to the Software Suspend mailing list."
+AddOptionHelp "--bug-report (requires UseSuspend2 on)" "Gathers a bunch of information about your machine and writes it to standard output. Please attach this information along with any bug reports to the Software Suspend mailing list."
 
 Swsusp2ConfigEnabler() {
-    [ "$1" != "useswsusp2" ] && return 1
+    [ "$1" != "usesuspend2" ] && [ "$1" != "useswsusp2" ] && return 1
     BoolIsOn "$1" "$2" || return 0
     [ -n "$USING_SWSUSP2" ] && return 0
     AddConfigHandler Swsusp2ConfigOptions
@@ -126,10 +126,10 @@ Swsusp2ConfigOptions() {
 	asynciolimit)
 	    SWSUSP_ASYNC_IO_LIMIT=$2
 	    ;;
-	swsusp2allsettings)
+	suspend2allsettings|swsusp2allsettings)
 	    SWSUSP_ALL_SETTINGS=$2
 	    ;;
-	swsusp2allsettingsfile)
+	suspend2allsettingsfile|swsusp2allsettingsfile)
 	    SWSUSP_ALL_SETTINGS_FILE=$2
 	    if ! [ -r "$SWSUSP_ALL_SETTINGS_FILE" ] ; then
 		echo "$EXE: Cannot read all_settings file $SWSUSP_ALL_SETTINGS_FILE"
@@ -338,7 +338,7 @@ ChangeToSwsuspVT() {
 	else
 	    SWSUSP_ORIGINAL_VT=1
 	fi
-	vecho 3 "swsusp2_15: changing console from $SWSUSP_ORIGINAL_VT to 63"
+	vecho 3 "suspend2: changing console from $SWSUSP_ORIGINAL_VT to 63"
 	chvt 63
 	# Turn off unicode on this VT, as it makes swsusp output ugly.
 	/bin/echo -ne '\033%@' > /dev/tty63
@@ -348,7 +348,7 @@ ChangeToSwsuspVT() {
 
 ChangeFromSwsuspVT() {
     if [ -n "$SWSUSP_ORIGINAL_VT" ] ; then
-	vecho 3 "swsusp2_15: changing console back to $SWSUSP_ORIGINAL_VT"
+	vecho 3 "suspend2: changing console back to $SWSUSP_ORIGINAL_VT"
 	chvt $SWSUSP_ORIGINAL_VT
     fi
     return 0
@@ -519,7 +519,7 @@ EOT
     # Check the interface version matches. Warn if it doesn't.
     if [ $ver -lt "$SWSUSP_INTERFACE_VERSION_MIN" ] || [ $ver -gt "$SWSUSP_INTERFACE_VERSION_MAX" ] ; then
 	cat <<EOT
-WARNING: The swsusp2 scriptlet was written for a different swsusp2 interface
+WARNING: The suspend2 scriptlet was written for a different suspend2 interface
 	 version from the one in your running kernel. This scriptlet was
 	 written for version between $SWSUSP_INTERFACE_VERSION_MIN and $SWSUSP_INTERFACE_VERSION_MIN where as the version running
 	 in your kernel is $ver. Things may not work as expected, but proceeding
