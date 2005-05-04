@@ -27,7 +27,7 @@ TimedFBSplashCtl() {
 FBSplashProgress() {
     if [ x"$USE_FBSPLASH" = "x1" ] ; then
 	FBSPLASH_PROGRESS=$(($FBSPLASH_PROGRESS+6553));
-	TimedFBSplashCtl "progress $(($FBSPLASH_PROGRESS))\nrepaint\n"
+	TimedFBSplashCtl "set mode silent\nprogress $(($FBSPLASH_PROGRESS))\nrepaint\n"
     fi
     return 0
 }
