@@ -200,6 +200,9 @@ FindXServer() {
     # Find a useful XAUTHORITY and ideally a username too if we can!
     local xuser xauth xpid
     for xpid in `pidof kwrapper ksmserver kdeinit gnome-session X XFree86 Xorg` ; do
+	# Ensure the process still exists, and we aren't hallucinating.
+	[ -d "/proc/$xpid/" ] || continue
+
 	xauth=`awk 'BEGIN{RS="\\000";FS="="}($1 == "XAUTHORITY"){print $2}' < /proc/$xpid/environ`
 	xhome=`awk 'BEGIN{RS="\\000";FS="="}($1 == "HOME"){print $2}' < /proc/$xpid/environ`
 	xuser=`/bin/ls -ld /proc/$xpid/ | awk '{print $3}'`
