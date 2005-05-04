@@ -529,8 +529,9 @@ EOT
     fi
 
     # Figure out if we need to handle VT switching ourselves (if version
-    # >= 2.0.0.103)
-    SwsuspIsAtLeastVersion $((0x02000067)) && SWSUSP_FORCE_CHVT=1
+    # >= 2.0.0.103, and the xhacks scriptlet didn't do it for us)
+    SwsuspIsAtLeastVersion $((0x02000067)) && [ x"$XHACKS_LEAVE_X" != "x1" ] && \
+	SWSUSP_FORCE_CHVT=1
 
     # If we have the resume2 proc entry, we can do some further tests
     # Otherwise, bail gracefully
