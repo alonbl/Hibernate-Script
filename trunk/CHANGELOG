@@ -1,6 +1,8 @@
 1.08 (unreleased)
- - Fix fbsplash colour weirdness.
+ - Fix fbsplash colour weirdness (Henrik Brix Andersen).
  - Make fbsplash/bootsplash automatically select on SwitchToTextMode.
+ - Remove spurious VT switches (also means fbsplash should be seamless between
+   hibernate script and userui).
  - Change ":" to "true" for compatibility with some versions of dash (Henrik
    Brix Andersen)
  - Rename a bunch of options with "Suspend2" instead of swsusp, specifically:
