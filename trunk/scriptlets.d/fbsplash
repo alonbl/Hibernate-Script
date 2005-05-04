@@ -52,7 +52,7 @@ FBSplashBegin() {
     # Start up the splash daemon.
     mkdir -p `dirname $FBSPLASH_FIFO`
     rm -f $FBSPLASH_FIFO > /dev/null 2>&1
-    if ! splash_util -t $FBSPLASH_THEME -d ; then
+    if ! splash_util -t $FBSPLASH_THEME -d -m v ; then
 	USE_FBSPLASH=0
 	vecho 0 "Splash daemon failed to start. fbsplash disabled."
 	return 0
@@ -62,7 +62,7 @@ FBSplashBegin() {
 	vecho 0 "Could not talk to splash daemon. fbsplash disabled."
 	return 0
     fi
-    TimedFBSplashCtl "set mode verbose\nset mode silent\nprogress 0\nset message $@\nrepaint\n"
+    TimedFBSplashCtl "set mode silent\nprogress 0\nset message $@\nrepaint\n"
 
     # Set console loglevel to KERN_CRIT whilst suspending
     SAVED_FBSPLASH_PRINTK_LEVEL=`awk '{print $1}' < /proc/sys/kernel/printk`
