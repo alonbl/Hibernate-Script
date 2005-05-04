@@ -80,7 +80,6 @@ FBSplashStartResume() {
 }
 
 FBSplashStartSuspend() {
-    FBSPLASH_INIT_VT=`fgconsole` || FBSPLASH_INIT_VT=1
     FBSplashBegin "Preparing to suspend ..."
 }
 
@@ -122,7 +121,7 @@ FBSplashOptions() {
 	AddSuspendHook 70 FBSplashProgress
 	AddSuspendHook 80 FBSplashProgress
 	AddSuspendHook 90 FBSplashProgress
-	AddSuspendHook 95 FBSplashProgress
+	AddSuspendHook 94 FBSplashProgress
 	AddSuspendHook 95 FBSplashOff
 	AddResumeHook 95 FBSplashStartResume
 	AddResumeHook 90 FBSplashProgress
