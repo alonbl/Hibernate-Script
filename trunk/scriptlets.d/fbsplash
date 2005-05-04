@@ -76,7 +76,9 @@ FBSplashBegin() {
 }
 
 FBSplashStartResume() {
-    FBSplashBegin "Recovering from resume ..."
+    TimedFBSplashCtl "set message Reloading drivers and applications ...\n"
+    FBSPLASH_PROGRESS=0
+    FBSplashProgress
 }
 
 FBSplashStartSuspend() {
@@ -122,7 +124,6 @@ FBSplashOptions() {
 	AddSuspendHook 80 FBSplashProgress
 	AddSuspendHook 90 FBSplashProgress
 	AddSuspendHook 94 FBSplashProgress
-	AddSuspendHook 95 FBSplashOff
 	AddResumeHook 95 FBSplashStartResume
 	AddResumeHook 90 FBSplashProgress
 	AddResumeHook 80 FBSplashProgress
