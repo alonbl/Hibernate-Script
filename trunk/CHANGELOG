@@ -11,6 +11,12 @@
 	Swsusp2AllSettingsFile -> Suspend2AllSettingsFile
     SwsuspVT -> HibernateVT
    Old options names are still recognised, but not advertised.
+ - Enforce modprobe/hotplug disabling whilst suspending unconditionally.
+ - Add a "hardware tweaks" scriptlet for hardware-specific config options,
+   currently includes:
+    * using the ibm_acpi module to signal suspend progress
+	* using radeontool to turn your backlight on and off
+ - Enable SwitchToTextMode in the default config.
 
 1.07 (21 April 2005)
  - Fix vbetool scriptlet inverted test condition.
