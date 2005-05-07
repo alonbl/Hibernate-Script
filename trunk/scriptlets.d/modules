@@ -338,15 +338,15 @@ ModulesOptions() {
 	*)
 	    return 1
     esac
-    if [ -z "$MODPROBE_HOOKED" ] ; then
-	AddSuspendHook 89 SaveKernelModprobe
-	# Restoration is also done by individual loaders. The following is just
-	# to ensure that we do restore it at some point.
-	AddResumeHook 89 RestoreKernelModprobe
-	MODPROBE_HOOKED=1
-	MOD_UNLOADED="" # Clear this early on
-    fi
     return 0
 }
+
+# Do this globally to ensure it is always done.
+if [ -z "$MODPROBE_HOOKED" ] ; then
+    AddSuspendHook 89 SaveKernelModprobe
+    AddResumeHook 89 RestoreKernelModprobe
+    MODPROBE_HOOKED=1
+    MOD_UNLOADED="" # Clear this early on
+fi
 
 # $Id$
