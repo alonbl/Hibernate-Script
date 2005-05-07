@@ -1,4 +1,4 @@
-1.08 (unreleased)
+1.08 (8 May 2005)
  - Fix fbsplash colour weirdness (Henrik Brix Andersen).
  - Make fbsplash/bootsplash automatically select on SwitchToTextMode.
  - Remove spurious VT switches (also means fbsplash should be seamless between
