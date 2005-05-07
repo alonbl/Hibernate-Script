@@ -109,6 +109,10 @@ syntax keyword hibernate_conf grubmenufile contained nextgroup=hibernate_filenam
 syntax keyword hibernate_conf alternategrubmenufile contained nextgroup=hibernate_filenames skipwhite
 syntax keyword hibernate_conf backupgrubmenufile contained nextgroup=hibernate_filenames skipwhite
 
+" hardware_tweaks
+syntax keyword hibernate_conf ibmacpi contained nextgroup=hibernate_boolean skipwhite
+syntax keyword hibernate_conf radeontool contained nextgroup=hibernate_boolean skipwhite
+
 " lilo
 syntax keyword hibernate_conf ensureliloresumes contained nextgroup=hibernate_boolean skipwhite
 
