@@ -14,8 +14,9 @@
  - Enforce modprobe/hotplug disabling whilst suspending unconditionally.
  - Add a "hardware tweaks" scriptlet for hardware-specific config options,
    currently includes:
-    * using the ibm_acpi module to signal suspend progress
-	* using radeontool to turn your backlight on and off
+	* using the ibm_acpi module to signal suspend progress (Henrik Brix
+	  Andersen)
+	* using radeontool to turn your backlight on and off (Henrik Brix Andersen)
  - Enable SwitchToTextMode in the default config.
 
 1.07 (21 April 2005)
