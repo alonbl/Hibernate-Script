@@ -125,7 +125,8 @@ This script was written by Bernard Blackham, with contributions from:
    bugfixes and ideas, man pages and Debian packaging)
  - Kevin Fenzi (rpm packaging, ideas)
  - Fedor Karpelevitch (lilo scriptlet idea)
- - Henrik Brix Andersen (hardware_tweaks scriptlet and doing lots of debugging)
+ - Henrik Brix Andersen (gentoo packaging, hardware_tweaks scriptlet and doing
+   lots of debugging)
  - And many others! (see changelog for full credits)
 
 LICENSE
