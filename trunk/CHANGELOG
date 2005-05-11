@@ -19,6 +19,7 @@
     * using radeontool to turn your backlight on and off (Henrik Brix Andersen)
  - Enable SwitchToTextMode in the default config.
  - Only allow the user to choose one suspend method.
+ - Don't attempt to suspend within 2 seconds of resuming.
 
 1.07 (21 April 2005)
  - Fix vbetool scriptlet inverted test condition.
