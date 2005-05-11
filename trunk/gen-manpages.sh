@@ -53,7 +53,7 @@ memory will be saved to disc, and your computer will switch off.  When
 you switch it back on again, it will resume exactly as it was when you
 hibernated.  This script is designed for Software Suspend 2, which
 is not yet included in the main kernel tree and must be downloaded
-from the Software Suspend web site at \fIhttp://softwaresuspend.berlios.de/\fR,
+from the Software Suspend web site at \fIhttp://www.suspend2.net/\fR,
 but can also utilise the vanilla kernel interfaces for swsusp or pmdisk
 (through /proc/acpi/sleep or /sys/power/state).
 Instructions on setting up the kernel can also be found on that web
@@ -116,13 +116,13 @@ on Debian systems) for information on how these work.
 Probably lots!
 .PP
 If you have problems with the hibernate script or Software Suspend, the best
-place to ask is on the mailing list - softwaresuspend-help@lists.berlios.de. You
-will need to subscribe to post. See http://softwaresuspend.berlios.de/lists.html
+place to ask is on the mailing list - suspend2-users@lists.suspend2.net. You
+will need to subscribe to post. See http://www.suspend2.net/lists
 for details.
 .PP
 If the suspend process itself crashes (while "Writing caches", "Reading
 caches", or "Copying original kernel back", etc), then the problem lies with
-Software Suspend 2 itself. See the FAQ at http://softwaresuspend.berlios.de/ for
+Software Suspend 2 itself. See the FAQ at http://www.suspend2.net/ for
 help on debugging.
 .SH AUTHOR
 .PP
