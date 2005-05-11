@@ -3,7 +3,7 @@
 
 LOCKFILE="/var/run/hibernate-script.pid"
 LAST_RESUME_FILE="/var/run/hibernate-last-resume"
-LAST_RESUME_WAIT=2
+LAST_RESUME_WAIT=3
 LOCKFILE_IN_USE=
 
 AddSuspendHook 01 LockFileGet
