@@ -181,6 +181,9 @@ $WRAPPED_HELP
 }
 CONFIGURATION_OPTIONS_HELP=""
 
+# FindXServer: Tries to find a running X server on the system. If one is found,
+# will set DISPLAY, XAUTHORITY and the XUSER variable, and return 0.
+# Otherwise, returns 1.
 FindXServer() {
     [ -n "$FIND_X_SERVER_RESULT" ] && return $FIND_X_SERVER_RESULT
 
@@ -226,6 +229,19 @@ FindXServer() {
     fi
 
     FIND_X_SERVER_RESULT=0
+    return 0
+}
+
+# UsingSuspendMethod <method name>: is called when a suspend method is chosen.
+# If a suspend method has already been chosen, the hibernate script will be
+# terminated with an error.
+UsingSuspendMethod() {
+    if [ -n "$HIBERNATE_SUSPEND_METHOD" ] ; then
+	vecho 0 "$EXE: More than one suspend method has been chosen."
+	vecho 0 "Please edit your config file so only one method is used."
+	exit 1
+    fi
+    HIBERNATE_SUSPEND_METHOD=$1
     return 0
 }
 

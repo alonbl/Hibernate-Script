@@ -15,6 +15,7 @@ ACPI_SLEEP_FILE=/proc/acpi/sleep
 ACPISleepConfigEnabler() {
     [ "$1" != "useacpisleep" ] && return 1
     [ -n "$USING_ACPI_SLEEP" ] && return 0
+    UsingSuspendMethod acpi_sleep
     AddSuspendHook 10 EnsureACPISleepCapable
     AddSuspendHook 99 DoACPISleep
     USING_ACPI_SLEEP=$2

@@ -63,6 +63,7 @@ Swsusp2ConfigEnabler() {
     [ "$1" != "usesuspend2" ] && [ "$1" != "useswsusp2" ] && return 1
     BoolIsOn "$1" "$2" || return 0
     [ -n "$USING_SWSUSP2" ] && return 0
+    UsingSuspendMethod suspend2
     AddConfigHandler Swsusp2ConfigOptions
     AddSuspendHook 10 EnsureSwsusp2Capable
     AddSuspendHook 97 ChangeToSwsuspVT

@@ -18,6 +18,7 @@ SYSFS_POWERDOWN_METHOD_FILE=/sys/power/disk
 SysfsPowerStateConfigEnabler() {
     [ "$1" != "usesysfspowerstate" ] && return 1
     [ -n "$USING_SYSFS_POWER_STATE" ] && return 0
+    UsingSuspendMethod sysfs_power_state
     AddConfigHandler SysfsPowerStateConfigOptions
     AddSuspendHook 10 EnsureSysfsPowerStateCapable
     AddSuspendHook 99 DoSysfsPowerStateSuspend
