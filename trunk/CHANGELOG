@@ -1,4 +1,4 @@
-1.08 (8 May 2005)
+1.08 (13 May 2005 - "Black Floody Friday")
  - Fix fbsplash colour weirdness (Henrik Brix Andersen).
  - Make fbsplash/bootsplash automatically select on SwitchToTextMode.
  - Remove spurious VT switches (also means fbsplash should be seamless between

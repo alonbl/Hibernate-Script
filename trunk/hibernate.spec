@@ -60,7 +60,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc TODO
 
 %changelog
-* Sun May 08 2005 Bernard Blackham <bernard@blackham.com.au> -
+* Fri May 13 2005 Bernard Blackham <bernard@blackham.com.au> -
 - Updated to 1.08 final version
 * Thu Apr 21 2005 Bernard Blackham <bernard@blackham.com.au> -
 - Updated to 1.07 final version
