@@ -54,7 +54,10 @@ CheckLastResume() {
     read last_resume < $LAST_RESUME_FILE
 
     now=`date "+%s"`
-    [ $now -gt $(($last_resume+$LAST_RESUME_WAIT)) ] && return 0
+    if [ $now -gt $(($last_resume+$LAST_RESUME_WAIT)) ] ; then
+	rm -f "$LAST_RESUME_FILE"
+	return 0
+    fi
 
     vecho 0 "$EXE: Less than $LAST_RESUME_WAIT seconds since last resumed. Not suspending."
     return 1 # (unless forced)
@@ -63,6 +66,7 @@ CheckLastResume() {
 # NoteLastResume: keep a record of when we last resumed so we can avoid doing
 # it more than once in quick succession.
 NoteLastResume() {
+    [ -f "$LAST_RESUME_FILE" ] && return 0
     date "+%s" > $LAST_RESUME_FILE
     return 0
 }
