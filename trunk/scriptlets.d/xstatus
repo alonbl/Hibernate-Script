@@ -16,39 +16,55 @@ AddConfigHelp "XosdSettings <options>" "Options to pass to osd_cat, see 'man osd
 XStatusProgressStart_kde() {
     KDEPB_DCOPREF=
 
+    DCOP_BIN=`command -v dcop`
+    KSTART_BIN=`command -v kstart`
+
     # Lookup dcop, we expect kdialog and kstart to sit there, too.
-    if [ "x$DISTRIBUTION" = "xgentoo" ] && ! command -v dcop > /dev/null 2>&1 ; then
-	# Gentoo stashes this in a silly place.
-	for i in /usr/kde/*/bin/dcop ; do
-	    if [ -x "$i" ] ; then
-		PATH=$PATH:${i%%/dcop}
-		export PATH
-		break
-	    fi
-	done
+    if [ "x$DISTRIBUTION" = "xgentoo" ] ; then
+	if [ -z "$DCOP_BIN" ] ; then
+	    for i in /usr/kde/*/bin/dcop ; do
+		if [ -x "$i" ] ; then
+		    DCOP_BIN="$i"
+		    break
+		fi
+	    done
+	fi
+	if [ -z "$KSTART_BIN" ] ; then
+	    for i in /usr/kde/*/bin/kstart ; do
+		if [ -x "$i" ] ; then
+		    DCOP_BIN="$i"
+		    break
+		fi
+	    done
+	fi
     fi
 
-    if ! command -v dcop > /dev/null 2>&1 ; then
+    if ! command -v $DCOP_BIN > /dev/null 2>&1 ; then
 	vecho 0 'Cannot connect to kdialog. `dcop` program not found.'
 	return 1 # abort, unless forced
     fi
 
-    KDEPB_DCOPREF="`su $XUSER -c \"kstart --windowclass KDialog --alldesktops kdialog --title Hibernating --progressbar \\\"$1\\\" 100\"`"
-    su $XUSER -c "dcop \"$KDEPB_DCOPREF\" showCancelButton 1"
+    if ! command -v $KSTART_BIN > /dev/null 2>&1 ; then
+	vecho 0 'Cannot connect to kdialog. `kstart` program not found.'
+	return 1 # abort, unless forced
+    fi
+
+    KDEPB_DCOPREF="`su $XUSER -c \"$KSTART_BIN --windowclass KDialog --alldesktops kdialog --title Hibernating --progressbar \\\"$1\\\" 100\"`"
+    su $XUSER -c "$DCOP_BIN \"$KDEPB_DCOPREF\" showCancelButton 1"
 }
 
 XStatusProgressCheckCancel_kde() {
     [ -z "$KDEPB_DCOPREF" ] && return 0
 
     local was_cancelled
-    was_cancelled=`su $XUSER -c "dcop \"$KDEPB_DCOPREF\" wasCancelled"`
+    was_cancelled=`su $XUSER -c "$DCOP_BIN \"$KDEPB_DCOPREF\" wasCancelled"`
     [ x"$was_cancelled" = "xtrue" ] && SUSPEND_ABORT=1
 }
 
 XStatusProgressUpdate_kde() {
     [ -z "$KDEPB_DCOPREF" ] && return 0
 
-    su $XUSER -c "dcop \"$KDEPB_DCOPREF\" setProgress $XSTATUS_PROGRESS"
+    su $XUSER -c "$DCOP_BIN \"$KDEPB_DCOPREF\" setProgress $XSTATUS_PROGRESS"
     XStatusProgressCheckCancel_kde
 }
 
@@ -56,11 +72,11 @@ XStatusProgressKill_kde() {
     [ -z "$KDEPB_DCOPREF" ] && return 0
 
     XStatusProgressCheckCancel_kde
-    su $XUSER -c "dcop \"$KDEPB_DCOPREF\" close"
+    su $XUSER -c "$DCOP_BIN \"$KDEPB_DCOPREF\" close"
 }
 
 XStatusReportErrors_kde() {
-    kstart --windowclass KDialog --alldesktops kdialog --title Hibernating --error "$1" > /dev/null 2>&1
+    $KSTART_BIN --windowclass KDialog --alldesktops kdialog --title Hibernating --error "$1" > /dev/null 2>&1
 }
 
 ### Gnome bits:
