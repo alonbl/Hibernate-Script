@@ -37,7 +37,7 @@ ACPISleepOptionHandler() {
 DoACPISleep() {
     if [ -z "$ACPI_SLEEP_NO_SUSPEND" ] ; then
 	vecho 1 "$EXE: Activating ACPI sleep state $USING_ACPI_SLEEP ..."
-	echo -n $USING_ACPI_SLEEP > $ACPI_SLEEP_FILE
+	/bin/echo -n $USING_ACPI_SLEEP > $ACPI_SLEEP_FILE
     else
 	vecho 1 "$EXE: Not actually suspending (--no-suspend given)"
     fi

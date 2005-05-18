@@ -305,7 +305,7 @@ DoSwsusp2() {
 
 	# Use a freezer test if we can. Otherwise, just don't suspend.
 	if [ -f "$SWSUSP_ROOT/freezer_test" ] ; then
-	    echo 1 > /proc/software_suspend/freezer_test
+	    /bin/echo 1 > /proc/software_suspend/freezer_test
 	    # We'll obtain debug_info from dmesg
 	else
 	    SWSUSP2_NO_SUSPEND=1
