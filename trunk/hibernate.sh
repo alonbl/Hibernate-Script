@@ -602,7 +602,7 @@ ProcessConfigOption() {
 		VERBOSITY="$params"
 	    ;;
 	distribution)
-	    [ -z "$DISTRIBUTION" ] && DISTRIBUTION="$params"
+	    [ -z "$DISTRIBUTION" ] && DISTRIBUTION=`echo $params | tr '[A-Z]' '[a-z]'`
 	    ;;
 	xdisplay)
 	    DISPLAY="$params"
