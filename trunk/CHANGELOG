@@ -2,7 +2,7 @@
  - Use /bin/echo when calling kernel suspend methods to avoid getting killed on
    oopses. (Piotr P. Karwasz)
  - Make Distribution option case-insensitive.
- - Fix non-standard path issue with KDE xstatus dialog under Gentoo.
+ - Fix non-standard path issue with KDE xstatus dialog under Gentoo (Pat Double)
 
 1.08 (13 May 2005 - "Black Floody Friday")
  - Fix fbsplash colour weirdness (Henrik Brix Andersen).

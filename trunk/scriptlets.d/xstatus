@@ -18,6 +18,7 @@ XStatusProgressStart_kde() {
 
     DCOP_BIN=`command -v dcop`
     KSTART_BIN=`command -v kstart`
+    KDIALOG_BIN=`command -v kdialog`
 
     # Lookup dcop, we expect kdialog and kstart to sit there, too.
     if [ "x$DISTRIBUTION" = "xgentoo" ] ; then
@@ -32,7 +33,15 @@ XStatusProgressStart_kde() {
 	if [ -z "$KSTART_BIN" ] ; then
 	    for i in /usr/kde/*/bin/kstart ; do
 		if [ -x "$i" ] ; then
-		    DCOP_BIN="$i"
+		    KSTART_BIN="$i"
+		    break
+		fi
+	    done
+	fi
+	if [ -z "$KDIALOG_BIN" ] ; then
+	    for i in /usr/kde/*/bin/kdialog ; do
+		if [ -x "$i" ] ; then
+		    KDIALOG_BIN="$i"
 		    break
 		fi
 	    done
@@ -49,7 +58,7 @@ XStatusProgressStart_kde() {
 	return 1 # abort, unless forced
     fi
 
-    KDEPB_DCOPREF="`su $XUSER -c \"$KSTART_BIN --windowclass KDialog --alldesktops kdialog --title Hibernating --progressbar \\\"$1\\\" 100\"`"
+    KDEPB_DCOPREF="`su $XUSER -c \"$KSTART_BIN --windowclass KDialog --alldesktops $KDIALOG_BIN --title Hibernating --progressbar \\\"$1\\\" 100\"`"
     su $XUSER -c "$DCOP_BIN \"$KDEPB_DCOPREF\" showCancelButton 1"
 }
 
@@ -76,7 +85,7 @@ XStatusProgressKill_kde() {
 }
 
 XStatusReportErrors_kde() {
-    $KSTART_BIN --windowclass KDialog --alldesktops kdialog --title Hibernating --error "$1" > /dev/null 2>&1
+    $KSTART_BIN --windowclass KDialog --alldesktops $KDIALOG_BIN --title Hibernating --error "$1" > /dev/null 2>&1
 }
 
 ### Gnome bits:
