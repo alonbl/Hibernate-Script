@@ -16,45 +16,25 @@ AddConfigHelp "XosdSettings <options>" "Options to pass to osd_cat, see 'man osd
 XStatusProgressStart_kde() {
     KDEPB_DCOPREF=
 
-    DCOP_BIN=`command -v dcop`
-    KSTART_BIN=`command -v kstart`
-    KDIALOG_BIN=`command -v kdialog`
-
-    # Lookup dcop, we expect kdialog and kstart to sit there, too.
-    if [ "x$DISTRIBUTION" = "xgentoo" ] ; then
-	if [ -z "$DCOP_BIN" ] ; then
-	    for i in /usr/kde/*/bin/dcop ; do
-		if [ -x "$i" ] ; then
-		    DCOP_BIN="$i"
-		    break
-		fi
-	    done
-	fi
-	if [ -z "$KSTART_BIN" ] ; then
-	    for i in /usr/kde/*/bin/kstart ; do
-		if [ -x "$i" ] ; then
-		    KSTART_BIN="$i"
-		    break
-		fi
-	    done
-	fi
-	if [ -z "$KDIALOG_BIN" ] ; then
-	    for i in /usr/kde/*/bin/kdialog ; do
-		if [ -x "$i" ] ; then
-		    KDIALOG_BIN="$i"
-		    break
-		fi
-	    done
-	fi
+    # Set $PATH for distros that aren't quite standard.
+    if [ "x$DISTRIBUTION" = "xsuse" ] ; then
+	[ -d "/opt/kde3/bin" ] && PATH=/opt/kde3/bin:$PATH && export PATH
+    elif [ "x$DISTRIBUTION" = "xgentoo" ] ; then
+	for i in /usr/kde/*/bin ; do
+	    [ "x$i" = "x/usr/kde/*/bin" ] && break
+	    PATH=$i:$PATH
+	done
+	export PATH
     fi
 
-    if ! command -v $DCOP_BIN > /dev/null 2>&1 ; then
+    if ! DCOP_BIN=`command -v dcop 2>/dev/null` ; then
 	vecho 0 'Cannot connect to kdialog. `dcop` program not found.'
 	return 1 # abort, unless forced
-    fi
-
-    if ! command -v $KSTART_BIN > /dev/null 2>&1 ; then
+    elif ! KSTART_BIN=`command -v kstart 2>/dev/null` ; then
 	vecho 0 'Cannot connect to kdialog. `kstart` program not found.'
+	return 1 # abort, unless forced
+    elif ! KDIALOG_BIN=`command -v kdialog 2>/dev/null` ; then
+	vecho 0 'Cannot connect to kdialog. `kdialog` program not found.'
 	return 1 # abort, unless forced
     fi
 
