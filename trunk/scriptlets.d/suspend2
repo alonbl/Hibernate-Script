@@ -656,7 +656,7 @@ Swsusp2SetupFilewriter() {
 	vecho 0 "ABORTING: resume2 is not setup correctly. Unless you have setup your bootloader"
 	vecho 0 "          correctly, resuming will most likely fail. To correct this, add"
 	vecho 0 "          \"resume2=$filewriter_target\" to your kernel command line in your"
-	vecho 0 "          LILO or GRUB configuration file."
+	vecho 0 "          LILO or GRUB configuration file and reboot."
 	return 2 # abort even if forced
     fi
 
