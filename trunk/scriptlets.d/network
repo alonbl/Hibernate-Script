@@ -15,18 +15,19 @@ NetworkStop() {
 
     local ret
     local int
-    ret=0
+    local do_auto
     NETWORK_DOWNEDIFS="" # for saving the downed interfaces, for "auto"
-    for int in $NETWORK_DOWNIFS ; do
-	if [ "$int" = "auto" ] ; then
-	    for int in `/sbin/ifconfig|sed -e 's/^\([^ \t]*\).*/\1/;/^$/d'` ; do
-		[ "$int" = "lo" ] && continue
-		vecho 2 "Bringing down interface $int (from auto)"
-		network_ifdown $int
-		[ $? -ne 0 ] && ret=1
-		NETWORK_DOWNEDIFS="$int $NETWORK_DOWNEDIFS"
-	    done
-	    continue
+    ret=0
+    do_auto=
+    case $NETWORK_DOWNIFS in *\ auto\ *) do_auto=yes ;; esac
+    for int in `/sbin/ifconfig|sed -e 's/^\([^ \t]*\).*/\1/;/^$/d'` ; do
+	if [ -z "$do_auto" ] ; then
+	    # Only proceed if we were given "auto" or this interface was meant
+	    # to be brought down.
+	    case "$NETWORK_DOWNIFS" in *\ $int\ *) ;; *) continue ;; esac
+	else
+	    # Don't bring down lo in auto mode.
+	    [ "$int" = "lo" ] && continue
 	fi
 	vecho 2 "Bringing down interface $int"
 	network_ifdown $int
