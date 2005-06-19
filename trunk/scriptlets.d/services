@@ -75,8 +75,11 @@ ServicesDetectDistro() {
 	suse|mandrake)
 	    INITDIR=/etc/init.d
 	    ;;
-	debian|slackware|redhat|fedora)
+	debian|redhat|fedora)
 	    INITDIR=/etc/init.d
+	    ;;
+	slackware)
+	    INITDIR=/etc/rc.d
 	    ;;
     	*)
 	    # Auto-detect
@@ -84,6 +87,8 @@ ServicesDetectDistro() {
 	    	INITDIR=/etc/init.d
 	    elif [ -d "/etc/rc.d/init.d" ] ; then
 	    	INITDIR=/etc/rc.d/init.d
+	    elif [ -d "/etc/rc.d" ] ; then
+	    	INITDIR=/etc/rc.d
 	    else
 		vecho 0 "Can not determine init.d directory. Services will not be suspended!"
 		SERVICES_HOOKED=""
