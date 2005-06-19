@@ -2,7 +2,8 @@
 # -*- sh -*-
 # vim:ft=sh:ts=8:sw=4:noet
 #
-# Suspend Script - Copyright (C) 2004 Bernard Blackham <bernard@blackham.com.au>
+# Hibernate Script
+# Copyright (C) 2004-2005 Bernard Blackham <bernard@blackham.com.au>
 #
 # The hibernate-script package is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as published by
