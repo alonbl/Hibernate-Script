@@ -24,6 +24,7 @@
 
 nvidia
 acx100
+acx_pci
 prism54
 
 bcm4400		2.6.0	2.6.99
