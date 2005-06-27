@@ -9,6 +9,7 @@
  - Slackware path fixes (Chris Friedhoff)
  - Support for cryptoapi in Suspend2.
  - Added logrotate script for hibernate.log. (Henrik Brix Andersen)
+ - Only start services enabled for the given runlevel. (Stephen Gildea)
 
 1.08 (13 May 2005 - "Black Floody Friday")
  - Fix fbsplash colour weirdness (Henrik Brix Andersen)

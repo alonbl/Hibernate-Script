@@ -16,11 +16,8 @@ ExecuteServices() {
     services=$@
     ret=0
     for service in $services ; do
-	[ -x "$INITDIR/$service" ] || continue
-	CMD="$INITDIR/$service $action"
-	vecho 2 "Executing $CMD"
-	$CMD || ret=1
-	RESTARTED_SERVICES="$service $RESTARTED_SERVICES"
+	InvokeRCD $service $action
+	[ "$?" -ne 100 ] && RESTARTED_SERVICES="$service $RESTARTED_SERVICES"
     done
     return $ret
 }
@@ -95,6 +92,31 @@ ServicesDetectDistro() {
 	    fi
     esac
     vecho 3 "Using '$INITDIR' as init.d directory."
+    # See if we have the invoke-rc.d utility
+    if command -v invoke-rc.d > /dev/null 2>&1 ; then
+	# Use it.
+	InvokeRCD () {
+	    vecho 2 "Executing invoke-rc.d $@"
+	    invoke-rc.d "$@"
+	}
+    else
+	# Otherwise, emulate it.
+	SERVICES_RUNLEVEL=`runlevel`
+	SERVICES_RUNLEVEL=${SERVICES_RUNLEVEL#* }
+	InvokeRCD () {
+	    local service action tmp cmd
+	    service="$1"
+	    action="$2"
+	    [ -x "$INITDIR/$service" ] || return 100
+	    cmd="$INITDIR/$service $action"
+	    if [ "$action" = "start" ] ; then
+		tmp=`echo $INITDIR/../rc${SERVICES_RUNLEVEL}.d/K??$service`
+		[ -x "$tmp" ] && return 101
+	    fi
+	    vecho 2 "Executing $cmd"
+	    $cmd
+	}
+    fi
     return 0
 }
 
