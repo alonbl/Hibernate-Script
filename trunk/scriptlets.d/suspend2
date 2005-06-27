@@ -2,7 +2,7 @@
 # vim:ft=sh:ts=8:sw=4:noet
 
 SWSUSP_INTERFACE_VERSION_MIN=15
-SWSUSP_INTERFACE_VERSION_MAX=15
+SWSUSP_INTERFACE_VERSION_MAX=16
 
 # Detect the new /proc root.
 if [ -d "/proc/swsusp/" ] ; then
@@ -46,6 +46,10 @@ AddConfigHelp "LoadSuspendModules <module name> [...] (requires UseSuspend2 on)"
 AddConfigHelp "UnloadSuspendModulesAfterResume <boolean> (requires UseSuspend2 on)" "If yes, will unload the Software Suspend modules mentioned above after resuming."
 
 AddConfigHelp "PowerdownMethod <3|4|5> (requires UseSuspend2 on)" "Allows you to choose what Software Suspend 2 should do after writing its image to disk. This only works if you have ACPI enabled in your kernel. 3/4/5 correspond to the ACPI states S3 (suspend-to-RAM), S4 (suspend-to-disk), and S5 (power off). Choosing 3 will request your machine to enter the S3 Suspend-to-RAM state if it is supported - this allows you drastically cut the resume time waiting for your BIOS but still consumes power whilst hibernated (though the image is not lost should power run out). Choosing 4 will cause your machine to enter an S4 sleep state which may also reduce the resume time without using any power whilst hibernated. Choosing 5 will cause your machine to switch off after suspending (traditional method)."
+
+AddConfigHelp "Compressor none|<compressor name> (requires UseSuspend2 on)" "Sets the compression algorithm to use for compressing the memory image. If set to \"none\", disables compression. Otherwise, the compressor name must be listed in /proc/crypto. This will also try to load the module if not available. (Only for Software Suspend 2.1.9.5 or newer)."
+
+AddConfigHelp "Encryptor none|<encryptor name> (requires UseSuspend2 on)" "Sets the encryption algorithm to use for encrypting the memory image. If set to \"none\", disables encryption. Otherwise, the cipher name must be listed in /proc/crypto. This will also try to load the module if not available. You will probably require more options than just this to fully use encryption. These will be introduced in the next version of hibernate, but for now you can set them using the \"ProcSetting\" option if you know what you are doing. (Only for Software Suspend 2.1.9.5 or newer)."
 
 AddConfigHelp "ProcSetting <entry name> <value> (requires UseSuspend2 on)" "Sets the value of $SWSUSP_ROOT/<entry_name> to <value> upon suspending. You can use this setting to set parameters that can't be configured anywhere else in this script. This is executed after all other settings have been set."
 
@@ -186,6 +190,12 @@ Swsusp2ConfigOptions() {
 		    ;;
 	    esac
 	    ;;
+	compressor|compression)
+	    SWSUSP_COMPRESSOR=$2
+	    ;;
+	encryptor|encryption)
+	    SWSUSP_ENCRYPTOR=$2
+	    ;;
 	procsetting)
 	    if [ -z "$OPT_DRY_RUN" ] ; then
 		if [ -z "$SWSUSP_EXTRA_PROC_SETTINGS" ] ; then
@@ -229,7 +239,57 @@ RemoveSwsuspProcCruft() {
     return 0
 }
 
+Swsusp2SetupCryptoAPI() {
+    SwsuspIsAtLeastVersion $((0x02010905)) || return
+
+    if [ -n "$SWSUSP_COMPRESSOR" ] ; then
+	if [ "$SWSUSP_COMPRESSOR" != "none" ] ; then
+	    if ! grep -q "^name.*: $SWSUSP_COMPRESSOR\$" /proc/crypto ; then
+		modprobe $SWSUSP_COMPRESSOR 2>/dev/null 2>&1
+		if ! grep -q "^name.*: $SWSUSP_COMPRESSOR\$" /proc/crypto ; then
+		    vecho 0 "Warning: Chosen Suspend2 compressor ($SWSUSP_COMPRESSOR) is not available. Compression disabled."
+		    SWSUSP_COMPRESSOR=none
+		fi
+	    fi
+	fi
+	if [ "$SWSUSP_COMPRESSOR" != "none" ] ; then
+	    echo "$SWSUSP_COMPRESSOR" > $SWSUSP_ROOT/compressor
+	    echo 0 > $SWSUSP_ROOT/disable_compression
+	else
+	    echo "" > $SWSUSP_ROOT/compressor
+	    echo 1 > $SWSUSP_ROOT/disable_compression
+	fi
+    fi
+
+    if [ -n "$SWSUSP_ENCRYPTOR" ] ; then
+	if [ "$SWSUSP_ENCRYPTOR" != "none" ] ; then
+	    if ! grep -q "^name.*: $SWSUSP_ENCRYPTOR\$" /proc/crypto ; then
+		modprobe $SWSUSP_ENCRYPTOR 2>/dev/null 2>&1
+		if ! grep -q "^name.*: $SWSUSP_ENCRYPTOR\$" /proc/crypto ; then
+		    vecho 0 "Warning: Chosen Suspend2 encryptor ($SWSUSP_ENCRYPTOR) is not available. Encryption disabled."
+		    SWSUSP_ENCRYPTOR=none
+		fi
+	    fi
+	fi
+	if [ "$SWSUSP_ENCRYPTOR" != "none" ] ; then
+	    echo "$SWSUSP_ENCRYPTOR" > $SWSUSP_ROOT/encryptor
+	    echo 0 > $SWSUSP_ROOT/disable_encryption
+	else
+	    echo "" > $SWSUSP_ROOT/encryptor
+	    echo 1 > $SWSUSP_ROOT/disable_encryption
+	fi
+    fi
+}
+
 Swsusp2ConfigSet() {
+    # Apply all settings first before making further changes.
+    [ -n "$SWSUSP_ALL_SETTINGS" ] && [ -f $SWSUSP_ROOT/all_settings ] && \
+    	echo $SWSUSP_ALL_SETTINGS > $SWSUSP_ROOT/all_settings
+
+    [ -n "$SWSUSP_ALL_SETTINGS_FILE" ] && [ -f $SWSUSP_ROOT/all_settings ] && \
+	[ -f "$SWSUSP_ALL_SETTINGS_FILE" ] && \
+    	cat $SWSUSP_ALL_SETTINGS_FILE > $SWSUSP_ROOT/all_settings
+
     if [ "x$SWSUSP_IMAGE_SIZE_LIMIT" = "xnocache" ] ; then
 	local field val units result
 	local total=0 cached=0 buffers=0 free=0
@@ -258,18 +318,13 @@ Swsusp2ConfigSet() {
     [ -n "$SWSUSP_ASYNC_IO_LIMIT" ] && [ -f $SWSUSP_ROOT/async_io_limit ] && \
     	echo $SWSUSP_ASYNC_IO_LIMIT > $SWSUSP_ROOT/async_io_limit
 
-    [ -n "$SWSUSP_ALL_SETTINGS" ] && [ -f $SWSUSP_ROOT/all_settings ] && \
-    	echo $SWSUSP_ALL_SETTINGS > $SWSUSP_ROOT/all_settings
-
-    [ -n "$SWSUSP_ALL_SETTINGS_FILE" ] && [ -f $SWSUSP_ROOT/all_settings ] && \
-	[ -f "$SWSUSP_ALL_SETTINGS_FILE" ] && \
-    	cat $SWSUSP_ALL_SETTINGS_FILE > $SWSUSP_ROOT/all_settings
-
     [ -n "$SWSUSP_RESUME2" ] && [ -f $SWSUSP_ROOT/resume2 ] && \
     	echo $SWSUSP_RESUME2 > $SWSUSP_ROOT/resume2
 
     [ -n "$SWSUSP_POWERDOWN_METHOD" ] && [ -f $SWSUSP_ROOT/powerdown_method ] && \
 	echo $SWSUSP_POWERDOWN_METHOD > $SWSUSP_ROOT/powerdown_method
+
+    Swsusp2SetupCryptoAPI
 
     [ -n "$SWSUSP_EXTRA_PROC_SETTINGS" ] && [ -f "$SWSUSP_EXTRA_PROC_SETTINGS" ] && \
 	. $SWSUSP_EXTRA_PROC_SETTINGS
@@ -436,7 +491,7 @@ PrintAnErrorString() {
 	;;
 	8) ERROR_TEXT="${ERROR_TEXT}Unable to free enough memory.\n"
 	;;
-	9) ERROR_TEXT="${ERROR_TEXT}Failed to setup encryption. (see dmesg)\n"
+	9) ERROR_TEXT="${ERROR_TEXT}Failed to setup encryption.\n"
 	;;
 	*) ERROR_TEXT="${ERROR_TEXT}Unknown error! (see dmesg?)\n"
 	;;
@@ -472,7 +527,7 @@ PrintErrors() {
 
     bit_num=0
     while [ "$code" -ne 0 ] ; do
-	[ $(($code&1)) -eq 1 ] && echo -n " - " && PrintAnErrorString "$bit_num"
+	[ $(($code&1)) -eq 1 ] && ERROR_TEXT="${ERROR_TEXT} - " && PrintAnErrorString "$bit_num"
 
 	bit_num=$(($bit_num+1))
 	code=$(($code>>1))

@@ -7,6 +7,7 @@
  - Clean up stderr output in xstatus. (Pat Double)
  - Only bring down interfaces that are up.
  - Slackware path fixes (Chris Friedhoff)
+ - Support for cryptoapi in Suspend2.
 
 1.08 (13 May 2005 - "Black Floody Friday")
  - Fix fbsplash colour weirdness (Henrik Brix Andersen).

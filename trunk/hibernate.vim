@@ -190,6 +190,10 @@ syntax keyword hibernate_conf verifyfilewriterresume2 contained nextgroup=hibern
 syntax keyword hibernate_conf loadsuspendmodules contained nextgroup=hibernate_modules skipwhite
 syntax keyword hibernate_conf unloadsuspendmodulesafterresume contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf powerdownmethod contained nextgroup=hibernate_powerdown_method skipwhite
+syntax keyword hibernate_conf compressor contained nextgroup=hibernate_modules skipwhite
+syntax keyword hibernate_conf compression contained nextgroup=hibernate_modules skipwhite
+syntax keyword hibernate_conf encryptor contained nextgroup=hibernate_modules skipwhite
+syntax keyword hibernate_conf encryption contained nextgroup=hibernate_modules skipwhite
 syntax keyword hibernate_conf procsetting contained nextgroup=hibernate_procsetting skipwhite
 syntax keyword hibernate_conf asynciolimit contained nextgroup=hibernate_integer skipwhite
 
