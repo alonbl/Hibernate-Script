@@ -491,7 +491,7 @@ PrintAnErrorString() {
 	;;
 	8) ERROR_TEXT="${ERROR_TEXT}Unable to free enough memory.\n"
 	;;
-	9) ERROR_TEXT="${ERROR_TEXT}Failed to setup encryption.\n"
+	9) ERROR_TEXT="${ERROR_TEXT}Failed to setup compression or encryption.\n"
 	;;
 	*) ERROR_TEXT="${ERROR_TEXT}Unknown error! (see dmesg?)\n"
 	;;
