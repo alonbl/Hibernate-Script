@@ -1,0 +1,117 @@
+# -*- sh -*-
+# vim:ft=sh:ts=8:sw=4:noet
+
+AddConfigHandler HardwareTweaksOptions
+
+###
+## IBM ACPI
+###
+
+AddConfigHelp "IbmAcpi <boolean>" "Use the ibm_acpi kernel module to signal suspend progress."
+
+# ibm_acpi proc directory
+IBM_ACPI_PROC=/proc/acpi/ibm
+
+# ibm_acpi LED control file
+IBM_ACPI_LED=$IBM_ACPI_PROC/led
+
+# ibm_acpi beep control
+IBM_ACPI_BEEP=$IBM_ACPI_PROC/beep
+
+IbmAcpiLed() {
+    if [ -f "$IBM_ACPI_LED" ] ; then
+	echo $1 $2 > $IBM_ACPI_LED
+    else
+	vecho 1 "File '$IBM_ACPI_LED' not found. Unable to signal LED."
+    fi
+}
+
+IbmAcpiBeep() {
+    if [ -f "$IBM_ACPI_BEEP" ] ; then
+	echo $1 > $IBM_ACPI_BEEP
+    else
+	vecho 1 "File '$IBM_ACPI_BEEP' not found. Unable to emit beep."
+    fi
+}
+
+IbmAcpiStartSuspend() {
+    # blink suspend LED
+    IbmAcpiLed 7 blink
+    return 0 # this shouldn't stop suspending
+}
+
+IbmAcpiEndResume() {
+    # turn off suspend LED
+    IbmAcpiLed 7 off
+
+    # audible failure if another scriplet failed
+    [ $EXIT_CODE -gt 1 ] && IbmAcpiBeep 4
+
+    return 0
+}
+
+###
+## radeontool
+###
+
+AddConfigHelp "RadeonTool <boolean>" "Use radeontool to turn off LCD backlight."
+
+RadeonToolBacklightOff() {
+    if ! command -v radeontool > /dev/null 2>&1 ; then
+	USE_RADEONTOOL=0
+	vecho 1 "'radeontool' utility not found. Radeontool disabled."
+	return 0
+    fi
+
+    radeontool light off || return 1
+
+    return 0
+}
+
+RadeonToolBacklightOn() {
+    [ x"$USE_RADEONTOOL" = "x1" ] || return 0
+
+    radeontool light on || return 1
+
+    return 0
+}
+
+###
+## Option handler for all of the above:
+###
+
+HardwareTweaksOptions() {
+    case $1 in
+	radeontool)
+	    BoolIsOn "$1" "$2" || return 0
+	    USE_RADEONTOOL=1
+	    if [ -z "$RADEONTOOL_HOOKED" ] ; then
+		AddSuspendHook 98 RadeonToolBacklightOff
+		AddResumeHook 98 RadeonToolBacklightOn
+		RADEONTOOL_HOOKED=1
+
+		# Enable SwitchToTextMode too.
+		XHacksOptions switchtotextmode 1
+	    fi
+	    ;;
+	ibmacpi)
+	    BoolIsOn "$1" "$2" || return 0
+	    if [ -d $IBM_ACPI_PROC ] ; then
+		USE_IBM_ACPI=1
+	    else
+		vecho 1 "Directory '$IBM_ACPI_PROC' not found. IbmAcpi disabled."
+		return 0
+	    fi
+	    if [ -z "$IBM_ACPI_HOOKED" ] ; then
+		# in call order
+		AddSuspendHook 12 IbmAcpiStartSuspend
+		AddResumeHook 12 IbmAcpiEndResume
+		IBM_ACPI_HOOKED=1
+	    fi
+	    ;;
+	*)
+	    return 1
+    esac
+
+    return 0
+}
