@@ -12,6 +12,7 @@
 [ -z "$CONFIG_FILE" ]   && CONFIG_FILE=$CONFIG_DIR/hibernate.conf
 [ -z "$RAM_CONFIG_FILE" ]   && RAM_CONFIG_FILE=$CONFIG_DIR/ram.conf
 [ -z "$BLACKLIST" ]     && BLACKLIST=$CONFIG_DIR/blacklisted-modules
+[ -z "$LOGROTATE_DIR" ] && LOGROTATE_DIR=/etc/logrotate.d
 
 [ -z "$OLD_SCRIPTLET_DIR" ] && OLD_SCRIPTLET_DIR=$CONFIG_DIR/scriptlets.d
 
@@ -66,6 +67,13 @@ mkdir -p $SCRIPTLET_DIR
 for i in scriptlets.d/* ; do
     cp -a $i $SCRIPTLET_DIR
 done
+
+if [ -d "$LOGROTATE_DIR" ] ; then
+    LOGROTATE_TARGET=$LOGROTATE_DIR/hibernate-script
+    echo "Installing logrotate file for hibernate.log to $LOGROTATE_TARGET ..."
+    cp -a logrotate.d-hibernate-script $LOGROTATE_TARGET
+    [ `whoami` = "root" ] && chown root:root $LOGROTATE_TARGET && chmod 644 $LOGROTATE_TARGET
+fi
 
 echo "Installing man pages to $MAN_DIR ..."
 mkdir -p $MAN_DIR/man5 $MAN_DIR/man8

@@ -1,4 +1,4 @@
-1.09 (unreleased)
+1.09 (27 June 2005)
  - Use /bin/echo when calling kernel suspend methods to avoid getting killed on
    oopses. (Piotr P. Karwasz)
  - Make Distribution option case-insensitive.
@@ -8,9 +8,10 @@
  - Only bring down interfaces that are up.
  - Slackware path fixes (Chris Friedhoff)
  - Support for cryptoapi in Suspend2.
+ - Added logrotate script for hibernate.log. (Henrik Brix Andersen)
 
 1.08 (13 May 2005 - "Black Floody Friday")
- - Fix fbsplash colour weirdness (Henrik Brix Andersen).
+ - Fix fbsplash colour weirdness (Henrik Brix Andersen)
  - Make fbsplash/bootsplash automatically select on SwitchToTextMode.
  - Remove spurious VT switches (also means fbsplash should be seamless between
    hibernate script and userui).
