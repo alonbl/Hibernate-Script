@@ -12,7 +12,7 @@
 [ -z "$CONFIG_FILE" ]   && CONFIG_FILE=$CONFIG_DIR/hibernate.conf
 [ -z "$RAM_CONFIG_FILE" ]   && RAM_CONFIG_FILE=$CONFIG_DIR/ram.conf
 [ -z "$BLACKLIST" ]     && BLACKLIST=$CONFIG_DIR/blacklisted-modules
-[ -z "$LOGROTATE_DIR" ] && LOGROTATE_DIR=/etc/logrotate.d
+[ -z "$LOGROTATE_DIR" ] && LOGROTATE_DIR=${BASE_DIR}/etc/logrotate.d
 
 [ -z "$OLD_SCRIPTLET_DIR" ] && OLD_SCRIPTLET_DIR=$CONFIG_DIR/scriptlets.d
 
