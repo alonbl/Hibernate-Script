@@ -25,6 +25,15 @@ get_swap_id() {
 	done
 }
 
+clear_swap() {
+	local where wason
+	where=$1
+	wason=
+	swapoff $where 2>/dev/null && wason=yes
+	mkswap $where > /dev/null || echo -n " (failed: $?)"
+	[ -n "$wason" ] && swapon $where
+}
+
 check_swap_sig() {
 	local part="$(get_swap_id)"
 	local where what type rest p c
@@ -38,7 +47,7 @@ check_swap_sig() {
 		case "$(dd if=$where bs=1 count=6 skip=4086 2>/dev/null)" in
 			S1SUSP|S2SUSP|pmdisk|[zZ]*)
 				echo -n "$where"
-				mkswap $where > /dev/null || echo -n " (failed: $?)"
+				clear_swap $where
 				echo -n ", "
 		esac
 	done < /etc/fstab
