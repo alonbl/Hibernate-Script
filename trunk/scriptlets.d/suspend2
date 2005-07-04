@@ -333,7 +333,7 @@ Swsusp2ConfigSet() {
 }
 
 SwsuspIsAtLeastVersion() {
-    ver=`awk 'BEGIN{FS="[^0-9]"}{print($1*0x1000000)+($2*0x10000)+($3*0x100)+$4}' $SWSUSP_ROOT/version`
+    ver=`awk 'BEGIN{FS="[^0-9]"}{print($1*16777216)+($2*65536)+($3*256)+$4}' $SWSUSP_ROOT/version`
     [ $ver -ge $1 ] && return 0
     return 1
 }
