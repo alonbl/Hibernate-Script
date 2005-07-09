@@ -43,7 +43,7 @@ ChangeGrubMenu() {
 		
 		title _____________________________________________________________________
 		configfile dummy
-		title WARNING: "`uname -s -r` "is suspended via Software Suspend!"
+		title WARNING: `uname -s -r` is suspended via Software Suspend!
 		configfile dummy
 		$GRUB_END_SENTINEL
 		EOF

@@ -1,5 +1,7 @@
 1.10 (unreleased)
  - Turn swap off before clearing it in init.d script.
+ - Make an awk expression mawk compatible.
+ - Fix quoting in grub.
 
 1.09 (27 June 2005)
  - Use /bin/echo when calling kernel suspend methods to avoid getting killed on
