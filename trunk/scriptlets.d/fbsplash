@@ -76,6 +76,7 @@ FBSplashBegin() {
 }
 
 FBSplashStartResume() {
+    TimedFBSplashCtl "set mode verbose\nset mode silent\n"
     TimedFBSplashCtl "set message Reloading drivers and applications ...\n"
     FBSPLASH_PROGRESS=0
     FBSplashProgress

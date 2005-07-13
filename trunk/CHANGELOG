@@ -1,7 +1,8 @@
-1.10 (unreleased)
+1.10 (13 July 2005)
  - Turn swap off before clearing it in init.d script.
  - Make an awk expression mawk compatible.
  - Fix quoting in grub.
+ - Test fix for funky colours when using fbsplash (Henrik Brix Andersen).
 
 1.09 (27 June 2005)
  - Use /bin/echo when calling kernel suspend methods to avoid getting killed on
