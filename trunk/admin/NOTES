@@ -29,6 +29,7 @@ RELEASING:
  - VERSION in hibernate.sh
  - Changelog
  - .spec file
+ - bugzilla version
 
 NEW CONFIG OPTIONS:
  - Help text
