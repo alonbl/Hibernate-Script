@@ -51,5 +51,6 @@ i8042		2.6.10	2.6.99
 intel_mch_agp	2.6.0	2.6.99
 
 button		2.6.9	2.6.99
+speedstep_smi	2.6.12	2.6.99
 
 @ndiswrapper    0.10    0.11
