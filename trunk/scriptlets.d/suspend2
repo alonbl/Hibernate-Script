@@ -242,6 +242,7 @@ RemoveSwsuspProcCruft() {
 Swsusp2SetupCryptoAPI() {
     SwsuspIsAtLeastVersion $((0x02010905)) || return
 
+    SWSUSP_MODULES_LOADED=
     if [ -n "$SWSUSP_COMPRESSOR" ] ; then
 	if [ "$SWSUSP_COMPRESSOR" != "none" ] ; then
 	    if ! grep -q "^name.*: $SWSUSP_COMPRESSOR\$" /proc/crypto ; then
@@ -249,6 +250,8 @@ Swsusp2SetupCryptoAPI() {
 		if ! grep -q "^name.*: $SWSUSP_COMPRESSOR\$" /proc/crypto ; then
 		    vecho 0 "Warning: Chosen Suspend2 compressor ($SWSUSP_COMPRESSOR) is not available. Compression disabled."
 		    SWSUSP_COMPRESSOR=none
+		else
+		    SWSUSP_MODULES_LOADED="$SWSUSP_COMPRESSOR"
 		fi
 	    fi
 	fi
@@ -268,6 +271,8 @@ Swsusp2SetupCryptoAPI() {
 		if ! grep -q "^name.*: $SWSUSP_ENCRYPTOR\$" /proc/crypto ; then
 		    vecho 0 "Warning: Chosen Suspend2 encryptor ($SWSUSP_ENCRYPTOR) is not available. Encryption disabled."
 		    SWSUSP_ENCRYPTOR=none
+		else
+		    SWSUSP_MODULES_LOADED="$SWSUSP_MODULES_LOADED $SWSUSP_ENCRYPTOR"
 		fi
 	    fi
 	fi
@@ -384,6 +389,7 @@ DoSwsusp2() {
 	vecho 1 "$EXE: Not actually suspending (--no-suspend given)"
     fi
     [ -f "$SWSUSP_ROOT/freezer_test" ] && echo 0 > /proc/software_suspend/freezer_test
+    [ -n "$SWSUSP_MODULES_LOADED" ] && rmmod $SWSUSP_MODULES_LOADED 2>/dev/null
     return 0
 }
 
