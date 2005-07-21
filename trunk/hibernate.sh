@@ -331,7 +331,7 @@ PluginConfigOption() {
 # the script. It exits the script if we don't.
 EnsureHavePrerequisites() {
     local i
-    for i in awk grep sort getopt basename ; do
+    for i in awk grep sort getopt basename chvt ; do
 	if ! command -v $i > /dev/null; then
 	    vecho 0 "Could not find required program \"$i\". Aborting."
 	    exit 1
