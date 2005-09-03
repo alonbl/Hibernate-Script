@@ -1,6 +1,7 @@
 1.11 (unreleased)
  - Unload compressor or encryptor modules that we loaded on suspend.
  - Ensure we have chvt.
+ - Silence fuser.
 
 1.10 (13 July 2005)
  - Turn swap off before clearing it in init.d script.
