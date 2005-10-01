@@ -1,9 +1,9 @@
 Name: hibernate
-Version: 1.10
+Version: 1.11
 Release: 1
 License: GPL
 Group: Applications/System
-URL: http://dagobah.ucc.asn.au/swsusp/script2/hibernate-script-1.10.tar.gz
+URL: http://dagobah.ucc.asn.au/swsusp/script2/hibernate-script-1.11.tar.gz
 Source0: hibernate-script-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 Summary: activates your computer's suspend functionality
@@ -60,6 +60,8 @@ rm -rf $RPM_BUILD_ROOT
 %doc TODO
 
 %changelog
+* Sun Oct  2 2005 Bernard Blackham <bernard@blackham.com.au> -
+- Updated to 1.11 final version
 * Wed Jul 13 2005 Bernard Blackham <bernard@blackham.com.au> -
 - Updated to 1.10 final version
 * Fri Jun 27 2005 Bernard Blackham <bernard@blackham.com.au> -
