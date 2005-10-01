@@ -103,6 +103,7 @@ VbetoolOptions() {
 	    ;;
 	restorevcsadata)
 	    BoolIsOn "$1" "$2" && VBETOOL_SAVEVCSADATA=1 || return 0
+	    ;;
 	*)
 	    return 1
     esac

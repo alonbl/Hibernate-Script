@@ -4,7 +4,7 @@
 # Detect the new /proc root.
 if [ -d "/proc/swsusp/" ] ; then
     SWSUSP_ROOT="/proc/swsusp"
-elif [ -d "/proc/software_suspend" ]
+elif [ -d "/proc/software_suspend" ] ; then
     SWSUSP_ROOT="/proc/software_suspend"
 else
     SWSUSP_ROOT="/proc/suspend2"
