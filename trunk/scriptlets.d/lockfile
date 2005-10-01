@@ -70,3 +70,5 @@ NoteLastResume() {
     date "+%s" > $LAST_RESUME_FILE
     return 0
 }
+
+# $Id$

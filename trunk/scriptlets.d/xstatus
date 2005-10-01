@@ -284,3 +284,5 @@ XStatusOptions() {
 
     return 0
 }
+
+# $Id$
