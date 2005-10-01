@@ -29,13 +29,13 @@ XStatusProgressStart_kde() {
 
     if ! DCOP_BIN=`command -v dcop 2>/dev/null` ; then
 	vecho 0 'Cannot connect to kdialog. `dcop` program not found.'
-	return 1 # abort, unless forced
+	return 0
     elif ! KSTART_BIN=`command -v kstart 2>/dev/null` ; then
 	vecho 0 'Cannot connect to kdialog. `kstart` program not found.'
-	return 1 # abort, unless forced
+	return 0
     elif ! KDIALOG_BIN=`command -v kdialog 2>/dev/null` ; then
 	vecho 0 'Cannot connect to kdialog. `kdialog` program not found.'
-	return 1 # abort, unless forced
+	return 0
     fi
 
     KDEPB_DCOPREF="`su $XUSER -c \"$KSTART_BIN --windowclass KDialog --alldesktops $KDIALOG_BIN --title Hibernating --progressbar \\\"$1\\\" 100\"`"
