@@ -57,7 +57,6 @@ rm -rf $RPM_BUILD_ROOT
 %doc COPYING
 %doc README
 %doc SCRIPTLET-API
-%doc TODO
 
 %changelog
 * Sun Oct  2 2005 Bernard Blackham <bernard@blackham.com.au> -
