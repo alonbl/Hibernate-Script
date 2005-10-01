@@ -1,14 +1,13 @@
 # -*- sh -*-
 # vim:ft=sh:ts=8:sw=4:noet
 
-SWSUSP_INTERFACE_VERSION_MIN=15
-SWSUSP_INTERFACE_VERSION_MAX=16
-
 # Detect the new /proc root.
 if [ -d "/proc/swsusp/" ] ; then
     SWSUSP_ROOT="/proc/swsusp"
-else
+elif [ -d "/proc/software_suspend" ]
     SWSUSP_ROOT="/proc/software_suspend"
+else
+    SWSUSP_ROOT="/proc/suspend2"
 fi
 
 SWSUSP_DEFAULT_ALL_SETTINGS_FILE="$SWSUSP_D/swsusp2-all-settings.conf"
@@ -542,27 +541,15 @@ PrintErrors() {
     return 1
 }
 
-# GetInterfaceVersion: returns the interface version of the swsusp
-# implementation in the kernel. This returns 0 if there is no swsusp in the
-# kernel (note, this is interpreted as "true" in shell-speak)
-GetInterfaceVersion() {
-    [ -d "$SWSUSP_ROOT" ] || return 0
-    [ -f "$SWSUSP_ROOT/interface_version" ] || return 0
-    read REPLY < $SWSUSP_ROOT/interface_version
-    return $REPLY
-}
-
 # EnsureSwsusp2Capable: makes sure we have a swsusp-capable kernel. Stops the
 # script with an error message if we don't. Also ensure's we have root -
 # (even though the actual suspend might not need it, everything else will)
 EnsureSwsusp2Capable() {
     # Test for *any* recent swsusp support
     local ver
-    GetInterfaceVersion
-    ver=$?
-    if [ "$ver" -eq 0 ] ; then
+    if ! [ -d "$SWSUSP_ROOT" ] ; then
 	cat <<EOT
-Your kernel does not have any recent Software Suspend 2 support compiled in.
+Your kernel does not appear to have Software Suspend 2 support compiled in.
 Please follow the HOWTO linked from http://www.suspend2.net/ for instructions
 on how to compile Software Suspend into your kernel.
 EOT
@@ -578,18 +565,6 @@ module?
 EOT
 	    return 1 # abort unless forced
 	fi
-    fi
-
-    # Check the interface version matches. Warn if it doesn't.
-    if [ $ver -lt "$SWSUSP_INTERFACE_VERSION_MIN" ] || [ $ver -gt "$SWSUSP_INTERFACE_VERSION_MAX" ] ; then
-	cat <<EOT
-WARNING: The suspend2 scriptlet was written for a different suspend2 interface
-	 version from the one in your running kernel. This scriptlet was
-	 written for version between $SWSUSP_INTERFACE_VERSION_MIN and $SWSUSP_INTERFACE_VERSION_MIN where as the version running
-	 in your kernel is $ver. Things may not work as expected, but proceeding
-	 anyway ...
-
-EOT
     fi
 
     # Figure out if we need to handle VT switching ourselves (if version
