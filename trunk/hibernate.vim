@@ -121,7 +121,9 @@ syntax match hibernate_username /[a-zA-Z0-9\-_]\+/ contained skipwhite
 highlight link hibernate_username Constant
 
 syntax keyword hibernate_conf lockkde contained nextgroup=hibernate_boolean skipwhite
-syntax keyword hibernate_conf lockxscreensaver contained nextgroup=hibernate_filenames skipwhite
+syntax keyword hibernate_conf lockxscreensaver contained nextgroup=hibernate_boolean skipwhite
+syntax keyword hibernate_conf lockxlock contained nextgroup=hibernate_boolean skipwhite
+syntax keyword hibernate_conf lockxautolock contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf lockconsoleas contained nextgroup=hibernate_username skipwhite
 
 " misclaunch
@@ -155,6 +157,9 @@ highlight link hibernate_network_auto Constant
 
 syntax keyword hibernate_conf downinterfaces contained nextgroup=hibernate_interfaces,hibernate_network_auto skipwhite
 syntax keyword hibernate_conf upinterfaces contained nextgroup=hibernate_interfaces,hibernate_network_auto skipwhite
+
+" pcmcia
+syntax keyword hibernate_conf ejectcards contained nextgroup=hibernate_boolean skipwhite
 
 " programs
 syntax match hibernate_programs /\S\+/ contained nextgroup=hibernate_programs skipwhite
@@ -211,6 +216,7 @@ highlight link hibernate_sysfspowerstate Special
 syntax keyword hibernate_conf enablevbetool contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf restorevbestatefrom contained nextgroup=hibernate_filenames skipwhite
 syntax keyword hibernate_conf vbetoolpost contained nextgroup=hibernate_boolean skipwhite
+syntax keyword hibernate_conf restorevcsadata contained nextgroup=hibernate_boolean skipwhite
 
 " xhacks
 syntax keyword hibernate_conf switchtotextmode contained nextgroup=hibernate_boolean skipwhite
