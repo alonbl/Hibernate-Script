@@ -1,0 +1,7 @@
+# -*- sh -*-
+# vim:ft=sh:ts=8:sw=4:noet
+
+# Dummy placeholder script for upgrade purposes for people that don't use a
+# package manager. Distro packages can safely get rid of this.
+
+# $Id$
