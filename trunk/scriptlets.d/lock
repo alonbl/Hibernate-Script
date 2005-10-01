@@ -4,8 +4,8 @@
 AddConfigHandler LockOptions
 AddConfigHelp "LockKDE <boolean>" "Lock all local KDE sessions before suspending."
 AddConfigHelp "LockXScreenSaver <boolean>" "Lock all local X11 sessions with xscreensaver running before suspending."
-AddConfigHelp "LockXLock <boolean>" "Lock all local X11 sessions using xlock."
-AddConfigHelp "LockXAutoLock <boolean>" "Lock all local X11 sessions using xautolock."
+AddConfigHelp "LockXLock <boolean>" "Lock active X11 session using xlock."
+AddConfigHelp "LockXAutoLock <boolean>" "Lock all local X11 sessions running xautolock."
 AddConfigHelp "LockConsoleAs <username>" "Locks the entire system after resuming, requiring you to enter either <username>'s or root's password to unlock it. (Requires vlock)."
 
 AddOptionHandler LockCmdlineOptions
@@ -52,12 +52,13 @@ LockKDE() {
 }
 
 LockXlock() {
+    FindXServer || return 0
     if command -v xlock > /dev/null 2>&1 ; then
-	vecho 1 'Trying xlock instead'
+	vecho 1 'Trying xlock'
 	su $XUSER -c "xlock -mode blank &"
 	return 0
     fi
-    return 1
+    return 0
 }
 
 LockXScreensaver() {
@@ -130,20 +131,6 @@ UnlockXScreensaver() {
 	vecho 2 "Unlocking $xuser's xscreensaver on display $xdisp using authority file $xauth"
 	DISPLAY=$xdisp XAUTHORITY=$xauth su $xuser -c "xscreensaver-command -deactivate"
     done
-
-    # Failing is silly. What would they do about it?
-    return 0
-}
-
-LockXLock() {
-    [ x"$LOCK_XLOCK" != "x1" ] && return 0
-
-    if ! command -v xlock > /dev/null 2>&1 ; then
-	vecho 0 'Cannot lock with xlock. `xlock` not found.'
-	return 0
-    fi
-
-    ( xlock & ) < /dev/null > /dev/null 2>&1
 
     # Failing is silly. What would they do about it?
     return 0
@@ -248,7 +235,7 @@ LockOptions() {
         lockxlock)
             BoolIsOn "$1" "$2" && LOCK_XLOCK=1 || LOCK_XLOCK=0
             if [ -z "$XLOCK_HOOKED" ]; then
-                AddResumeHook 91 LockXLock
+                AddResumeHook 91 LockXlock
                 XLOCK_HOOKED=1
             fi
             ;;
