@@ -4,10 +4,19 @@
 AddConfigHandler LockOptions
 AddConfigHelp "LockKDE <boolean>" "Lock all local KDE sessions before suspending."
 AddConfigHelp "LockXScreenSaver <boolean>" "Lock all local X11 sessions with xscreensaver running before suspending."
+AddConfigHelp "LockXLock <boolean>" "Lock all local X11 sessions using xlock."
+AddConfigHelp "LockXAutoLock <boolean>" "Lock all local X11 sessions using xautolock."
 AddConfigHelp "LockConsoleAs <username>" "Locks the entire system after resuming, requiring you to enter either <username>'s or root's password to unlock it. (Requires vlock)."
 
+AddOptionHandler LockCmdlineOptions
+AddLongOption 'lock-console-as:'
+AddOptionHelp '--lock-console-as <username>' 'Uses vlock to lock the entire system after resuming, requirng you to enter the password for the given user to unlock it. This overrides any username given in the configuration file. (Requires vlock)'
+
 LockKDE() {
-    [ x"$LOCK_KDE" != "x1" ] && return 0
+    if ! ps ax | grep -q '[d]copserver' ; then
+	vecho 1 'No KDE sessions detected. Not locking KDE.'
+	return 0
+    fi
 
     if [ "x$DISTRIBUTION" = "xgentoo" ] && ! command -v dcop > /dev/null 2>&1 ; then
 	# Gentoo stashes this in a silly place.
@@ -62,7 +71,7 @@ LockXScreensaver() {
 	vecho 0 'Cannot lock with xscreensaver. `xscreensaver-command` not found.'
 	# Try xlock.
 	LockXlock
-	return
+	return 0
     fi
 
     local xpid
@@ -120,6 +129,46 @@ UnlockXScreensaver() {
 
 	vecho 2 "Unlocking $xuser's xscreensaver on display $xdisp using authority file $xauth"
 	DISPLAY=$xdisp XAUTHORITY=$xauth su $xuser -c "xscreensaver-command -deactivate"
+    done
+
+    # Failing is silly. What would they do about it?
+    return 0
+}
+
+LockXLock() {
+    [ x"$LOCK_XLOCK" != "x1" ] && return 0
+
+    if ! command -v xlock > /dev/null 2>&1 ; then
+	vecho 0 'Cannot lock with xlock. `xlock` not found.'
+	return 0
+    fi
+
+    ( xlock & ) < /dev/null > /dev/null 2>&1
+
+    # Failing is silly. What would they do about it?
+    return 0
+}
+
+LockXAutoLock() {
+    if ! command -v xautolock > /dev/null 2>&1 ; then
+	vecho 0 'Cannot lock with xautolock. `xautolock` not found.'
+	return
+    fi
+
+    local xpid
+
+    for xpid in `pidof xautolock` ; do
+	local xuser xdisp xauth xhome
+	xuser=`awk 'BEGIN{RS="\\000";FS="="}($1 == "USER"){print $2}' < /proc/$xpid/environ`
+	xdisp=`awk 'BEGIN{RS="\\000";FS="="}($1 == "DISPLAY"){print $2}' < /proc/$xpid/environ`
+	xauth=`awk 'BEGIN{RS="\\000";FS="="}($1 == "XAUTHORITY"){print $2}' < /proc/$xpid/environ`
+	if [ -z "$xauth" ] ; then
+	    xhome=`awk 'BEGIN{RS="\\000";FS="="}($1 == "HOME"){print $2}' < /proc/$xpid/environ`
+	    xauth="$xhome/.Xauthority"
+	fi
+
+	vecho 2 "Locking $xuser's xautolock on display $xdisp using authority file $xauth"
+	DISPLAY=$xdisp XAUTHORITY=$xauth su $xuser -c "xautolock -locknow"
     done
 
     # Failing is silly. What would they do about it?
@@ -196,6 +245,22 @@ LockOptions() {
 	    fi
 	    ;;
 
+        lockxlock)
+            BoolIsOn "$1" "$2" && LOCK_XLOCK=1 || LOCK_XLOCK=0
+            if [ -z "$XLOCK_HOOKED" ]; then
+                AddResumeHook 91 LockXLock
+                XLOCK_HOOKED=1
+            fi
+            ;;
+
+        lockxautolock)
+            BoolIsOn "$1" "$2" && LOCK_XAUTOLOCK=1 || LOCK_XAUTOLOCK=0
+            if [ -z "$XAUTOLOCK_HOOKED" ]; then
+                AddResumeHook 91 LockXAutoLock
+                XAUTOLOCK_HOOKED=1
+            fi
+            ;;
+
 	lockconsoleas)
 	    LOCK_CONSOLE_USER="$2"
 
@@ -214,3 +279,22 @@ LockOptions() {
     return 0
 }
 
+LockCmdlineOptions() {
+    case $1 in
+	--lock-console-as)
+	    LOCK_CONSOLE_USER="$2"
+
+	    if [ -z "$CONSOLELOCK_HOOKED" ] ; then
+		AddResumeHook 96 LockConsole
+		AddSuspendHook 96 SwitchToLockConsole
+
+		CONSOLELOCK_HOOKED=1
+	    fi
+	    ;;
+	*)
+	    return 1
+    esac
+    return 0
+}
+
+# $Id$
