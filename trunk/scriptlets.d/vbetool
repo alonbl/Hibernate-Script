@@ -10,14 +10,27 @@ AddConfigHandler VbetoolOptions
 AddConfigHelp "EnableVbetool <boolean>" "Save and restore video state using vbetool before and after suspending."
 AddConfigHelp "RestoreVbeStateFrom <filename>" "If set, will restore the VBE state with the data stored in <filename>. Use this if your card requires you to restore it with a state captured at boot (from single user mode, run \"vbetool vbestate save > /var/lib/vbetool/vbestate\"). If this option is not set, the state is saved just before suspending."
 AddConfigHelp "VbetoolPost <boolean>" "If yes, will call the video BIOS's POST routine to reinitialise the video card. Some cards need this to turn on the backlight back and be useful after resuming. Other video cards will hang if you attempt to POST them. Try it with yours and see."
+AddConfigHelp "RestoreVCSAData <boolean>" "If yes, will call save and restore some of the video card's state from /dev/vcsa. This helps certain drivers such as ATI's fglrx driver to resume properly."
 
 # hopefully this is a good choice and nothing else uses it :-/
 VBETOOL_VT=61
 VBETOOL_ENABLED=
 VBETOOL_POST=
 VBETOOL_SAVED_STATE=
+VBETOOL_SAVEVCSADATA=
 
 VbetoolSaveState() {
+    # Saving /dev/vcsa data is really independent of VBETool itself.
+    if [ x"$VBETOOL_SAVEVCSADATA" = "x1" ] ; then
+	if [ -r "/dev/vcsa" ] ; then
+	    VBETOOL_VCSADATAFILE=`mktemp /tmp/tmp.hibernate-vcsa.XXXXXX`
+	    cat < /dev/vcsa > $VBETOOL_VCSADATAFILE
+	else
+	    VBETOOL_VCSADATAFILE=
+	    vecho 1 "'/dev/vcsa' not found or not readable. Not saving."
+	fi
+    fi
+
     # if we're switched off, don't do nuffin
     [ x"$VBETOOL_ENABLED" = "x1" ] || return 0
 
@@ -44,6 +57,12 @@ VbetoolSaveState() {
 }
 
 VbetoolRestoreState() {
+    # Restoring /dev/vcsa data is really independent of VBETool itself.
+    if [ x"$VBETOOL_SAVEVCSADATA" = "x1" ] && [ -r "$VBETOOL_VCSADATAFILE" ] ; then
+	cat < $VBETOOL_VCSADATAFILE > /dev/vcsa
+	rm -f $VBETOOL_VCSADATAFILE
+    fi
+
     # if we're switched off, don't do nuffin
     [ x"$VBETOOL_ENABLED" = "x1" ] || return 0
 
@@ -82,6 +101,8 @@ VbetoolOptions() {
 		return 0
 	    fi
 	    ;;
+	restorevcsadata)
+	    BoolIsOn "$1" "$2" && VBETOOL_SAVEVCSADATA=1 || return 0
 	*)
 	    return 1
     esac
