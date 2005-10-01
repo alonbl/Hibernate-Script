@@ -58,7 +58,7 @@ SWSUSP_D="/etc/hibernate"
 SCRIPTLET_PATH="$SWSUSP_D/scriptlets.d /usr/local/share/hibernate/scriptlets.d /usr/share/hibernate/scriptlets.d"
 CONFIG_FILE="$SWSUSP_D/hibernate.conf"
 EXE=`basename $0`
-VERSION="1.10"
+VERSION="1.11"
 
 # Add these to the $PATH just in case.
 PATH="$PATH:/sbin:/usr/sbin"
@@ -203,7 +203,7 @@ FindXServer() {
 
     # Find a useful XAUTHORITY and ideally a username too if we can!
     local xuser xauth xpid
-    for xpid in `pidof kwrapper ksmserver kdeinit gnome-session X XFree86 Xorg` ; do
+    for xpid in `pidof kwrapper ksmserver kdeinit gnome-session fvwm fvwm2 pwm blackbox fluxbox X XFree86 Xorg` ; do
 	# Ensure the process still exists, and we aren't hallucinating.
 	[ -d "/proc/$xpid/" ] || continue
 
@@ -755,7 +755,6 @@ LOGPIPE="cat"
 ERROR_TEXT=""
 
 EnsureHavePrerequisites
-EnsureHaveRoot
 
 CheckImplicitAlternateConfig $0
 
@@ -771,6 +770,7 @@ if [ -n "$HELP_ONLY" ] ; then
 fi
 DISABLE_HELP=1
 
+EnsureHaveRoot
 LoadScriptlets
 ReadConfigFile "${CONFIG_FILE}"
 ParseOptions "$@"
