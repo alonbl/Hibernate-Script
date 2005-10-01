@@ -48,6 +48,14 @@ filesystems (/var in particular).
 This script will invalidate any suspend image on a clean boot so that the image
 cannot be later resumed from (leading to corruption of your filesystems).
 
+Additionally, the hibernate script will look for a particular file before
+suspending (/var/run/suspend2-new-kernel) and if it is detected, will refuse to
+suspend.  The idea is that your installation scripts for new kernels create
+this file, which prevents you from hibernating until you have booted your new
+kernel (or you remove the file manually if you know what you are doing). For
+example, kernel packages compiled with the Debian kernel-patch-suspend2 patches
+do this upon installation.
+
 CONFIGURATION
 -------------
 The default configuration does nothing but save and restore your clock, and
