@@ -1,7 +1,16 @@
-1.11 (unreleased)
- - Unload compressor or encryptor modules that we loaded on suspend.
- - Ensure we have chvt.
+1.11 (2 October 2005)
+ - Remove trailing LILO command-line to avoid asking for passwords. (Bug#65)
+ - Unload compressor or encryptor modules that we loaded on suspend. (Bug#66)
  - Silence fuser.
+ - Ensure we have chvt. (Bug#71)
+ - Added PCMCIA scriptlet to eject cards before suspending. (Bug#75)
+ - Added fluxbox, fvwm and pwm to list of detected window managers for X
+   server. (Bug#81)
+ - Added RestoreVCSAData option (helps some people resume with the fglrx driver).
+ - Added --lock-console-as option. (Bug#84)
+ - Allow --help to work without root. (Bug#85)
+ - Added XLock and XAutolock options. (Gene Pavlovsky) (Bug#111)
+ - Remove interface_version detection (for Software Suspend 2.2-rc8)
 
 1.10 (13 July 2005)
  - Turn swap off before clearing it in init.d script.
