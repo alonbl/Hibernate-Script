@@ -1,3 +1,6 @@
+1.12 (2 October 2005, later that day)
+ - Fix some hardcoded paths in the suspend2 scriptlet.
+
 1.11 (2 October 2005)
  - Remove trailing LILO command-line to avoid asking for passwords. (Bug#65)
  - Unload compressor or encryptor modules that we loaded on suspend. (Bug#66)
