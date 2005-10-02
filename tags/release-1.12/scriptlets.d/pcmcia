@@ -1,0 +1,34 @@
+# -*- sh -*-
+# vim:ft=sh:ts=8:sw=4:noet
+
+AddConfigHandler PCMCIAOptions
+AddConfigHelp "EjectCards <boolean> " "Eject all PCMCIA cards before suspending, and insert them again after resuming"
+
+PCMCIAEject() {
+    vecho 1 "$EXE: Ejecting PCMCIA cards"
+    cardctl eject
+    return 0
+}
+
+PCMCIAInsert() {
+    vecho 1 "$EXE: Inserting PCMCIA cards $i"
+    cardctl insert
+    return 0
+}
+
+PCMCIAOptions() {
+    case $1 in
+	ejectcards)
+	    if [ -z "$PCMCIA_HOOKED" ] ; then
+		AddSuspendHook 55 PCMCIAEject
+		AddResumeHook 55 PCMCIAInsert
+	    fi
+	    PCMCIA_HOOKED=1
+	    ;;
+	*)
+	    return 1
+    esac
+    return 0
+}
+
+# $Id$
