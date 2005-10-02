@@ -20,8 +20,8 @@ PCMCIAOptions() {
     case $1 in
 	ejectcards)
 	    if [ -z "$PCMCIA_HOOKED" ] ; then
-		AddSuspendHook 93 PCMCIAEject
-		AddResumeHook 93 PCMCIAInsert
+		AddSuspendHook 55 PCMCIAEject
+		AddResumeHook 55 PCMCIAInsert
 	    fi
 	    PCMCIA_HOOKED=1
 	    ;;
