@@ -364,12 +364,12 @@ DoSwsusp2() {
 
 	# Use a freezer test if we can. Otherwise, just don't suspend.
 	if [ -f "$SWSUSP_ROOT/freezer_test" ] ; then
-	    /bin/echo 1 > /proc/software_suspend/freezer_test
+	    /bin/echo 1 > $SWSUSP_ROOT/freezer_test
 	    # We'll obtain debug_info from dmesg
 	else
 	    SWSUSP2_NO_SUSPEND=1
 	    if [ -f "$SWSUSP_ROOT/debug_info" ] ; then
-		vecho 0 "--- /proc/software_suspend/debug_info:"
+		vecho 0 "--- $SWSUSP_ROOT/debug_info:"
 		vcat 0 $SWSUSP_ROOT/debug_info
 	    fi
 	fi
@@ -387,7 +387,7 @@ DoSwsusp2() {
     else
 	vecho 1 "$EXE: Not actually suspending (--no-suspend given)"
     fi
-    [ -f "$SWSUSP_ROOT/freezer_test" ] && echo 0 > /proc/software_suspend/freezer_test
+    [ -f "$SWSUSP_ROOT/freezer_test" ] && echo 0 > $SWSUSP_ROOT/freezer_test
     [ -n "$SWSUSP_MODULES_LOADED" ] && rmmod $SWSUSP_MODULES_LOADED 2>/dev/null
     return 0
 }
@@ -460,7 +460,7 @@ CleanupDmesg() {
 # PrintErrors. We can't just return it, because error codes may be > 255
 DoSuspend() {
     # Some versions of Software Suspend didn't clear this in certain cases:
-    echo 0 > /proc/software_suspend/last_result
+    echo 0 > $SWSUSP_ROOT/last_result
 
     if [ -f $SWSUSP_ROOT/do_suspend ] ; then
 	echo > $SWSUSP_ROOT/do_suspend
