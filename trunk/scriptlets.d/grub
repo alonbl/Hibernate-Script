@@ -117,8 +117,7 @@ GrubCmdlineOptions() {
 RestoreGrubStandalone() {
     # we want to restore always
     CHANGE_GRUB_MENU=1
-    RestoreGrubMenu
-    vecho 0 "Grub menu restored."
+    RestoreGrubMenu && vecho 0 "Grub menu restored." || vecho 0 "No grub menu found to restore."
 
     # 3 to indicate hibernate to be silent on exiting
     return 3
