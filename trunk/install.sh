@@ -8,7 +8,7 @@
 [ -z "$SCRIPT_DEST" ]   && SCRIPT_DEST=$BASE_DIR$EXEC_PREFIX/sbin/hibernate
 [ -z "$SCRIPTLET_DIR" ] && SCRIPTLET_DIR=$BASE_DIR$PREFIX/share/hibernate/scriptlets.d
 [ -z "$MAN_DIR" ]       && MAN_DIR=$BASE_DIR$PREFIX/man
-[ -z "$CONFIG_DIR" ]    && CONFIG_DIR=${BASE_DIR}/etc/hibernate
+[ -z "$CONFIG_DIR" ]    && CONFIG_DIR=${BASE_DIR}${CONFIG_PREFIX}/etc/hibernate
 [ -z "$CONFIG_FILE" ]   && CONFIG_FILE=$CONFIG_DIR/hibernate.conf
 [ -z "$RAM_CONFIG_FILE" ]   && RAM_CONFIG_FILE=$CONFIG_DIR/ram.conf
 [ -z "$BLACKLIST" ]     && BLACKLIST=$CONFIG_DIR/blacklisted-modules

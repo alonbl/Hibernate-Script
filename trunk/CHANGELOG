@@ -1,3 +1,6 @@
+1.13 (unreleased)
+ - Add $CONFIG_PREFIX to install script
+
 1.12 (2 October 2005, later that day)
  - Fix some hardcoded paths in the suspend2 scriptlet.
 
