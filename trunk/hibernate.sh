@@ -164,23 +164,11 @@ $WRAPPED_HELP
 }
 CMDLINE_OPTIONS_HELP=""
 
-# AddConfigHelp <item name> <item help>: Adds an option to the option help
-# text. <item help> must only contain line breaks if a new paragraph really
-# does want to be started. Text wrapping is taken care of.
+# AddConfigHelp <item name> <item help>: Deprecated. We no longer write
+# config help in --help
 AddConfigHelp() {
-    [ -n "$DISABLE_HELP" ] && return
-    local ATEXT
-    local WRAPPED_HELP
-    ATEXT="  $1"
-    [ -n "$CURRENT_SOURCED_SCRIPTLET" ] && ATEXT=`LeftRightPadText "$ATEXT" "[$CURRENT_SOURCED_SCRIPTLET]"`
-    WRAPPED_HELP="`echo \"$2\" | WrapHelpText`"
-    ATEXT="$ATEXT
-$WRAPPED_HELP
-
-"
-    CONFIGURATION_OPTIONS_HELP="$CONFIGURATION_OPTIONS_HELP$ATEXT"
+    return 0
 }
-CONFIGURATION_OPTIONS_HELP=""
 
 # FindXServer: Tries to find a running X server on the system. If one is found,
 # will set DISPLAY, XAUTHORITY and the XUSER variable, and return 0.
@@ -382,10 +370,9 @@ Usage: $EXE [options]
 Activates software suspend and control its parameters.
 
 $CMDLINE_OPTIONS_HELP
-The following config file options are available (module name in brackets):
+For configuration file options for hibernate.conf, man hibernate.conf
 
-$CONFIGURATION_OPTIONS_HELP
-Hibernate Script $VERSION                           (C) 2004 Bernard Blackham
+Hibernate Script $VERSION                      (C) 2004-2006 Bernard Blackham
 EOT
     return
 }

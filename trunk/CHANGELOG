@@ -2,6 +2,7 @@
  - Add $CONFIG_PREFIX to install script.
  - Refine grub menu restoration messages.
  - Make xlock scriptlet mawk-compatible.
+ - Don't output config options with --help.
 
 1.12 (2 October 2005, later that day)
  - Fix some hardcoded paths in the suspend2 scriptlet.
