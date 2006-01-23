@@ -370,7 +370,7 @@ Usage: $EXE [options]
 Activates software suspend and control its parameters.
 
 $CMDLINE_OPTIONS_HELP
-For configuration file options for hibernate.conf, man hibernate.conf
+For configuration file options for hibernate.conf, man hibernate.conf.
 
 Hibernate Script $VERSION                      (C) 2004-2006 Bernard Blackham
 EOT
