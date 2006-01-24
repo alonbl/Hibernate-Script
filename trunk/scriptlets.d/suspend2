@@ -180,7 +180,7 @@ Swsusp2ConfigOptions() {
 	    ;;
 	powerdownmethod)
 	    case $2 in
-		[3-5])
+		[03-5])
 		    SWSUSP_POWERDOWN_METHOD=$2
 		    ;;
 		*)

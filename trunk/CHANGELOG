@@ -3,6 +3,7 @@
  - Refine grub menu restoration messages.
  - Make xlock scriptlet mawk-compatible.
  - Don't output config options with --help.
+ - Allow PowerdownMethod 0 (don't use ACPI).
 
 1.12 (2 October 2005, later that day)
  - Fix some hardcoded paths in the suspend2 scriptlet.
