@@ -615,9 +615,7 @@ ProcessConfigOption() {
 	    export DISPLAY
 	    ;;
         include)
-            if [ -r "$params" ]; then
-                ReadConfigFile "$params"
-            else
+            if ! ReadConfigFile "$params" ; then
                 echo "$EXE: Unable to read configuration file $params (from Include directive)."
                 exit 1
             fi
@@ -625,10 +623,8 @@ ProcessConfigOption() {
 	trymethod)
 	    if [ -z "$HIBERNATE_SUSPEND_METHOD" ] ; then
 		NO_COMPLAIN_UNSUPPORTED=1
-		if [ -r "$params" ]; then
-		    vecho 1 "Trying method in $2..."
-		    ReadConfigFile "$params"
-		else
+		vecho 1 "Trying method in $2..."
+		if ! ReadConfigFile "$params" ; then
 		    echo "$EXE: Unable to read configuration file $params (from TryMethod directive)."
 		fi
 		NO_COMPLAIN_UNSUPPORTED=
@@ -662,9 +658,14 @@ ReadConfigFile() {
     local option params
     local file_name="$1"
     if [ ! -f "${file_name}" ] ; then
-	echo "WARNING: No configuration file found (${file_name})."
-	echo "This script probably won't do anything."
-	return 0
+	# Search in /etc/hibernate
+	if [ -f "$SWSUSP_D/$file_name" ] ; then
+	    file_name="$SWSUSP_D/$file_name"
+	else
+	    echo "WARNING: No configuration file found (${file_name})."
+	    echo "This script probably won't do anything."
+	    return 1
+	fi
     fi
     while true ; do
 	# Doing the read this way allows means we don't require a new-line
