@@ -57,6 +57,8 @@ syntax keyword hibernate_conf alwaysforce contained nextgroup=hibernate_boolean 
 syntax keyword hibernate_conf alwayskill contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf distribution contained nextgroup=hibernate_distribution skipwhite
 syntax keyword hibernate_conf include contained nextgroup=hibernate_filenames skipwhite
+syntax keyword hibernate_conf trymethod contained nextgroup=hibernate_filenames skipwhite
+syntax keyword hibernate_conf complain contained skipwhite
 syntax keyword hibernate_conf xdisplay contained nextgroup=hibernate_xdisplay skipwhite
 highlight link hibernate_conf Keyword
 

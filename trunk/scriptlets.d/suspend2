@@ -66,6 +66,10 @@ Swsusp2ConfigEnabler() {
     [ "$1" != "usesuspend2" ] && [ "$1" != "useswsusp2" ] && return 1
     BoolIsOn "$1" "$2" || return 0
     [ -n "$USING_SWSUSP2" ] && return 0
+    if [ -n "$NO_COMPLAIN_UNSUPPORTED" ] ; then
+	# Just bail silently if we don't detect it.
+	[ -d "$SWSUSP_ROOT" ] || return 0
+    fi
     UsingSuspendMethod suspend2
     AddConfigHandler Swsusp2ConfigOptions
     AddSuspendHook 10 EnsureSwsusp2Capable

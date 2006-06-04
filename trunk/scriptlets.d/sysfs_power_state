@@ -18,6 +18,12 @@ SYSFS_POWERDOWN_METHOD_FILE=/sys/power/disk
 SysfsPowerStateConfigEnabler() {
     [ "$1" != "usesysfspowerstate" ] && return 1
     [ -n "$USING_SYSFS_POWER_STATE" ] && return 0
+    if [ -n "$NO_COMPLAIN_UNSUPPORTED" ] ; then
+	# Just bail silently if we don't detect it.
+	if ! test -f $SYSFS_POWER_STATE_FILE || ! grep -q $2 $SYSFS_POWER_STATE_FILE ; then
+	    return 0
+	fi
+    fi
     UsingSuspendMethod sysfs_power_state
     AddConfigHandler SysfsPowerStateConfigOptions
     AddSuspendHook 10 EnsureSysfsPowerStateCapable
