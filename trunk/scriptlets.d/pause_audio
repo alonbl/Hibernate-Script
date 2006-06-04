@@ -17,11 +17,12 @@ PauseAudio() {
     done
     # Pause xmms
     for auuser in $(ps aux | grep '[x]mms' | awk '{print $1}' | sort | uniq); do
-	su - $auuser -c 'xmms -u'
+	su $auuser -c 'xmms -u'
     done
     # Pause beep media player
     for auuser in $(ps aux | grep '[b]eep-media-player' | awk '{print $1}' | sort | uniq); do
-	su - $auuser -c 'beep-media-player -u'
+	FindXServer
+	su $auuser -c 'beep-media-player -u'
     done
     # Add your favourite media player here.
     # And then perhaps think up a less horrific way of doing this.
