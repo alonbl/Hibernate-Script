@@ -158,6 +158,9 @@ reads its configuration from the
 .I /etc/hibernate/hibernate.conf
 file when it runs (unless an alternative configuration file is
 specified on the command line.
+.PP
+If configuration directives are specified multiple times, typically
+the last one will take effect.
 .SH USAGE
 EOT
 }

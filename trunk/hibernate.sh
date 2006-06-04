@@ -676,7 +676,7 @@ AddInbuiltHelp() {
     AddConfigHelp "AlwaysForce <boolean>" "If set to yes, the script will always run as if --force had been passed."
     AddConfigHelp "AlwaysKill <boolean>" "If set to yes, the script will always run as if --kill had been passed."
     AddConfigHelp "Distribution <debian|fedora|mandrake|redhat|gentoo|suse|slackware>" "If specified, tweaks some scriptlets to be more integrated with the given distribution."
-    AddConfigHelp "Include <filename>" "Read configuration directives from the given file."
+    AddConfigHelp "Include <filename>" "Immediately include configuration directives from the given file."
     AddConfigHelp "XDisplay <display location>" "Specifies where scriptlets that use the X server should find one. (Default: :0)"
 }
 
