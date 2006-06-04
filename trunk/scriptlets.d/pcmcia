@@ -4,15 +4,23 @@
 AddConfigHandler PCMCIAOptions
 AddConfigHelp "EjectCards <boolean> " "Eject all PCMCIA cards before suspending, and insert them again after resuming"
 
+_cardctl() {
+    if [ -x $(command -v pccardctl 2>/dev/null) ] ; then
+	pccardctl "$@"
+    else
+	cardctl "$@"
+    fi
+}
+
 PCMCIAEject() {
     vecho 1 "$EXE: Ejecting PCMCIA cards"
-    cardctl eject
+    _cardctl eject
     return 0
 }
 
 PCMCIAInsert() {
     vecho 1 "$EXE: Inserting PCMCIA cards $i"
-    cardctl insert
+    _cardctl insert
     return 0
 }
 
