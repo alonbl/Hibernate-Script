@@ -19,7 +19,7 @@ MiscLaunchAuxFunc${MISC_LAUNCH_COUNT}() {
 Executing $@...
 EOT2
     $@
-    [ $? -ne 0 ] && return 1
+    [ \$? -ne 0 ] && return 1
     return 0
 }
 EOT
@@ -39,7 +39,7 @@ MiscLaunchAuxFunc${MISC_LAUNCH_COUNT}() {
 Executing $@...
 EOT2
     $@
-    [ $? -ne 0 ] && return 1
+    [ \$? -ne 0 ] && return 1
     return 0
 }
 EOT
