@@ -7,6 +7,7 @@ XOSD_SETTINGS="--font '-misc-fixed-medium-r-semicondensed--*-120-*-*-c-*-*-*' --
 
 AddConfigHandler XStatusOptions
 AddConfigHelp "XStatus <gnome|kde|x>" "Enables progress display and error reporting for the given environment."
+AddConfigHelp "XmessageDisable <boolean>" "Disable display of xmessage dialogs if XStatus is set to \"x\"."
 AddConfigHelp "XSuspendText <message>" "Text to display on screen whilst preparing to suspend. (default: \"$XSTATUS_SUSPEND_TEXT\")"
 AddConfigHelp "XResumeText <message>" "Text to display on screen whilst coming back from suspend. (default: \"$XSTATUS_RESUME_TEXT\")"
 AddConfigHelp "XosdSettings <options>" "Options to pass to osd_cat, see 'man osd_cat' (default: \"$XOSD_SETTINGS\")"
@@ -143,9 +144,11 @@ XStatusProgressStart_x() {
 	XOSD_PIDS="$XOSD_PIDS $new_pid"
     fi
 
-    pid_to_kill=`/bin/sh -c 'echo $PPID'`
-    XStatusProgressStart_xXmessageHelper "$1" &
-    XMESSAGE_PIDS="$XMESSAGE_PIDS $!"
+    if [ -z "$XMESSAGE_DISABLE" ] ; then
+	pid_to_kill=`/bin/sh -c 'echo $PPID'`
+	XStatusProgressStart_xXmessageHelper "$1" &
+	XMESSAGE_PIDS="$XMESSAGE_PIDS $!"
+    fi
 }
 
 XStatusProgressUpdate_x() {
@@ -231,6 +234,9 @@ XStatusOptions() {
 		    exit 1
 		    ;;
 	    esac
+	    ;;
+	xmessagedisable)
+	    BoolIsOn "$1" "$2" && XMESSAGE_DISABLE=1 && return 0
 	    ;;
 	xsuspendtext)
 	    shift
