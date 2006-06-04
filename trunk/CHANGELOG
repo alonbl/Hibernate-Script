@@ -4,7 +4,8 @@
  - Make xlock scriptlet mawk-compatible.
  - Don't output config options with --help.
  - Allow PowerdownMethod 0 (don't use ACPI).
- - Don't evaluate $? too early (Henrique de Moraes Holschuh and Alon Bar-Lev)
+ - Don't evaluate $? too early. (Henrique de Moraes Holschuh and Alon Bar-Lev)
+ - Try an alternate method of finding X parameters. (Joey Hess)
 
 1.12 (2 October 2005, later that day)
  - Fix some hardcoded paths in the suspend2 scriptlet.

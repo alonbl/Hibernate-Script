@@ -191,20 +191,38 @@ FindXServer() {
 
     # Find a useful XAUTHORITY and ideally a username too if we can!
     local xuser xauth xpid
-    for xpid in `pidof kwrapper ksmserver kdeinit gnome-session fvwm fvwm2 pwm blackbox fluxbox X XFree86 Xorg` ; do
-	# Ensure the process still exists, and we aren't hallucinating.
-	[ -d "/proc/$xpid/" ] || continue
-
-	xauth=`awk 'BEGIN{RS="\\000";FS="="}($1 == "XAUTHORITY"){print $2}' < /proc/$xpid/environ`
-	xhome=`awk 'BEGIN{RS="\\000";FS="="}($1 == "HOME"){print $2}' < /proc/$xpid/environ`
-	xuser=`/bin/ls -ld /proc/$xpid/ | awk '{print $3}'`
-	[ -z $xauth ] && [ -n $xhome ] && [ -f $xhome/.Xauthority ] && xauth=$xhome/.Xauthority
-
-	XAUTHORITY=$xauth su $xuser -c "$xhost" > /dev/null 2>&1 && break
-
-	xauth=
-	xuser=
+    for display in $(seq 0 8); do
+	xuser=$(last ":$display" | grep 'still logged in' | awk '{print $1}') || true
+	if [ -n "$xuser" ]; then
+	    xhome=$(getent passwd "$xuser" | cut -d: -f 6)
+	    if [ -n "$xhome" ]; then
+		xauth=$xhome/.Xauthority
+	    fi
+	fi
+	if [ -z "$xhome" ] || [ -z "$xauth" ]; then
+	    xauth=
+	    xuser=
+	    xhome=
+	else 
+	    break
+	fi
     done
+    if [ -z $xuser ] ; then
+        for xpid in `pidof kwrapper ksmserver kdeinit gnome-session fvwm fvwm2 pwm blackbox fluxbox X XFree86 Xorg` ; do
+	    # Ensure the process still exists, and we aren't hallucinating.
+	    [ -d "/proc/$xpid/" ] || continue
+
+	    xauth=`awk 'BEGIN{RS="\\000";FS="="}($1 == "XAUTHORITY"){print $2}' < /proc/$xpid/environ`
+	    xhome=`awk 'BEGIN{RS="\\000";FS="="}($1 == "HOME"){print $2}' < /proc/$xpid/environ`
+	    xuser=`/bin/ls -ld /proc/$xpid/ | awk '{print $3}'`
+	    [ -z $xauth ] && [ -n $xhome ] && [ -f $xhome/.Xauthority ] && xauth=$xhome/.Xauthority
+
+	    XAUTHORITY=$xauth su $xuser -c "$xhost" > /dev/null 2>&1 && break
+
+	   xauth=
+	   xuser=
+       done
+    fi
     if [ -n $xuser ] ; then
 	XUSER=$xuser
 	if [ -n "$xauth" ] ; then
