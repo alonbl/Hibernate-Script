@@ -9,6 +9,7 @@
  - Allow disabling the xmessage dialogs. (Joey Hess)
  - Added pause_audio scriptlet to avoid embarrassing situations. (Joey Hess)
  - Fix xosd font quoting issues in xstatus. (Joey Hess)
+ - Add an option for running i915resolution on resume. (Joey Hess)
 
 1.12 (2 October 2005, later that day)
  - Fix some hardcoded paths in the suspend2 scriptlet.
