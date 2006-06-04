@@ -626,6 +626,7 @@ ProcessConfigOption() {
 	    if [ -z "$HIBERNATE_SUSPEND_METHOD" ] ; then
 		NO_COMPLAIN_UNSUPPORTED=1
 		if [ -r "$params" ]; then
+		    vecho 1 "Trying method in $2..."
 		    ReadConfigFile "$params"
 		else
 		    echo "$EXE: Unable to read configuration file $params (from TryMethod directive)."
@@ -636,14 +637,19 @@ ProcessConfigOption() {
 	complain)
 	    if [ -z "$HIBERNATE_SUSPEND_METHOD" ] ; then
 		echo "$EXE: No suitable suspend methods were found on your machine."
-		echo "$EXE: You need to install a kernel with support for suspending to."
+		echo "$EXE: You need to install a kernel with support for suspending to"
 		echo "$EXE: disk or RAM and reboot, then try again."
 	    fi
 	    ;;
 	*)
 	    if ! PluginConfigOption $option $params ; then
-		echo "$EXE: Unknown configuration option ($option)"
-		exit 1
+		# See if we're trying something new, and haven't yet got a suspend method
+		if [ -n "$NO_COMPLAIN_UNSUPPORTED" ] && [ -z "$HIBERNATE_SUSPEND_METHOD" ] ; then
+		    return 1
+		else
+		    echo "$EXE: Unknown configuration option ($option)"
+		    exit 1
+		fi
 	    fi
 	    ;;
     esac
@@ -667,7 +673,7 @@ ReadConfigFile() {
 	[ $? -ne 0 ] && [ -z "$option" ] && break
 	[ -z "$option" ] && continue
 	case $option in ""|\#*) continue ;; esac # avoids a function call (big speed hit)
-	ProcessConfigOption $option $params
+	ProcessConfigOption $option $params || break
     done < ${file_name}
     return 0
 }
