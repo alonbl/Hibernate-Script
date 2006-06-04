@@ -112,6 +112,7 @@ syntax keyword hibernate_conf backupgrubmenufile contained nextgroup=hibernate_f
 " hardware_tweaks
 syntax keyword hibernate_conf ibmacpi contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf radeontool contained nextgroup=hibernate_boolean skipwhite
+syntax keyword hibernate_conf runi915resolution contained nextgroup=hibernate_boolean skipwhite
 
 " lilo
 syntax keyword hibernate_conf ensureliloresumes contained nextgroup=hibernate_boolean skipwhite
@@ -157,6 +158,9 @@ highlight link hibernate_network_auto Constant
 
 syntax keyword hibernate_conf downinterfaces contained nextgroup=hibernate_interfaces,hibernate_network_auto skipwhite
 syntax keyword hibernate_conf upinterfaces contained nextgroup=hibernate_interfaces,hibernate_network_auto skipwhite
+
+" pause_audio
+syntax keyword hibernate_conf pauseaudio contained nextgroup=hibernate_boolean skipwhite
 
 " pcmcia
 syntax keyword hibernate_conf ejectcards contained nextgroup=hibernate_boolean skipwhite
@@ -227,6 +231,7 @@ syntax keyword hibernate_xstatus kde gnome x contained
 highlight link hibernate_xstatus Special
 
 syntax keyword hibernate_conf xstatus contained nextgroup=hibernate_xstatus skipwhite
+syntax keyword hibernate_conf xmessagedisable contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf xsuspendtext contained nextgroup=hibernate_text skipwhite
 syntax keyword hibernate_conf xresumetext contained nextgroup=hibernate_text skipwhite
 syntax keyword hibernate_conf xosdsettings contained nextgroup=hibernate_text skipwhite
