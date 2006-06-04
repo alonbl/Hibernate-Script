@@ -13,6 +13,7 @@
  - Split out config files into a new structure.
  - Add the ability to try various suspend methods until one succeeds.
  - Support for pccardctl. (Martin F Krafft)
+ - Fix X11R6/bin not appearing in path through su in xlock. (Leonid Evdokimov)
 
 1.12 (2 October 2005, later that day)
  - Fix some hardcoded paths in the suspend2 scriptlet.

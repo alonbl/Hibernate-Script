@@ -88,7 +88,7 @@ LockXScreensaver() {
 	fi
 
 	vecho 2 "Locking $xuser's xscreensaver on display $xdisp using authority file $xauth"
-	DISPLAY=$xdisp XAUTHORITY=$xauth su $xuser -c "xscreensaver-command -lock"
+	DISPLAY=$xdisp XAUTHORITY=$xauth su $xuser -c "$(command -v xscreensaver-command) -lock"
 	if [ $? -ne 0 ] ; then
 	    vecho 0 "Failed to activate xscreensaver on $xdisp using authority file $xauth."
 	    DISPLAY=$xdisp XAUTHORITY=$xauth LockXlock && locked_one=1
@@ -129,7 +129,7 @@ UnlockXScreensaver() {
 	fi
 
 	vecho 2 "Unlocking $xuser's xscreensaver on display $xdisp using authority file $xauth"
-	DISPLAY=$xdisp XAUTHORITY=$xauth su $xuser -c "xscreensaver-command -deactivate"
+	DISPLAY=$xdisp XAUTHORITY=$xauth su $xuser -c "$(command -v xscreensaver-command) -deactivate"
     done
 
     # Failing is silly. What would they do about it?
