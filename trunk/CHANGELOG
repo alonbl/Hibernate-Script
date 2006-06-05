@@ -16,6 +16,7 @@
  - Fix X11R6/bin not appearing in path through su in xlock. (Leonid Evdokimov)
  - Allow passing a different config to UseDummyXServer. (Wolfgang Karall)
  - Support for gnome-screensaver. (Sam Noble)
+ - Fix file locations and paths for slackware. (PJ Beers)
 
 1.12 (2 October 2005, later that day)
  - Fix some hardcoded paths in the suspend2 scriptlet.

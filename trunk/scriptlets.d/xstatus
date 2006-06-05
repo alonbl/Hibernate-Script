@@ -18,15 +18,9 @@ XStatusProgressStart_kde() {
     KDEPB_DCOPREF=
 
     # Set $PATH for distros that aren't quite standard.
-    if [ "x$DISTRIBUTION" = "xsuse" ] ; then
-	[ -d "/opt/kde3/bin" ] && PATH=/opt/kde3/bin:$PATH && export PATH
-    elif [ "x$DISTRIBUTION" = "xgentoo" ] ; then
-	for i in /usr/kde/*/bin ; do
-	    [ "x$i" = "x/usr/kde/*/bin" ] && break
-	    PATH=$i:$PATH
-	done
-	export PATH
-    fi
+    for i in /opt/kde*/bin /usr/kde/*/bin ; do
+	[ -d "$i" ] && PATH=${PATH}:${i} && export PATH
+    done
 
     if ! DCOP_BIN=`command -v dcop 2>/dev/null` ; then
 	vecho 0 'Cannot connect to kdialog. `dcop` program not found.'

@@ -21,9 +21,9 @@ LockKDE() {
 	return 0
     fi
 
-    if [ "x$DISTRIBUTION" = "xgentoo" ] && ! command -v dcop > /dev/null 2>&1 ; then
-	# Gentoo stashes this in a silly place.
-	for i in /usr/kde/*/bin/dcop ; do
+    if ! command -v dcop > /dev/null 2>&1 ; then
+	# Gentoo and Slackware stash this in a silly place.
+	for i in /usr/kde/*/bin/dcop /opt/kde/bin/dcop ; do
 	    if [ -x "$i" ] ; then
 		PATH=$PATH:${i%%/dcop}
 		export PATH
