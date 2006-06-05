@@ -1,0 +1,50 @@
+# -*- sh -*-
+# vim:ft=sh:ts=8:sw=4:noet
+
+AddConfigHandler PauseAudioOptions
+AddConfigHelp "PauseAudio <boolean>" "This will pause your audio player before suspending. Audio is not unpaused on resume."
+
+PauseAudio() {
+    local auuser
+    # Pause quodlibet
+    for auuser in $(ps aux | grep '[q]uodlibet' | awk '{print $1}' | sort | uniq); do
+	local homedir
+	homedir=$(getent passwd "$auuser" | cut -d: -f 6)
+	if [ -p $homedir/.quodlibet/control ]; then
+	    vecho 1 "Pausing $auuser quodlibet.."
+	    echo pause > $homedir/.quodlibet/control
+	fi
+    done
+    # Pause xmms
+    for auuser in $(ps aux | grep '[x]mms' | awk '{print $1}' | sort | uniq); do
+	su $auuser -c 'xmms -u'
+    done
+    # Pause beep media player
+    for auuser in $(ps aux | grep '[b]eep-media-player' | awk '{print $1}' | sort | uniq); do
+	FindXServer
+	su $auuser -c 'beep-media-player -u'
+    done
+    # Add your favourite media player here.
+    # And then perhaps think up a less horrific way of doing this.
+    return 0
+}
+
+PauseAudioOptions() {
+    case $1 in
+	pauseaudio)
+	    BoolIsOn "$1" "$2" || return 0
+    	    if [ -z "$PAUSEAUDIO_HOOKED" ] ; then
+		# Run before device scriptlet kills programs accessing
+		# some devices. Pausing can prevent an audio player
+		# from using a device and getting killed.
+		AddSuspendHook 15 PauseAudio
+		PAUSEAUDIO_HOOKED=1
+	    fi
+	    ;;
+	*)
+	    return 1
+    esac
+    return 0
+}
+
+# $Id$
