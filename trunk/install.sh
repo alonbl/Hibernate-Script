@@ -10,7 +10,10 @@
 [ -z "$MAN_DIR" ]       && MAN_DIR=$BASE_DIR$PREFIX/man
 [ -z "$CONFIG_DIR" ]    && CONFIG_DIR=${BASE_DIR}${CONFIG_PREFIX}/etc/hibernate
 [ -z "$CONFIG_FILE" ]   && CONFIG_FILE=$CONFIG_DIR/hibernate.conf
-[ -z "$RAM_CONFIG_FILE" ]   && RAM_CONFIG_FILE=$CONFIG_DIR/ram.conf
+[ -z "$RAM_CONFIG_FILE" ]    && RAM_CONFIG_FILE=$CONFIG_DIR/ram.conf
+[ -z "$DISK_CONFIG_FILE" ]   && DISK_CONFIG_FILE=$CONFIG_DIR/disk.conf
+[ -z "$S2_CONFIG_FILE" ]     && S2_CONFIG_FILE=$CONFIG_DIR/suspend2.conf
+[ -z "$COMMON_CONFIG_FILE" ] && COMMON_CONFIG_FILE=$CONFIG_DIR/common.conf
 [ -z "$BLACKLIST" ]     && BLACKLIST=$CONFIG_DIR/blacklisted-modules
 [ -z "$LOGROTATE_DIR" ] && LOGROTATE_DIR=${BASE_DIR}/etc/logrotate.d
 
@@ -37,6 +40,8 @@ cp -a hibernate.sh $SCRIPT_DEST
 
 echo "Installing configuration files to $CONFIG_DIR ..."
 mkdir -p $CONFIG_DIR
+# We assume that if hibernate.conf does not exist, no config files do.
+# Let a package management system figure this one out :)
 if [ -f $CONFIG_FILE ] ; then
     echo "  **"
     echo "  ** You already have a configuration file at $CONFIG_FILE"
@@ -44,10 +49,16 @@ if [ -f $CONFIG_FILE ] ; then
     echo "  **"
     cp -a hibernate.conf ${CONFIG_FILE}.dist
     cp -a ram.conf ${RAM_CONFIG_FILE}.dist
+    cp -a disk.conf ${DISK_CONFIG_FILE}.dist
+    cp -a suspend2.conf ${S2_CONFIG_FILE}.dist
+    cp -a common.conf ${COMMON_CONFIG_FILE}.dist
     EXISTING_CONFIG=1
 else
     cp -a hibernate.conf $CONFIG_FILE
     cp -a ram.conf $RAM_CONFIG_FILE
+    cp -a disk.conf ${DISK_CONFIG_FILE}
+    cp -a suspend2.conf ${S2_CONFIG_FILE}
+    cp -a common.conf ${COMMON_CONFIG_FILE}
 fi
 
 cp -a blacklisted-modules $BLACKLIST
