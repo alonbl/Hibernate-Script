@@ -8,6 +8,10 @@
 "
 "   augroup filetypedetect
 "       au BufNewFile,BufRead hibernate.conf set filetype=hibernate
+"       au BufNewFile,BufRead common.conf set filetype=hibernate
+"       au BufNewFile,BufRead suspend2.conf set filetype=hibernate
+"       au BufNewFile,BufRead disk.conf set filetype=hibernate
+"       au BufNewFile,BufRead ram.conf set filetype=hibernate
 "   augroup END
 "
 
