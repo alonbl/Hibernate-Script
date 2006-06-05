@@ -227,6 +227,7 @@ syntax keyword hibernate_conf restorevcsadata contained nextgroup=hibernate_bool
 " xhacks
 syntax keyword hibernate_conf switchtotextmode contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf usedummyxserver contained nextgroup=hibernate_boolean skipwhite
+syntax keyword hibernate_conf dummyxserverconfig contained nextgroup=hibernate_filename skipwhite
 
 " xstatus
 syntax keyword hibernate_xstatus kde gnome x contained
