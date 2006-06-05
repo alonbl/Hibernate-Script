@@ -125,6 +125,7 @@ highlight link hibernate_username Constant
 
 syntax keyword hibernate_conf lockkde contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf lockxscreensaver contained nextgroup=hibernate_boolean skipwhite
+syntax keyword hibernate_conf lockgnomescreensaver contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf lockxlock contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf lockxautolock contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf lockconsoleas contained nextgroup=hibernate_username skipwhite

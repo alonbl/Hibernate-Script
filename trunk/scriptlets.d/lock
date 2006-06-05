@@ -4,6 +4,7 @@
 AddConfigHandler LockOptions
 AddConfigHelp "LockKDE <boolean>" "Lock all local KDE sessions before suspending."
 AddConfigHelp "LockXScreenSaver <boolean>" "Lock all local X11 sessions with xscreensaver running before suspending."
+AddConfigHelp "LockGnomeScreenSaver <boolean>" "Lock all local X11 sessions with gnome-screensaver running before suspending."
 AddConfigHelp "LockXLock <boolean>" "Lock active X11 session using xlock."
 AddConfigHelp "LockXAutoLock <boolean>" "Lock all local X11 sessions running xautolock."
 AddConfigHelp "LockConsoleAs <username>" "Locks the entire system after resuming, requiring you to enter either <username>'s or root's password to unlock it. (Requires vlock)."
@@ -136,6 +137,83 @@ UnlockXScreensaver() {
     return 0
 }
 
+LockGnomeScreensaver() {
+    local locked_one
+
+    locked_one=
+
+    [ x"$LOCK_GNOMESCREENSAVER" != "x1" ] && return 0
+
+    if ! command -v gnome-screensaver-command > /dev/null 2>&1 ; then
+	vecho 0 'Cannot lock with gnome-screensaver. `gnome-screensaver-command` not found.'
+	# Try xlock.
+	LockXlock
+	return 0
+    fi
+
+    local xpid
+
+    for xpid in `pidof gnome-screensaver` ; do
+	local xuser xdisp xauth xhome xdbus
+	xuser=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "USER"){print $2}' < /proc/$xpid/environ)
+	xdisp=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "DISPLAY"){print $2}' < /proc/$xpid/environ)
+	xauth=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "XAUTHORITY"){print $2}' < /proc/$xpid/environ)
+	xdbus=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "DBUS_SESSION_BUS_ADDRESS"){print $2"="$3"="$4}' < /proc/$xpid/environ)
+	if [ -z "$xauth" ] ; then
+	    xhome=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "HOME"){print $2}' < /proc/$xpid/environ)
+	    xauth="$xhome/.Xauthority"
+	fi
+
+	vecho 2 "Locking $xuser's gnome-screensaver on display $xdisp using authority file $xauth"
+	DISPLAY=$xdisp XAUTHORITY=$xauth DBUS_SESSION_BUS_ADDRESS=$xdbus su $xuser -c "$(command -v gnome-screensaver-command) --lock"
+	if [ $? -ne 0 ] ; then
+	    vecho 0 "Failed to activate gnome-screensaver on $xdisp using authority file $xauth."
+	    DISPLAY=$xdisp XAUTHORITY=$xauth LockXlock && locked_one=1
+	else
+	    locked_one=1
+	fi
+    done
+
+    # Fall back to xlock if nothing worked.
+    [ -z "$locked_one" ] && LockXlock
+
+    # Failing is silly. What would they do about it?
+    return 0
+}
+
+UnlockGnomeScreensaver() {
+    # This function name is kind of bad, it doesn't actually unlock
+    # anything.  It just calls gnome-screensaver-command --poke, which makes
+    # the password prompt appear on the display.
+
+    # FIXME: refactor this code so it looks less obviously like a
+    # cut-n-paste job from LockXScreensaver :) .
+
+    [ x"$LOCK_GNOMESCREENSAVER" != "x1" ] && return 0
+
+    command -v gnome-screensaver-command > /dev/null 2>&1 || return
+
+    local xpid
+
+    for xpid in `pidof gnome-screensaver` ; do
+	local xuser xdisp xauth xhome xdbus
+	xuser=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "USER"){print $2}' < /proc/$xpid/environ)
+	xdisp=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "DISPLAY"){print $2}' < /proc/$xpid/environ)
+	xauth=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "XAUTHORITY"){print $2}' < /proc/$xpid/environ)
+	xdbus=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "DBUS_SESSION_BUS_ADDRESS"){print $2"="$3"="$4}' < /proc/$xpid/environ)
+	if [ -z "$xauth" ] ; then
+	    xhome=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "HOME"){print $2}' < /proc/$xpid/environ)
+	    xauth="$xhome/.Xauthority"
+	fi
+
+	vecho 2 "Unlocking $xuser's gnome-screensaver on display $xdisp using authority file $xauth"
+	DISPLAY=$xdisp XAUTHORITY=$xauth DBUS_SESSION_BUS_ADDRESS=$xdbus su $xuser -c "$(command -v gnome-screensaver-command) --poke"
+    done
+
+    # Failing is silly. What would they do about it?
+    return 0
+}
+
 LockXAutoLock() {
     if ! command -v xautolock > /dev/null 2>&1 ; then
 	vecho 0 'Cannot lock with xautolock. `xautolock` not found.'
@@ -215,36 +293,63 @@ SwitchToLockConsole() {
 LockOptions() {
     case $1 in
 	lockkde)
-	    BoolIsOn "$1" "$2" && LOCK_KDE=1 || LOCK_KDE=0
-
-	    if [ -z "$KDELOCK_HOOKED" ] ; then
-		AddSuspendHook 91 LockKDE
-		KDELOCK_HOOKED=1
+	    if BoolIsOn "$1" "$2" ; then
+		LOCK_KDE=1
+		if [ -z "$KDELOCK_HOOKED" ] ; then
+		    AddSuspendHook 91 LockKDE
+		    KDELOCK_HOOKED=1
+		fi
+	    else
+		LOCK_KDE=0
+	    fi
+	    ;;
+	lockxscreensaver)
+	    if BoolIsOn "$1" "$2" ; then 
+		LOCK_XSCREENSAVER=1
+		if [ -z "$XSCREENSAVERLOCK_HOOKED" ]; then
+		    AddSuspendHook 91 LockXScreensaver
+		    AddResumeHook 30 UnlockXScreensaver
+		    XSCREENSAVERLOCK_HOOKED=1
+		fi
+	    else
+		LOCK_XSCREENSAVER=0
 	    fi
 	    ;;
 
-	lockxscreensaver)
-	    BoolIsOn "$1" "$2" && LOCK_XSCREENSAVER=1 || LOCK_XSCREENSAVER=0
-	    if [ -z "$XSCREENSAVERLOCK_HOOKED" ]; then
-		AddSuspendHook 91 LockXScreensaver
-		AddResumeHook 30 UnlockXScreensaver
-		XSCREENSAVERLOCK_HOOKED=1
+	lockgnomescreensaver)
+	    if BoolIsOn "$1" "$2" ; then
+		LOCK_GNOMESCREENSAVER=1
+		if [ -z "$GNOMESCREENSAVERLOCK_HOOKED" ]; then
+		    AddSuspendHook 91 LockGnomeScreensaver
+		    AddResumeHook 30 UnlockGnomeScreensaver
+		    GNOMESCREENSAVERLOCK_HOOKED=1
+		fi
+	    else
+		LOCK_GNOMESCREENSAVER=0
 	    fi
 	    ;;
 
         lockxlock)
-            BoolIsOn "$1" "$2" && LOCK_XLOCK=1 || LOCK_XLOCK=0
-            if [ -z "$XLOCK_HOOKED" ]; then
-                AddResumeHook 91 LockXlock
-                XLOCK_HOOKED=1
+            if BoolIsOn "$1" "$2" ; then
+		LOCK_XLOCK=1
+		if [ -z "$XLOCK_HOOKED" ]; then
+		    AddResumeHook 91 LockXlock
+		    XLOCK_HOOKED=1
+		fi
+	    else
+		LOCK_XLOCK=0
             fi
             ;;
 
         lockxautolock)
-            BoolIsOn "$1" "$2" && LOCK_XAUTOLOCK=1 || LOCK_XAUTOLOCK=0
-            if [ -z "$XAUTOLOCK_HOOKED" ]; then
-                AddResumeHook 91 LockXAutoLock
-                XAUTOLOCK_HOOKED=1
+            if BoolIsOn "$1" "$2" ; then
+		LOCK_XAUTOLOCK=1
+		if [ -z "$XAUTOLOCK_HOOKED" ]; then
+		    AddResumeHook 91 LockXAutoLock
+		    XAUTOLOCK_HOOKED=1
+		fi
+	    else
+		LOCK_XAUTOLOCK=0
             fi
             ;;
 
