@@ -117,10 +117,10 @@ NetworkDetectDistro() {
 	    ;;
 	slackware)
 	    network_ifup() {
-		/etc/init.d/rc.inet1 start
+		/etc/rc.d/rc.inet1 start
 	    }
 	    network_ifdown() {
-		/etc/init.d/rc.inet1 stop
+		/etc/rc.d/rc.inet1 stop
 	    }
 	    NETWORK_CALL_ONCE=1
 	    ;;
