@@ -11,6 +11,10 @@ AddSuspendHook 01 CheckLastResume
 AddResumeHook 01 LockFilePut
 AddResumeHook 01 NoteLastResume
 
+# Check it before we do anything, and also at point of no return
+AddSuspendHook 01 CheckRunlevel
+AddSuspendHook 98 CheckRunlevel
+
 # LockFileGet: test if a lockfile already exists, and create one if not. If it
 # does exist, returns 1 to indicate the script should abort unless using
 # --force. This code has race conditions. We could probably do something
@@ -68,6 +72,18 @@ CheckLastResume() {
 NoteLastResume() {
     [ -f "$LAST_RESUME_FILE" ] && return 0
     date "+%s" > $LAST_RESUME_FILE
+    return 0
+}
+
+# CheckRunlevel: Verify we're not shutting down or rebooting mid-suspend.
+CheckRunlevel() {
+    [ -z "${RUNLEVEL}" ] && RUNLEVEL=$(/sbin/runlevel | awk '{print $2}')
+    case "${RUNLEVEL}" in
+	0|6) # shutdown ongoing, emergency abort
+	    vecho 0 "System ongoing shutdown by runlevel, aborting hibernation."
+	    return 3
+	    ;;
+    esac
     return 0
 }
 
