@@ -71,7 +71,7 @@ vecho() {
     local v
     v="$1"
     shift
-    [ "x$LOG_TIMESTAMP" = "x1"] && set -- $(date "+%b %e %H:%M:%S") "$@"
+    [ "x$LOG_TIMESTAMP" = "x1" ] && set -- $(date "+%b %e %H:%M:%S.%2N") "$@"
     if [ "$v" -le $VERBOSITY ] ; then
 	echo $@
     else
@@ -599,8 +599,11 @@ ProcessConfigOption() {
 		LOGFILE="$params"
 	    ;;
 	logtimestamp)
-	    BoolIsOn "$option" "$params"
-	    LOG_TIMESTAMP=$?
+	    if BoolIsOn "$option" "$params" ; then
+		LOG_TIMESTAMP=1
+	    else
+		LOG_TIMESTAMP=0
+	    fi
 	    ;;
 	logverbosity)
 	    EnsureNumeric "$option" "$params" && LOG_VERBOSITY="$params"
