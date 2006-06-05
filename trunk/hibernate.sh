@@ -638,13 +638,6 @@ ProcessConfigOption() {
 		NO_COMPLAIN_UNSUPPORTED=
 	    fi
 	    ;;
-	complain)
-	    if [ -z "$HIBERNATE_SUSPEND_METHOD" ] ; then
-		echo "$EXE: No suitable suspend methods were found on your machine."
-		echo "$EXE: You need to install a kernel with support for suspending to"
-		echo "$EXE: disk or RAM and reboot, then try again."
-	    fi
-	    ;;
 	*)
 	    if ! PluginConfigOption $option $params ; then
 		# See if we're trying something new, and haven't yet got a suspend method
@@ -812,6 +805,13 @@ DISABLE_HELP=1
 EnsureHaveRoot
 LoadScriptlets
 ReadConfigFile "${CONFIG_FILE}"
+# Verify we actually got a suspend method we could use.
+if [ -z "$HIBERNATE_SUSPEND_METHOD" ] ; then
+    echo "$EXE: No suitable suspend methods were found on your machine."
+    echo "$EXE: You need to install a kernel with support for suspending to"
+    echo "$EXE: disk or RAM and reboot, then try again."
+    exit 1
+fi
 ParseOptions "$@"
 
 # Set a logfile if we need one.
