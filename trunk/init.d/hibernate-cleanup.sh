@@ -66,9 +66,17 @@ check_filewriter_sig() {
 	esac
 }
 
-echo -n "Clearing Software Suspend 2 signatures... "
-check_swap_sig
-check_filewriter_sig
-echo "done."
+case "$1" in
+start)
+        echo -n "Clearing Software Suspend 2 signatures... "
+        check_swap_sig
+        check_filewriter_sig
+        echo "done."
+        ;;
+stop|restart|force-reload)
+        ;;
+*)
+        echo "Usage: /etc/init.d/hibernate {start|stop|restart|force-reload}"
+esac
 
 exit 0
