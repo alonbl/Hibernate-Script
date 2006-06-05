@@ -18,6 +18,7 @@
  - Support for gnome-screensaver. (Sam Noble)
  - Fix file locations and paths for slackware. (PJ Beers)
  - Don't allow suspending when rebooting or shutting down. (Henrique de Moraes Holschuh)
+ - Support for timestamps in hibernate.log (for profiling)
 
 1.12 (2 October 2005, later that day)
  - Fix some hardcoded paths in the suspend2 scriptlet.

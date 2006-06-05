@@ -52,6 +52,7 @@ highlight link hibernate_order_num Constant
 syntax keyword hibernate_conf hibernatevt contained nextgroup=hibernate_integer skipwhite
 syntax keyword hibernate_conf verbosity contained nextgroup=hibernate_verbosity skipwhite
 syntax keyword hibernate_conf logfile contained nextgroup=hibernate_filenames skipwhite
+syntax keyword hibernate_conf logtimestamp contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf logverbosity contained nextgroup=hibernate_verbosity skipwhite
 syntax keyword hibernate_conf alwaysforce contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf alwayskill contained nextgroup=hibernate_boolean skipwhite

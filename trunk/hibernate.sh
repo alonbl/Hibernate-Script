@@ -71,6 +71,7 @@ vecho() {
     local v
     v="$1"
     shift
+    [ "x$LOG_TIMESTAMP" = "x1"] && set -- $(date "+%b %e %H:%M:%S") "$@"
     if [ "$v" -le $VERBOSITY ] ; then
 	echo $@
     else
@@ -597,6 +598,10 @@ ProcessConfigOption() {
 	    [ -z "$LOGFILE" ] &&
 		LOGFILE="$params"
 	    ;;
+	logtimestamp)
+	    BoolIsOn "$option" "$params"
+	    LOG_TIMESTAMP=$?
+	    ;;
 	logverbosity)
 	    EnsureNumeric "$option" "$params" && LOG_VERBOSITY="$params"
 	    ;;
@@ -697,6 +702,7 @@ AddInbuiltHelp() {
    3: print steps in lots of detail
    4: print out every command executed (uses -x)"
     AddConfigHelp "LogFile <filename>" "If specified, output from the suspend script will also be redirected to this file - useful for debugging purposes."
+    AddConfigHelp "LogTimestamp <boolean>" "If logging to file, will place timestamps on each log entry. This is only recommended if you are trying to optimise suspend/resume time, otherwise it will just slow the process down."
     AddConfigHelp "LogVerbosity N" "Same as Verbosity, but controls what is written to the logfile."
     AddConfigHelp "AlwaysForce <boolean>" "If set to yes, the script will always run as if --force had been passed."
     AddConfigHelp "AlwaysKill <boolean>" "If set to yes, the script will always run as if --kill had been passed."
