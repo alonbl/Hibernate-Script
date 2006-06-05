@@ -1,3 +1,7 @@
+1.91 (5 June 2006)
+ - Call common.conf from each of {suspend2,disk,ram}.conf so that hibernate-ram
+   works again.
+
 1.90 (5 June 2006)
  - Add $CONFIG_PREFIX to install script.
  - Refine grub menu restoration messages.
