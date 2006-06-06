@@ -461,19 +461,22 @@ DoGetOpt() {
 # ParseOptions <options>: process all the command-line options given
 ParseOptions() {
     local opts
-    opts="`getopt -n \"$EXE\" -o \"Vhfksv:nqF:$EXTRA_SHORT_OPTS\" -l \"help,force,kill,verbosity:,dry-run,config-file:$EXTRA_LONG_OPTS\" -- \"$@\"`" || exit 1
+    opts="`getopt -n \"$EXE\" -o \"Vhfksv:nqF:$EXTRA_SHORT_OPTS\" -l \"help,force,kill,verbosity:,dry-run,config-file:,version$EXTRA_LONG_OPTS\" -- \"$@\"`" || exit 1
     DoGetOpt $opts
 }
 
 # CheckImplicitAlternateConfig <$0> : checks $0 to see if we should be
 # implicitly using a different configuration file.
 CheckImplicitAlternateConfig() {
+    # Don't find one if we've already been specified one.
+    [ -n "$CONFIG_FILE" ] && return 0
+
     local self
     self=`basename $0`
     case $self in
 	hibernate-*) 
 	    CONFIG_FILE="$SWSUSP_D/${self#hibernate-}.conf"
-	    vecho 1 "Using implicit configuration file $CONFIG_FILE"
+	    vecho 3 "$EXE: Using implicit configuration file $CONFIG_FILE"
 	    ;;
 	*)
 	    ;;
@@ -485,17 +488,23 @@ CheckImplicitAlternateConfig() {
 # be dealt with before scriptlets and before other command-line options.
 PreliminaryGetopt() {
     local opt
-    local next_is_config
-    for opt in `getopt -q -o hF: -l help,config-file:,version -- "$@"` ; do
-	if [ -n "$next_is_config" ] ; then
-	    CONFIG_FILE="${opt#\'}"
-	    CONFIG_FILE="${CONFIG_FILE%\'}"
-	    next_is_config=
-	fi
+    set -- `getopt -q -o hv:F: -l help,verbosity:,config-file:,version -- "$@"`
+    while [ -n "$*" ] ; do
+	opt="$1"
+	shift
 
 	case $opt in
 	    -h|--help) HELP_ONLY=1 ;;
-	    -F|--config-file) next_is_config=1 ;;
+	    -F|--config-file)
+		CONFIG_FILE="${1#\'}"
+		CONFIG_FILE="${CONFIG_FILE%\'}"
+		;;
+	    -v|--verbosity)
+		OPT_VERBOSITY="${1#\'}"
+		OPT_VERBOSITY="${OPT_VERBOSITY%\'}"
+		EnsureNumeric "verbosity" $OPT_VERBOSITY && VERBOSITY="$OPT_VERBOSITY"
+		shift
+		;;
 	    --version)
 		echo "Hibernate Script $VERSION"
 		exit 0
@@ -623,15 +632,16 @@ ProcessConfigOption() {
 	    export DISPLAY
 	    ;;
         include)
-            if ! ReadConfigFile "$params" ; then
-                echo "$EXE: Unable to read configuration file $params (from Include directive)."
-                exit 1
-            fi
-            ;;
+	    vecho 3 "$EXE: Including configuration from $params"
+	    if ! ReadConfigFile "$params" ; then
+		echo "$EXE: Unable to read configuration file $params (from Include directive)."
+		exit 1
+	    fi
+	    ;;
 	trymethod)
 	    if [ -z "$HIBERNATE_SUSPEND_METHOD" ] ; then
 		NO_COMPLAIN_UNSUPPORTED=1
-		vecho 1 "Trying method in $1..."
+		vecho 1 "$EXE: Trying method in $1..."
 		if ! ReadConfigFile "$params" ; then
 		    echo "$EXE: Unable to read configuration file $params (from TryMethod directive)."
 		fi
@@ -788,10 +798,10 @@ ERROR_TEXT=""
 
 EnsureHavePrerequisites
 
-CheckImplicitAlternateConfig $0
-
-# Test for options that will affect future choices (-h and -F currently)
+# Test for options that will affect future choices
 PreliminaryGetopt "$@"
+
+CheckImplicitAlternateConfig $0
 
 # Generating help text is slow. Avoid it if we can.
 if [ -n "$HELP_ONLY" ] ; then
