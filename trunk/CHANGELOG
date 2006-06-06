@@ -1,5 +1,6 @@
 1.92 (unreleased)
  - Fix init.d script to only clean signatures at boot-time. (Martin F Krafft)
+ - Fix typo in TryMethod log message. (EspeonEefi)
 
 1.91 (5 June 2006)
  - Call common.conf from each of {suspend2,disk,ram}.conf so that hibernate-ram

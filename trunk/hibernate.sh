@@ -631,7 +631,7 @@ ProcessConfigOption() {
 	trymethod)
 	    if [ -z "$HIBERNATE_SUSPEND_METHOD" ] ; then
 		NO_COMPLAIN_UNSUPPORTED=1
-		vecho 1 "Trying method in $2..."
+		vecho 1 "Trying method in $1..."
 		if ! ReadConfigFile "$params" ; then
 		    echo "$EXE: Unable to read configuration file $params (from TryMethod directive)."
 		fi
