@@ -56,7 +56,7 @@ unset TRIED_DASH
 
 SWSUSP_D="/etc/hibernate"
 SCRIPTLET_PATH="$SWSUSP_D/scriptlets.d /usr/local/share/hibernate/scriptlets.d /usr/share/hibernate/scriptlets.d"
-CONFIG_FILE="$SWSUSP_D/hibernate.conf"
+DEFAULT_CONFIG_FILE="$SWSUSP_D/hibernate.conf"
 EXE=`basename $0`
 VERSION="1.91"
 
@@ -479,6 +479,7 @@ CheckImplicitAlternateConfig() {
 	    vecho 3 "$EXE: Using implicit configuration file $CONFIG_FILE"
 	    ;;
 	*)
+	    CONFIG_FILE="${DEFAULT_CONFIG_FILE}"
 	    ;;
     esac
     return 0
