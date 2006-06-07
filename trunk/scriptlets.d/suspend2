@@ -44,7 +44,7 @@ AddConfigHelp "VerifyFilewriterResume2 <boolean> (requires UseSuspend2 on)" "Whe
 AddConfigHelp "LoadSuspendModules <module name> [...] (requires UseSuspend2 on)" "Loads the given modules before even detecting Software Suspend. This may be required when Software Suspend is compiled as modules that need to be loaded prior to suspending."
 AddConfigHelp "UnloadSuspendModulesAfterResume <boolean> (requires UseSuspend2 on)" "If yes, will unload the Software Suspend modules mentioned above after resuming."
 
-AddConfigHelp "PowerdownMethod <3|4|5> (requires UseSuspend2 on)" "Allows you to choose what Software Suspend 2 should do after writing its image to disk. This only works if you have ACPI enabled in your kernel. 3/4/5 correspond to the ACPI states S3 (suspend-to-RAM), S4 (suspend-to-disk), and S5 (power off). Choosing 3 will request your machine to enter the S3 Suspend-to-RAM state if it is supported - this allows you drastically cut the resume time waiting for your BIOS but still consumes power whilst hibernated (though the image is not lost should power run out). Choosing 4 will cause your machine to enter an S4 sleep state which may also reduce the resume time without using any power whilst hibernated. Choosing 5 will cause your machine to switch off after suspending (traditional method)."
+AddConfigHelp "PowerdownMethod <0|3|4|5> (requires UseSuspend2 on)" "Allows you to choose what Software Suspend 2 should do after writing its image to disk. 3/4/5 will only work if you have ACPI enabled in your kernel. 3/4/5 correspond to the ACPI states S3 (suspend-to-RAM), S4 (suspend-to-disk), and S5 (power off). Choosing 3 will request your machine to enter the S3 Suspend-to-RAM state if it is supported - this allows you drastically cut the resume time waiting for your BIOS but still consumes power whilst hibernated (though the image is not lost should power run out). Choosing 4 will cause your machine to enter an S4 sleep state which may also reduce the resume time without using any power whilst hibernated. Choosing 5 will cause your machine to switch off after suspending (traditional method) but might still cause your machine to resume when you open the lid. 0 bypasses ACPI and shuts off the machine completely."
 
 AddConfigHelp "Compressor none|<compressor name> (requires UseSuspend2 on)" "Sets the compression algorithm to use for compressing the memory image. If set to \"none\", disables compression. Otherwise, the compressor name must be listed in /proc/crypto. This will also try to load the module if not available. (Only for Software Suspend 2.1.9.5 or newer)."
 
@@ -188,7 +188,7 @@ Swsusp2ConfigOptions() {
 		    SWSUSP_POWERDOWN_METHOD=$2
 		    ;;
 		*)
-		    echo "$EXE: Invalid value for $1 ($2). Must be 3 4 or 5."
+		    echo "$EXE: Invalid value for $1 ($2). Must be 0 3 4 or 5."
 		    return 0
 		    ;;
 	    esac
