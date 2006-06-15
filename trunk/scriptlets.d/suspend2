@@ -54,7 +54,6 @@ AddConfigHelp "ProcSetting <entry name> <value> (requires UseSuspend2 on)" "Sets
 
 AddShortOption "n"
 AddLongOption "no-suspend"
-AddOptionHelp "-n, --no-suspend (requires UseSuspend2 on)" "Disables actually suspending the system. This is useful for testing the suspend script itself."
 
 AddLongOption "save-settings::"
 AddOptionHelp "--save-settings [filename] (requires UseSuspend2 on)" "Saves all the current settings for Software Suspend 2 into a file (default: $SWSUSP_DEFAULT_ALL_SETTINGS_FILE)"

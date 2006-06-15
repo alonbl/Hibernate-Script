@@ -10,7 +10,7 @@ AddConfigHelp "PowerdownMethod <shutdown|platform|firmware> (requires UseSysfsPo
 
 AddShortOption "n"
 AddLongOption "no-suspend"
-AddOptionHelp "-n, --no-suspend (requires SysfsPowerState to be set)" "Disables actually suspending the system via /sys/power/state. This is useful for testing the suspend script itself."
+AddOptionHelp "-n, --no-suspend" "Disables actually suspending the system. This is useful for testing the hibernate script itself."
 
 SYSFS_POWER_STATE_FILE=/sys/power/state
 SYSFS_POWERDOWN_METHOD_FILE=/sys/power/disk

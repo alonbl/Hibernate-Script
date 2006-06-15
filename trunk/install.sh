@@ -13,6 +13,7 @@
 [ -z "$RAM_CONFIG_FILE" ]    && RAM_CONFIG_FILE=$CONFIG_DIR/ram.conf
 [ -z "$DISK_CONFIG_FILE" ]   && DISK_CONFIG_FILE=$CONFIG_DIR/disk.conf
 [ -z "$S2_CONFIG_FILE" ]     && S2_CONFIG_FILE=$CONFIG_DIR/suspend2.conf
+[ -z "$US_CONFIG_FILE" ]     && US_CONFIG_FILE=$CONFIG_DIR/ususpend.conf
 [ -z "$COMMON_CONFIG_FILE" ] && COMMON_CONFIG_FILE=$CONFIG_DIR/common.conf
 [ -z "$BLACKLIST" ]     && BLACKLIST=$CONFIG_DIR/blacklisted-modules
 [ -z "$LOGROTATE_DIR" ] && LOGROTATE_DIR=${BASE_DIR}/etc/logrotate.d
@@ -51,6 +52,7 @@ if [ -f $CONFIG_FILE ] ; then
     cp -a ram.conf ${RAM_CONFIG_FILE}.dist
     cp -a disk.conf ${DISK_CONFIG_FILE}.dist
     cp -a suspend2.conf ${S2_CONFIG_FILE}.dist
+    cp -a ususpend.conf ${US_CONFIG_FILE}.dist
     cp -a common.conf ${COMMON_CONFIG_FILE}.dist
     EXISTING_CONFIG=1
 else
@@ -58,6 +60,7 @@ else
     cp -a ram.conf $RAM_CONFIG_FILE
     cp -a disk.conf ${DISK_CONFIG_FILE}
     cp -a suspend2.conf ${S2_CONFIG_FILE}
+    cp -a ususpend.conf ${US_CONFIG_FILE}
     cp -a common.conf ${COMMON_CONFIG_FILE}
 fi
 

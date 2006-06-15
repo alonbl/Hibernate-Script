@@ -8,7 +8,6 @@ AddConfigHelp "UseACPISleep <state>" "Enables the use of /proc/acpi/sleep for su
 
 AddShortOption "n"
 AddLongOption "no-suspend"
-AddOptionHelp "-n, --no-suspend (requires UseACPISleep to be set)" "Disables actually suspending the system via /proc/acpi/sleep. This is useful for testing the suspend script itself."
 
 ACPI_SLEEP_FILE=/proc/acpi/sleep
 

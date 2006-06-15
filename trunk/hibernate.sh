@@ -61,7 +61,7 @@ EXE=`basename $0`
 VERSION="1.91"
 
 # Add these to the $PATH just in case.
-PATH="$PATH:/sbin:/usr/sbin"
+PATH="$PATH:/sbin:/usr/sbin:/usr/local/sbin"
 export PATH
 
 # vecho N <echo params>: acts like echo but with verbosity control - If it's
