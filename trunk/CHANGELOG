@@ -3,6 +3,7 @@
  - Fix typo in TryMethod log message. (EspeonEefi)
  - Process command-line verbosity level earlier to ease debugging of config files.
  - Update PowerdownMethod 0 doco. (Jens Gustedt)
+ - Support for uswsusp. (Jason Lunz)
 
 1.91 (5 June 2006)
  - Call common.conf from each of {suspend2,disk,ram}.conf so that hibernate-ram
