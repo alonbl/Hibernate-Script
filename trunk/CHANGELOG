@@ -1,4 +1,4 @@
-1.92 (unreleased)
+1.92 (12 July 2006)
  - Fix init.d script to only clean signatures at boot-time. (Martin F Krafft)
  - Fix typo in TryMethod log message. (EspeonEefi)
  - Process command-line verbosity level earlier to ease debugging of config files.
