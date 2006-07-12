@@ -128,7 +128,7 @@ EOT
 FullSpeedCPUResume() {
     [ -f "$HW_FULLSPEEDCPU_RESTORER" ] || return 0
     . "$HW_FULLSPEEDCPU_RESTORER"
-    #rm -f "$HW_FULLSPEEDCPU_RESTORER"
+    rm -f "$HW_FULLSPEEDCPU_RESTORER"
     return 0
 }
 
