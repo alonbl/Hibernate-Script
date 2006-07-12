@@ -1,0 +1,6 @@
+/var/log/hibernate.log {
+    missingok
+    rotate 5
+    size 100k
+    weekly
+}
