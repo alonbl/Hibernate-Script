@@ -1,0 +1,123 @@
+# -*- sh -*-
+# vim:ft=sh:ts=8:sw=4:noet
+
+AddConfigHandler ServicesOptions
+AddConfigHelp "StopServices <service name> [...]" "The services listed are stopped prior to suspending. The service name must correspond to the name of an init.d script that is active in the current runlevel."
+AddConfigHelp "StartServices <service name> [...]" "The services listed are started after resuming. The service name must correspond to the name of an init.d script that is active in the current runlevel."
+AddConfigHelp "RestartServices <service name> [...]" "The services listed are stopped before suspending and started after resuming. The service name must correspond to the name of an init.d script that is active in the current runlevel."
+
+# ExecuteServices <action> <services ...>
+ExecuteServices() {
+    local action
+    local services
+    local service
+    action=$1
+    shift
+    services=$@
+    ret=0
+    for service in $services ; do
+	InvokeRCD $service $action
+	[ "$?" -ne 100 ] && RESTARTED_SERVICES="$service $RESTARTED_SERVICES"
+    done
+    return $ret
+}
+
+ServicesStop() {
+    [ -z "$SERVICES_HOOKED" ] && return 0
+    ExecuteServices stop $SERVICES_STOP
+    RESTARTED_SERVICES=
+    ExecuteServices stop $SERVICES_RESTART
+    return 0 # Don't abort just because a service failed to stop, right?
+}
+
+ServicesStart() {
+    [ -z "$SERVICES_HOOKED" ] && return 0
+    ExecuteServices start $RESTARTED_SERVICES
+    ExecuteServices start $SERVICES_START
+    # preserve exit code
+}
+
+ServicesOptions() {
+    case $1 in
+	stopservices)
+	    shift
+	    SERVICES_STOP="$@"
+	    ;;
+	startservices)
+	    shift
+	    SERVICES_START="$@"
+	    ;;
+	restartservices)
+	    shift
+	    SERVICES_RESTART="$@"
+	    ;;
+	*)
+	    return 1
+    esac
+    if [ -z "$SERVICES_HOOKED" ] ; then
+	AddSuspendHook 30 ServicesStop
+	AddResumeHook 30 ServicesStart
+	SERVICES_HOOKED=1
+	ServicesDetectDistro
+    fi
+    return 0
+}
+
+ServicesDetectDistro() {
+    # Use either a given $DISTRIBUTION or autodetect one.
+    case "$DISTRIBUTION" in
+	gentoo)
+	    INITDIR=/etc/init.d
+	    ;;
+	suse|mandrake)
+	    INITDIR=/etc/init.d
+	    ;;
+	debian|redhat|fedora)
+	    INITDIR=/etc/init.d
+	    ;;
+	slackware)
+	    INITDIR=/etc/rc.d
+	    ;;
+    	*)
+	    # Auto-detect
+	    if [ -d "/etc/init.d/" ] ; then
+	    	INITDIR=/etc/init.d
+	    elif [ -d "/etc/rc.d/init.d" ] ; then
+	    	INITDIR=/etc/rc.d/init.d
+	    elif [ -d "/etc/rc.d" ] ; then
+	    	INITDIR=/etc/rc.d
+	    else
+		vecho 0 "Can not determine init.d directory. Services will not be suspended!"
+		SERVICES_HOOKED=""
+	    fi
+    esac
+    vecho 3 "Using '$INITDIR' as init.d directory."
+    # See if we have the invoke-rc.d utility
+    if command -v invoke-rc.d > /dev/null 2>&1 ; then
+	# Use it.
+	InvokeRCD () {
+	    vecho 2 "Executing invoke-rc.d $@"
+	    invoke-rc.d "$@"
+	}
+    else
+	# Otherwise, emulate it.
+	SERVICES_RUNLEVEL=`runlevel`
+	SERVICES_RUNLEVEL=${SERVICES_RUNLEVEL#* }
+	InvokeRCD () {
+	    local service action tmp cmd
+	    service="$1"
+	    action="$2"
+	    [ -x "$INITDIR/$service" ] || return 100
+	    cmd="$INITDIR/$service $action"
+	    if [ "$action" = "start" ] ; then
+		tmp=`echo $INITDIR/../rc${SERVICES_RUNLEVEL}.d/K??$service`
+		[ -x "$tmp" ] && return 101
+	    fi
+	    vecho 2 "Executing $cmd"
+	    $cmd
+	}
+    fi
+    return 0
+}
+
+# $Id$
