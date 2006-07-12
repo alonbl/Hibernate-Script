@@ -1,14 +1,29 @@
 # -*- sh -*-
 # vim:ft=sh:ts=8:sw=4:noet
 
-# Detect the new /proc root.
-if [ -d "/proc/swsusp/" ] ; then
+# Detect where suspend2 is these days.
+if [ -d "/sys/power/suspend2/" ] ; then
+    SWSUSP_ROOT="/sys/power/suspend2"
+elif [ -d "/proc/swsusp/" ] ; then
     SWSUSP_ROOT="/proc/swsusp"
 elif [ -d "/proc/software_suspend" ] ; then
     SWSUSP_ROOT="/proc/software_suspend"
 else
     SWSUSP_ROOT="/proc/suspend2"
 fi
+
+COMPRESSION_ROOT="$SWSUSP_ROOT"
+ENCRYPTION_ROOT="$SWSUSP_ROOT"
+FILEWRITER_ROOT="$SWSUSP_ROOT"
+SWAPWRITER_ROOT="$SWSUSP_ROOT"
+UI_ROOT="$SWSUSP_ROOT"
+STORAGEMAN_ROOT="$SWSUSP_ROOT"
+[ -d "$SWSUSP_ROOT/compression/" ] && COMPRESSION_ROOT="$SWSUSP_ROOT/compression"
+[ -d "$SWSUSP_ROOT/encryption/" ] && ENCRYPTION_ROOT="$SWSUSP_ROOT/encryption"
+[ -d "$SWSUSP_ROOT/filewriter/" ] && FILEWRITER_ROOT="$SWSUSP_ROOT/filewriter"
+[ -d "$SWSUSP_ROOT/swapwriter/" ] && SWAPWRITER_ROOT="$SWSUSP_ROOT/swapwriter"
+[ -d "$SWSUSP_ROOT/user_interface/" ] && UI_ROOT="$SWSUSP_ROOT/user_interface"
+[ -d "$SWSUSP_ROOT/storage_manager/" ] && STORAGEMAN_ROOT="$SWSUSP_ROOT/storage_manager"
 
 SWSUSP_DEFAULT_ALL_SETTINGS_FILE="$SWSUSP_D/swsusp2-all-settings.conf"
 HIBERNATE_FILEWRITER_TRAIL="/var/run/suspend2_filewriter_image_exists"
@@ -212,7 +227,15 @@ EOT
 		shift
 		FILE="$1"
 		shift
-		echo "echo \"$*\" > $SWSUSP_ROOT/$FILE" >> $SWSUSP_EXTRA_PROC_SETTINGS
+		TARGET="$SWSUSP_ROOT/$FILE"
+		if ! [ -f "$TARGET" ] ; then
+		    TARGET="`echo $SWSUSP_ROOT/*/$FILE | awk '{print $1}'`"
+		fi
+		if ! [ -f "$TARGET" ] ; then
+		    vecho 0 "suspend2: No $FILE entry available. Not setting."
+		else
+		    echo "echo \"$*\" > $TARGET" >> $SWSUSP_EXTRA_PROC_SETTINGS
+		fi
 	    fi
 	    ;;
 	*)
@@ -237,7 +260,7 @@ Swsusp2SaveSettings() {
 }
 
 RemoveSwsuspProcCruft() {
-    [ -f "$SWSUSP_EXTRA_PROC_SETTINGS" ] && rm -f $SWSUSP_EXTRA_PROC_SETTINGS
+    #[ -f "$SWSUSP_EXTRA_PROC_SETTINGS" ] && rm -f $SWSUSP_EXTRA_PROC_SETTINGS
     return 0
 }
 
@@ -258,11 +281,11 @@ Swsusp2SetupCryptoAPI() {
 	    fi
 	fi
 	if [ "$SWSUSP_COMPRESSOR" != "none" ] ; then
-	    echo "$SWSUSP_COMPRESSOR" > $SWSUSP_ROOT/compressor
-	    echo 0 > $SWSUSP_ROOT/disable_compression
+	    echo "$SWSUSP_COMPRESSOR" > $COMPRESSION_ROOT/compressor
+	    echo 0 > $COMPRESSION_ROOT/disable_compression
 	else
-	    echo "" > $SWSUSP_ROOT/compressor
-	    echo 1 > $SWSUSP_ROOT/disable_compression
+	    echo "" > $COMPRESSION_ROOT/compressor
+	    echo 1 > $COMPRESSION_ROOT/disable_compression
 	fi
     fi
 
@@ -279,11 +302,11 @@ Swsusp2SetupCryptoAPI() {
 	    fi
 	fi
 	if [ "$SWSUSP_ENCRYPTOR" != "none" ] ; then
-	    echo "$SWSUSP_ENCRYPTOR" > $SWSUSP_ROOT/encryptor
-	    echo 0 > $SWSUSP_ROOT/disable_encryption
+	    echo "$SWSUSP_ENCRYPTOR" > $ENCRYPTION_ROOT/encryptor
+	    echo 0 > $ENCRYPTION_ROOT/disable_encryption
 	else
-	    echo "" > $SWSUSP_ROOT/encryptor
-	    echo 1 > $SWSUSP_ROOT/disable_encryption
+	    echo "" > $ENCRYPTION_ROOT/encryptor
+	    echo 1 > $ENCRYPTION_ROOT/disable_encryption
 	fi
     fi
 }
@@ -316,11 +339,11 @@ Swsusp2ConfigSet() {
     [ -n "$OPT_REBOOT" ] && [ -f "$SWSUSP_ROOT/reboot" ] && \
 	echo $OPT_REBOOT > $SWSUSP_ROOT/reboot
 
-    [ -n "$OPT_ESCAPE" ] && [ -f $SWSUSP_ROOT/enable_escape ] && \
-	echo $OPT_ESCAPE > $SWSUSP_ROOT/enable_escape
+    [ -n "$OPT_ESCAPE" ] && [ -f $UI_ROOT/enable_escape ] && \
+	echo $OPT_ESCAPE > $UI_ROOT/enable_escape
 
-    [ -n "$OPT_CONSOLELEVEL" ] && [ -f $SWSUSP_ROOT/default_console_level ] && \
-	echo $OPT_CONSOLELEVEL > $SWSUSP_ROOT/default_console_level
+    [ -n "$OPT_CONSOLELEVEL" ] && [ -f $UI_ROOT/default_console_level ] && \
+	echo $OPT_CONSOLELEVEL > $UI_ROOT/default_console_level
 
     [ -n "$SWSUSP_ASYNC_IO_LIMIT" ] && [ -f $SWSUSP_ROOT/async_io_limit ] && \
     	echo $SWSUSP_ASYNC_IO_LIMIT > $SWSUSP_ROOT/async_io_limit
@@ -631,7 +654,7 @@ Swsusp2UnloadModules() {
 }
 
 Swsusp2SetupFilewriter() {
-    if ! [ -f "$SWSUSP_ROOT/filewriter_target" ] ; then
+    if ! [ -f "$FILEWRITER_ROOT/filewriter_target" ] ; then
 	vecho 0 "$EXE: WARNING: Filewriter location given, but kernel does not have filewriter"
 	vecho 0 "$EXE: support. Ignoring."
 	return 0
@@ -670,7 +693,7 @@ Swsusp2SetupFilewriter() {
 	    ;;
     esac
 
-    if ! echo "$SWSUSP_FILEWRITER_LOC" > $SWSUSP_ROOT/filewriter_target ; then
+    if ! echo "$SWSUSP_FILEWRITER_LOC" > $FILEWRITER_ROOT/filewriter_target ; then
 	vecho 0 "$EXE: Failed to set filewriter location! Aborting."
 	return 2 # abort even if forced
     fi
