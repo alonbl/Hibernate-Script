@@ -168,6 +168,7 @@ syntax keyword hibernate_conf downinterfaces contained nextgroup=hibernate_inter
 syntax keyword hibernate_conf upinterfaces contained nextgroup=hibernate_interfaces,hibernate_network_auto skipwhite
 
 " pause_audio
+syntax keyword hibernate_conf muteaudio contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf pauseaudio contained nextgroup=hibernate_boolean skipwhite
 
 " pcmcia
