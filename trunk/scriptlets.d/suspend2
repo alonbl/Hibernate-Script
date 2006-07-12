@@ -240,6 +240,8 @@ EOT
 			    nfile=filewriter/${FILE#filewriter_}
 			[ $FILE != ${FILE#swapwriter_} ] && \
 			    nfile=swapwriter/${FILE#swapwriter_}
+			[ $FILE != ${FILE#encryption_} ] && \
+			    nfile=encryption/${FILE#encryption_}
 			if [ $FILE != ${FILE#disable_} ] ; then
 			    nfile=${FILE#disable_}/enabled
 			    val=$(($1^1))
@@ -298,16 +300,21 @@ Swsusp2SetupCryptoAPI() {
 	    fi
 	fi
 	if [ "$SWSUSP_COMPRESSOR" != "none" ] ; then
-	    echo "$SWSUSP_COMPRESSOR" > $COMPRESSION_ROOT/compressor
+	    compression_algorithm=$SWSUSP_COMPRESSOR
 	    disable_value=0
 	else
-	    echo "" > $COMPRESSION_ROOT/compressor
+	    compression_algorithm=""
 	    disable_value=1
 	fi
 	if [ -f "$COMPRESSION_ROOT/disable_compression" ] ; then
 	    echo $disable_value > $COMPRESSION_ROOT/disable_compression
 	elif [ -f "$COMPRESSION_ROOT/enabled" ] ; then
 	    echo $(($disable_value^1)) > $COMPRESSION_ROOT/enabled
+	fi
+	if [ -f "$COMPRESSION_ROOT/compressor" ] ; then
+	    echo $compression_algorithm > $COMPRESSION_ROOT/compressor
+	elif [ -f "$COMPRESSION_ROOT/algorithm" ] ; then
+	    echo $compression_algorithm > $COMPRESSION_ROOT/algorithm
 	fi
     fi
 
@@ -324,16 +331,21 @@ Swsusp2SetupCryptoAPI() {
 	    fi
 	fi
 	if [ "$SWSUSP_ENCRYPTOR" != "none" ] ; then
-	    echo "$SWSUSP_ENCRYPTOR" > $ENCRYPTION_ROOT/encryptor
+	    encryption_algorithm=$SWSUSP_ENCRYPTOR
 	    disable_value=0
 	else
-	    echo "" > $ENCRYPTION_ROOT/encryptor
+	    encryption_algorithm=""
 	    disable_value=1
 	fi
 	if [ -f "$ENCRYPTION_ROOT/disable_encryption" ] ; then
 	    echo $disable_value > $ENCRYPTION_ROOT/disable_encryption
 	elif [ -f "$ENCRYPTION_ROOT/enabled" ] ; then
 	    echo $(($disable_value^1)) > $ENCRYPTION_ROOT/enabled
+	fi
+	if [ -f "$ENCRYPTION_ROOT/encryptor" ] ; then
+	    echo $encryption_algorithm > $ENCRYPTION_ROOT/encryptor
+	elif [ -f "$ENCRYPTION_ROOT/algorithm" ] ; then
+	    echo $encryption_algorithm > $ENCRYPTION_ROOT/algorithm
 	fi
     fi
 }

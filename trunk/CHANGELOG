@@ -1,3 +1,6 @@
+1.93 (12 July 2006)
+ - More updates for suspend2 compatibility with 2.2.7.3.
+
 1.92 (12 July 2006)
  - Fix init.d script to only clean signatures at boot-time. (Martin F Krafft)
  - Fix typo in TryMethod log message. (EspeonEefi)
