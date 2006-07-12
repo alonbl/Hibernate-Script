@@ -260,7 +260,7 @@ Swsusp2SaveSettings() {
 }
 
 RemoveSwsuspProcCruft() {
-    #[ -f "$SWSUSP_EXTRA_PROC_SETTINGS" ] && rm -f $SWSUSP_EXTRA_PROC_SETTINGS
+    [ -f "$SWSUSP_EXTRA_PROC_SETTINGS" ] && rm -f $SWSUSP_EXTRA_PROC_SETTINGS
     return 0
 }
 
