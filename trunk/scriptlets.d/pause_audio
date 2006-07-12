@@ -8,7 +8,7 @@ AddConfigHelp "PauseAudio <boolean>" "This will pause your audio player before s
 PauseAudio() {
     local auuser
     # Pause quodlibet
-    for auuser in $(ps aux | grep '[q]uodlibet' | awk '{print $1}' | sort | uniq); do
+    for auuser in $(ps aux | grep -w '[q]uodlibet' | awk '{print $1}' | sort | uniq); do
 	local homedir
 	homedir=$(getent passwd "$auuser" | cut -d: -f 6)
 	if [ -p $homedir/.quodlibet/control ]; then
@@ -17,11 +17,11 @@ PauseAudio() {
 	fi
     done
     # Pause xmms
-    for auuser in $(ps aux | grep '[x]mms' | awk '{print $1}' | sort | uniq); do
+    for auuser in $(ps aux | grep -w '[x]mms' | awk '{print $1}' | sort | uniq); do
 	su $auuser -c 'xmms -u'
     done
     # Pause beep media player
-    for auuser in $(ps aux | grep '[b]eep-media-player' | awk '{print $1}' | sort | uniq); do
+    for auuser in $(ps aux | grep -w '[b]eep-media-player' | awk '{print $1}' | sort | uniq); do
 	FindXServer
 	su $auuser -c 'beep-media-player -u'
     done
