@@ -234,7 +234,7 @@ EOT
 			nfile=$FILE
 			[ $FILE != ${FILE#userui_} ] && \
 			    nfile=user_interface/${FILE#userui_}
-			[ $FILE == "storage_manager" ] && \
+			[ $FILE = "storage_manager" ] && \
 			    nfile=storage_manager/program
 			[ $FILE != ${FILE#filewriter_} ] && \
 			    nfile=filewriter/${FILE#filewriter_}
