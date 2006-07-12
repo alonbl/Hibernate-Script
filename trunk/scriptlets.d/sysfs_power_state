@@ -15,6 +15,22 @@ AddOptionHelp "-n, --no-suspend" "Disables actually suspending the system. This 
 SYSFS_POWER_STATE_FILE=/sys/power/state
 SYSFS_POWERDOWN_METHOD_FILE=/sys/power/disk
 
+IsBadPPCKernel() {
+    # ppc/powerpc prior to 2.6.16.20 oopsed when you try to activate STR this
+    # way.
+    [ $1 != "mem" ] && return 1
+    case `arch` in
+	ppc|ppc64|powerpc)
+	    ;;
+	*)
+	    return 1
+	    ;;
+    esac
+    ver=`uname -r | sed -e 's/[^0-9.]*//' | awk 'BEGIN{FS="[.]"}{print($1*16777216)+($2*65536)+($3*256)+$4}'`
+    [ $ver -lt $((0x02061014)) ] && return 1
+    return 0
+}
+
 SysfsPowerStateConfigEnabler() {
     [ "$1" != "usesysfspowerstate" ] && return 1
     [ -n "$USING_SYSFS_POWER_STATE" ] && return 0
@@ -23,6 +39,7 @@ SysfsPowerStateConfigEnabler() {
 	if ! test -f $SYSFS_POWER_STATE_FILE || ! grep -q $2 $SYSFS_POWER_STATE_FILE ; then
 	    return 0
 	fi
+	IsBadPPCKernel $2 && return 0
     fi
     UsingSuspendMethod sysfs_power_state
     AddConfigHandler SysfsPowerStateConfigOptions
@@ -77,6 +94,12 @@ EnsureSysfsPowerStateCapable() {
     fi
     if ! grep -q $USING_SYSFS_POWER_STATE $SYSFS_POWER_STATE_FILE ; then
 	vecho 0 "Your kernel or machine does support the power state \"$USING_SYSFS_POWER_STATE\"."
+	return 2
+    fi
+
+    if IsBadPPCKernel $USING_SYSFS_POWER_STATE ; then
+	vecho 0 "Suspend-to-RAM can not be activated this way on PowerPC."
+	vecho 0 "Have a look at pmud or pbbuttonsd."
 	return 2
     fi
 

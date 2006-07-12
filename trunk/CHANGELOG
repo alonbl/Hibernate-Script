@@ -9,6 +9,7 @@
  - Added FullSpeedCPU option to maximise CPU speed whilst suspending.
  - amaroK pause support. (Kevin 'radsaq' Radloff)
  - Added MuteAudio option.
+ - Disable suspend-to-RAM for ppc kernels < 2.6.16.20. (Johannes Berg)
 
 1.91 (5 June 2006)
  - Call common.conf from each of {suspend2,disk,ram}.conf so that hibernate-ram
