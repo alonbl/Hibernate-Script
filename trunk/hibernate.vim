@@ -119,6 +119,7 @@ syntax keyword hibernate_conf backupgrubmenufile contained nextgroup=hibernate_f
 syntax keyword hibernate_conf ibmacpi contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf radeontool contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf runi915resolution contained nextgroup=hibernate_boolean skipwhite
+syntax keyword hibernate_conf fullspeedcpu contained nextgroup=hibernate_boolean skipwhite
 
 " lilo
 syntax keyword hibernate_conf ensureliloresumes contained nextgroup=hibernate_boolean skipwhite
