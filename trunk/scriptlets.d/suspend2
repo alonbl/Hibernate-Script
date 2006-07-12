@@ -230,6 +230,23 @@ EOT
 		TARGET="$SWSUSP_ROOT/$FILE"
 		if ! [ -f "$TARGET" ] ; then
 		    TARGET="`echo $SWSUSP_ROOT/*/$FILE | awk '{print $1}'`"
+		    if ! [ -f "$TARGET" ] ; then
+			nfile=$FILE
+			[ $FILE != ${FILE#userui_} ] && \
+			    nfile=user_interface/${FILE#userui_}
+			[ $FILE == "storage_manager" ] && \
+			    nfile=storage_manager/program
+			[ $FILE != ${FILE#filewriter_} ] && \
+			    nfile=filewriter/${FILE#filewriter_}
+			[ $FILE != ${FILE#swapwriter_} ] && \
+			    nfile=swapwriter/${FILE#swapwriter_}
+			if [ $FILE != ${FILE#disable_} ] ; then
+			    nfile=${FILE#disable_}/enabled
+			    val=$(($1^1))
+			    set -- $val
+			fi
+			TARGET=$SWSUSP_ROOT/$nfile
+		    fi
 		fi
 		if ! [ -f "$TARGET" ] ; then
 		    vecho 0 "suspend2: No $FILE entry available. Not setting."
@@ -282,10 +299,15 @@ Swsusp2SetupCryptoAPI() {
 	fi
 	if [ "$SWSUSP_COMPRESSOR" != "none" ] ; then
 	    echo "$SWSUSP_COMPRESSOR" > $COMPRESSION_ROOT/compressor
-	    echo 0 > $COMPRESSION_ROOT/disable_compression
+	    disable_value=0
 	else
 	    echo "" > $COMPRESSION_ROOT/compressor
-	    echo 1 > $COMPRESSION_ROOT/disable_compression
+	    disable_value=1
+	fi
+	if [ -f "$COMPRESSION_ROOT/disable_compression" ] ; then
+	    echo $disable_value > $COMPRESSION_ROOT/disable_compression
+	elif [ -f "$COMPRESSION_ROOT/enabled" ] ; then
+	    echo $(($disable_value^1)) > $COMPRESSION_ROOT/enabled
 	fi
     fi
 
@@ -303,10 +325,15 @@ Swsusp2SetupCryptoAPI() {
 	fi
 	if [ "$SWSUSP_ENCRYPTOR" != "none" ] ; then
 	    echo "$SWSUSP_ENCRYPTOR" > $ENCRYPTION_ROOT/encryptor
-	    echo 0 > $ENCRYPTION_ROOT/disable_encryption
+	    disable_value=0
 	else
 	    echo "" > $ENCRYPTION_ROOT/encryptor
-	    echo 1 > $ENCRYPTION_ROOT/disable_encryption
+	    disable_value=1
+	fi
+	if [ -f "$ENCRYPTION_ROOT/disable_encryption" ] ; then
+	    echo $disable_value > $ENCRYPTION_ROOT/disable_encryption
+	elif [ -f "$ENCRYPTION_ROOT/enabled" ] ; then
+	    echo $(($disable_value^1)) > $ENCRYPTION_ROOT/enabled
 	fi
     fi
 }
@@ -654,7 +681,14 @@ Swsusp2UnloadModules() {
 }
 
 Swsusp2SetupFilewriter() {
-    if ! [ -f "$FILEWRITER_ROOT/filewriter_target" ] ; then
+    local ft_entry
+    ft_entry=
+    [ -f "$FILEWRITER_ROOT/filewriter_target" ] && \
+	ft_entry="$FILEWRITER_ROOT/filewriter_target"
+    [ -f "$FILEWRITER_ROOT/target" ] && \
+	ft_entry="$FILEWRITER_ROOT/target"
+
+    if [ -z $ft_entry ] ; then
 	vecho 0 "$EXE: WARNING: Filewriter location given, but kernel does not have filewriter"
 	vecho 0 "$EXE: support. Ignoring."
 	return 0
@@ -693,7 +727,7 @@ Swsusp2SetupFilewriter() {
 	    ;;
     esac
 
-    if ! echo "$SWSUSP_FILEWRITER_LOC" > $FILEWRITER_ROOT/filewriter_target ; then
+    if ! echo "$SWSUSP_FILEWRITER_LOC" > $ft_entry ; then
 	vecho 0 "$EXE: Failed to set filewriter location! Aborting."
 	return 2 # abort even if forced
     fi
