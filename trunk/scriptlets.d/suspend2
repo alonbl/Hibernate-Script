@@ -524,9 +524,6 @@ CleanupDmesg() {
 # DoSuspend: activates the suspend and echo's the error code to be processed by
 # PrintErrors. We can't just return it, because error codes may be > 255
 DoSuspend() {
-    # Some versions of Software Suspend didn't clear this in certain cases:
-    echo 0 > $SWSUSP_ROOT/last_result
-
     if [ -f $SWSUSP_ROOT/do_suspend ] ; then
 	echo > $SWSUSP_ROOT/do_suspend
     else
