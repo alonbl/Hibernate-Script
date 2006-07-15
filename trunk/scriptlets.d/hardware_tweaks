@@ -97,8 +97,20 @@ FullSpeedCPUSuspend() {
     local cpu
     HW_FULLSPEEDCPU_RESTORER=`mktemp /tmp/tmp.hibernate.XXXXXX`
     for cpu in /sys/devices/system/cpu/*/cpufreq ; do
-	local min_freq setspeed governor
+	local cpunum min_freq setspeed governor i
 	[ -d $cpu ] || continue
+
+	# Find out if this CPU has been affected already.
+	cpunum=${cpu#/sys/devices/system/cpu/cpu}
+	cpunum=${cpunum%/cpufreq}
+	if IsANumber $cpunum ; then
+	    eval "done_this=\$hw_cpu_${cpunum}_done"
+	    [ "x$done_this" = "xcpudone" ] && continue
+	fi
+	# Mark all affected CPUs as done
+	for i in `cat $cpu/affected_cpus 2>/dev/null` ; do
+	    IsANumber $i && eval "hw_cpu_${i}_done=cpudone"
+	done
 
 	# Backup what we have.
 	max_freq=`cat $cpu/scaling_max_freq`
