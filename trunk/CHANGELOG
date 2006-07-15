@@ -1,5 +1,6 @@
 1.94 (unreleased)
  - Make media player detection a little more robust. (Nicolas Bonifas)
+ - Fix bogus amarok detection. (Andrew Deason)
 
 1.93 (12 July 2006)
  - More updates for suspend2 compatibility with 2.2.7.3.

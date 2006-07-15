@@ -26,7 +26,7 @@ PauseAudio() {
 	su $auuser -c 'beep-media-player -u'
     done
     # Pause amaroK
-    for auuser in $(ps aux | grep 'amarok' | awk '{print $1}' | sort | uniq); do
+    for auuser in $(ps aux | grep -w '[a]marok' | awk '{print $1}' | sort | uniq); do
 	FindXServer
 	if [ "`su $auuser -c 'dcop amarok player status'`" = "2" ]; then
 	    su $auuser -c 'dcop amarok player pause'
