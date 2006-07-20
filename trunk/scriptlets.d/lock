@@ -45,8 +45,8 @@ LockKDE() {
 
     # send the lock command to all sessions
     for session in $avail_sessions; do
-	# Check first that the session is not already locked, to prevent dcop
-	# from hanging.
+	# Check first that the session is not already locked.
+	# Otherwise dcop may hang.
 	locked=`dcop --session "$session" --all-users kdesktop KScreensaverIface isBlanked 2>/dev/null`
 	if [ x"$locked" = "xfalse" ] ; then
 	    vecho 1 "Locking session $session"
