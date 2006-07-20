@@ -5,6 +5,7 @@
  - Don't reset last_result (breaks compatibility with some obscure versions of
    suspend2 from the dark ages).
  - Fix cardctl detection bug in zsh. (Florian Tham)
+ - Update error statuses for suspend2.
 
 1.93 (12 July 2006)
  - More updates for suspend2 compatibility with 2.2.7.3.

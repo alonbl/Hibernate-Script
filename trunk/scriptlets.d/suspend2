@@ -560,6 +560,10 @@ PrintAnErrorString() {
 	;;
 	9) ERROR_TEXT="${ERROR_TEXT}Failed to setup compression or encryption.\n"
 	;;
+	10) ERROR_TEXT="${ERROR_TEXT}A suspend is already in progress?\n"
+	;;
+	11) ERROR_TEXT="${ERROR_TEXT}Some devices refused to suspend (see dmesg).\n"
+	;;
 	*) ERROR_TEXT="${ERROR_TEXT}Unknown error! (see dmesg?)\n"
 	;;
     esac
