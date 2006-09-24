@@ -8,6 +8,10 @@
  - Update error statuses for suspend2.
  - Do not lock KDE sessions that are already locked. (Alexandre Ferreira)
 
+ [martin f. krafft]
+ - Added a new scriptlet to restore the brightness of GFX cards on resume
+   (Joey Hess; Debian bug #384140).
+
 1.93 (12 July 2006)
  - More updates for suspend2 compatibility with 2.2.7.3.
 
