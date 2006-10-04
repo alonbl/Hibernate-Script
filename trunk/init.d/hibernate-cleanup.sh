@@ -68,7 +68,7 @@ check_filewriter_sig() {
 
 case "$1" in
 start)
-        echo -n "Clearing Software Suspend 2 signatures... "
+        echo -n "Invalidating stale software suspend images... "
         check_swap_sig
         check_filewriter_sig
         echo "done."
