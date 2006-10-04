@@ -58,3 +58,6 @@ button		2.6.9	2.6.99
 speedstep_smi	2.6.12	2.6.99
 
 @ndiswrapper    0.10    0.11
+
+# #383169
+ath_pci
