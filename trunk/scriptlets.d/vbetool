@@ -51,7 +51,7 @@ VbetoolSaveState() {
     VBETOOL_FILE=`mktemp /tmp/tmp.hibernate.XXXXXX`
 
     # save the vbe state
-    vbetool vbestate save > $VBETOOL_FILE || return 1
+    (vbetool vbestate save 2>&1 >&3 | vcat 2 >&2) 3> $VBETOOL_FILE || return 1
 
     return 0
 }
@@ -67,18 +67,18 @@ VbetoolRestoreState() {
     [ x"$VBETOOL_ENABLED" = "x1" ] || return 0
 
     # POST if we're asked to
-    [ x"$VBETOOL_POST" = "x1" ] && vbetool post
+    [ x"$VBETOOL_POST" = "x1" ] && (vbetool post 2>&1 >&3 | vcat 2 >&2) 3>&1
 
     # Restore a saved state.
     if [ -n "$VBETOOL_SAVED_STATE" ] ; then
-	vbetool vbestate restore < $VBETOOL_SAVED_STATE
+	(vbetool vbestate restore < $VBETOOL_SAVED_STATE 2>&1 >&3 | vcat 2 >&2) 3>&1
     elif [ -n "$VBETOOL_FILE" ] ; then
-	vbetool vbestate restore < $VBETOOL_FILE
+	(vbetool vbestate restore < $VBETOOL_FILE 2>&1 >&3 | vcat 2 >&2) 3>&1
 	rm -f $VBETOOL_FILE
     fi
 
     # see if we can power on the display too
-    vbetool dpms on
+    (vbetool dpms on 2>&1 >&3 | vcat 2 >&2) 3>&1
 
     # change back to our original VT
     chvt $VBETOOL_ORIG_VT
