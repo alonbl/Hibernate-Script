@@ -20,7 +20,7 @@ NetworkStop() {
     ret=0
     do_auto=
     case $NETWORK_DOWNIFS in *\ auto\ *) do_auto=yes ;; esac
-    for int in `/sbin/ifconfig|sed -e 's/^\([^ \t]*\).*/\1/;/^$/d'` ; do
+    for int in `sed -rne 's,[[:space:]]*([[:alnum:]]+):.*,\1,p' /proc/net/dev`; do
 	if [ -z "$do_auto" ] ; then
 	    # Only proceed if we were given "auto" or this interface was meant
 	    # to be brought down.
