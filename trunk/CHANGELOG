@@ -11,6 +11,26 @@
  [martin f. krafft]
  - Added a new scriptlet to restore the brightness of GFX cards on resume
    (Joey Hess; Debian bug #384140).
+ - Use /proc/net/dev instead of ifconfig to enumerate network devices, because
+   the latter would ignore madwifi interfaces.
+ - Improved ususpend method. Now supports USuspendRamForce (boolean) to pass
+   the -f option to s2ram. Also tests with s2ram's -n option if s2ram is used
+   and the option is not set. I also made disk.conf and ram.conf prefer the
+   uswsusp methods, if they are available. If you do not want to use them, use
+   the sysfs-{ram,disk}.conf files, which are the former ram.conf and
+   disk.conf files.
+ - Added scriptlet to remount /boot read-only if /boot is a separate
+   partition, contains an XFS filesystem, hibernate was asked to update the
+   Grub menu file, and this feature has not been disabled in the configuration
+   file (Debian bugs #317479, #317479, #386623). Also added README.xfs to
+   document caveats for users of the XFS filesystem.
+ - Added ath_pci to blacklisted modules (see Debian bug #383169).
+ - Reworded the init.d script message about invalidating stale signatures
+   (Debian bug #381903).
+ - Fixed a typo in hibernate.conf manpage (Debian bug #386799)
+ - Changed vbetool scriptlet to log stderr output to log file, and only let
+   output through to real stderr if verbosity >=2 is selected (Debian bug
+   #381927).
 
 1.93 (12 July 2006)
  - More updates for suspend2 compatibility with 2.2.7.3.
