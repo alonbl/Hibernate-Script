@@ -3,7 +3,7 @@
 
 AddConfigHandler NetworkConfigOptions
 AddConfigHelp "DownInterfaces auto|<ifname> [...]" "The names of network interfaces to bring down before suspending. If the parameter \"auto\" is given, all interfaces which are not lo are brought down."
-AddConfigHelp "UpInterfaces auto|<ifname> [...]" "The names of network interfaces to bring up after suspending. If the parameter \"auto\" is given, the interfaces stoped before suspending will be started in reverse order."
+AddConfigHelp "UpInterfaces auto|<ifname> [...]" "The names of network interfaces to bring up after suspending. If the parameter \"auto\" is given, the interfaces stopped before suspending will be started in reverse order."
 
 NetworkStop() {
     # If the script stops networking altogether, there's not much we can do.
