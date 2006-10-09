@@ -1,4 +1,4 @@
-1.94 (unreleased)
+1.94
  - Make media player detection a little more robust. (Nicolas Bonifas)
  - Fix bogus amarok detection. (Andrew Deason)
  - Accomodate affected_cpus for FullSpeedCPU option.
