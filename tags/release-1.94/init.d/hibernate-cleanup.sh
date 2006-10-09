@@ -18,7 +18,7 @@ HIBERNATE_FILEWRITER_TRAIL="/var/run/suspend2_filewriter_image_exists"
 
 get_swap_id() {
 	local line
-	fdisk -l | while read line; do
+	fdisk -l 2>/dev/null | while read line; do
 		case "$line" in
 			/*Linux\ [sS]wap*) echo "${line%% *}"
 		esac
