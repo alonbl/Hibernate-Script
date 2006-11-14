@@ -22,6 +22,8 @@ STORAGEMAN_ROOT="$SWSUSP_ROOT"
 [ -d "$SWSUSP_ROOT/encryption/" ] && ENCRYPTION_ROOT="$SWSUSP_ROOT/encryption"
 [ -d "$SWSUSP_ROOT/filewriter/" ] && FILEWRITER_ROOT="$SWSUSP_ROOT/filewriter"
 [ -d "$SWSUSP_ROOT/swapwriter/" ] && SWAPWRITER_ROOT="$SWSUSP_ROOT/swapwriter"
+[ -d "$SWSUSP_ROOT/file/" ] && FILEWRITER_ROOT="$SWSUSP_ROOT/file"
+[ -d "$SWSUSP_ROOT/swap/" ] && SWAPWRITER_ROOT="$SWSUSP_ROOT/swap"
 [ -d "$SWSUSP_ROOT/user_interface/" ] && UI_ROOT="$SWSUSP_ROOT/user_interface"
 [ -d "$SWSUSP_ROOT/storage_manager/" ] && STORAGEMAN_ROOT="$SWSUSP_ROOT/storage_manager"
 
