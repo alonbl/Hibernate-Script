@@ -2,35 +2,39 @@
 # -*- sh -*-
 # vim:ft=sh:ts=8:sw=4:noet
 
-[ -z "$PREFIX" ]        && PREFIX=/usr/local
-[ -z "$EXEC_PREFIX" ]   && EXEC_PREFIX=$PREFIX
+[ -z "$PREFIX" ]        	&& PREFIX=/usr
+[ -z "$EXEC_PREFIX" ]   	&& EXEC_PREFIX=$PREFIX
 
-[ -z "$SCRIPT_DEST" ]   && SCRIPT_DEST=$BASE_DIR$EXEC_PREFIX/sbin/hibernate
-[ -z "$SCRIPTLET_DIR" ] && SCRIPTLET_DIR=$BASE_DIR$PREFIX/share/hibernate/scriptlets.d
-[ -z "$MAN_DIR" ]       && MAN_DIR=$BASE_DIR$PREFIX/man
-[ -z "$CONFIG_DIR" ]    && CONFIG_DIR=${BASE_DIR}${CONFIG_PREFIX}/etc/hibernate
-[ -z "$CONFIG_FILE" ]   && CONFIG_FILE=$CONFIG_DIR/hibernate.conf
-[ -z "$RAM_CONFIG_FILE" ]    && RAM_CONFIG_FILE=$CONFIG_DIR/ram.conf
-[ -z "$DISK_CONFIG_FILE" ]   && DISK_CONFIG_FILE=$CONFIG_DIR/disk.conf
-[ -z "$S2_CONFIG_FILE" ]     && S2_CONFIG_FILE=$CONFIG_DIR/suspend2.conf
-[ -z "$US_CONFIG_FILE" ]     && US_CONFIG_FILE=$CONFIG_DIR/ususpend.conf
-[ -z "$COMMON_CONFIG_FILE" ] && COMMON_CONFIG_FILE=$CONFIG_DIR/common.conf
-[ -z "$BLACKLIST" ]     && BLACKLIST=$CONFIG_DIR/blacklisted-modules
-[ -z "$LOGROTATE_DIR" ] && LOGROTATE_DIR=${BASE_DIR}/etc/logrotate.d
+[ -z "$SCRIPT_DEST" ]   	&& SCRIPT_DEST=$BASE_DIR$EXEC_PREFIX/sbin/hibernate
+[ -z "$SCRIPTLET_DIR" ] 	&& SCRIPTLET_DIR=$BASE_DIR$PREFIX/share/hibernate/scriptlets.d
+[ -z "$MAN_DIR" ]       	&& MAN_DIR=$BASE_DIR$PREFIX/man
+[ -z "$CONFIG_DIR" ]    	&& CONFIG_DIR=${BASE_DIR}${CONFIG_PREFIX}/etc/hibernate
+[ -z "$CONFIG_FILE" ]   	&& CONFIG_FILE=$CONFIG_DIR/hibernate.conf
+[ -z "$RAM_CONFIG_FILE" ]   && RAM_CONFIG_FILE=$CONFIG_DIR/ram.conf
+[ -z "$DISK_CONFIG_FILE" ]  && DISK_CONFIG_FILE=$CONFIG_DIR/disk.conf
+[ -z "$S2_CONFIG_FILE" ]    && S2_CONFIG_FILE=$CONFIG_DIR/suspend2.conf
+[ -z "$US_BOTH_CONFIG_FILE" ]   && US_BOTH_CONFIG_FILE=$CONFIG_DIR/ususpend-both.conf
+[ -z "$US_DISK_CONFIG_FILE" ]   && US_DISK_CONFIG_FILE=$CONFIG_DIR/ususpend-disk.conf
+[ -z "$US_RAM_CONFIG_FILE" ]    && US_RAM_CONFIG_FILE=$CONFIG_DIR/ususpend-ram.conf
+[ -z "$COMMON_CONFIG_FILE" ]	&& COMMON_CONFIG_FILE=$CONFIG_DIR/common.conf
+[ -z "$BLACKLIST" ]     	&& BLACKLIST=$CONFIG_DIR/blacklisted-modules
+[ -z "$LOGROTATE_DIR" ] 	&& LOGROTATE_DIR=${BASE_DIR}/etc/logrotate.d
 
 [ -z "$OLD_SCRIPTLET_DIR" ] && OLD_SCRIPTLET_DIR=$CONFIG_DIR/scriptlets.d
-
+#
+# This test removed because the installed files are not actually overwritten.
+# Thus the question is redundant and confusing.
 # Test if the script is already installed.
-if [ -d $CONFIG_DIR ] || [ -f $SCRIPT_DEST ] ; then
-    echo "Config directory $CONFIG_DIR and/or $SCRIPT_DEST already exist."
-    echo -n "Are you sure you want to overwrite them? (y/N) "
-    read REPLY
-    echo
-    case $REPLY in
-	y*|Y*) ;;
-	*) echo "Aborting!" ; exit 1 ;;
-    esac
-fi
+#if [ -d $CONFIG_DIR ] || [ -f $SCRIPT_DEST ] ; then
+#    echo "Config directory $CONFIG_DIR and/or $SCRIPT_DEST already exist."
+#    echo -n "Are you sure you want to overwrite them? (y/N) "
+#    read REPLY
+#    echo
+#    case $REPLY in
+#	y*|Y*) ;;
+#	*) echo "Aborting!" ; exit 1 ;;
+#    esac
+#fi
 
 (
 set -e
@@ -42,7 +46,7 @@ cp -a hibernate.sh $SCRIPT_DEST
 echo "Installing configuration files to $CONFIG_DIR ..."
 mkdir -p $CONFIG_DIR
 # We assume that if hibernate.conf does not exist, no config files do.
-# Let a package management system figure this one out :)
+# Let a package management system figure this one out.
 if [ -f $CONFIG_FILE ] ; then
     echo "  **"
     echo "  ** You already have a configuration file at $CONFIG_FILE"
@@ -52,7 +56,9 @@ if [ -f $CONFIG_FILE ] ; then
     cp -a ram.conf ${RAM_CONFIG_FILE}.dist
     cp -a disk.conf ${DISK_CONFIG_FILE}.dist
     cp -a suspend2.conf ${S2_CONFIG_FILE}.dist
-    cp -a ususpend.conf ${US_CONFIG_FILE}.dist
+    cp -a ususpend-ram.conf ${US_CONFIG_FILE}.dist
+    cp -a ususpend-disk.conf ${US_CONFIG_FILE}.dist
+    cp -a ususpend-both.conf ${US_CONFIG_FILE}.dist
     cp -a common.conf ${COMMON_CONFIG_FILE}.dist
     EXISTING_CONFIG=1
 else
@@ -60,7 +66,9 @@ else
     cp -a ram.conf $RAM_CONFIG_FILE
     cp -a disk.conf ${DISK_CONFIG_FILE}
     cp -a suspend2.conf ${S2_CONFIG_FILE}
-    cp -a ususpend.conf ${US_CONFIG_FILE}
+    cp -a ususpend-ram.conf ${US_CONFIG_FILE}
+    cp -a ususpend-disk.conf ${US_CONFIG_FILE}
+    cp -a ususpend-both.conf ${US_CONFIG_FILE}
     cp -a common.conf ${COMMON_CONFIG_FILE}
 fi
 
