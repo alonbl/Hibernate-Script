@@ -83,7 +83,10 @@ RadeonToolBacklightOn() {
 AddConfigHelp "Runi915resolution <boolean>" "Set to run 915resolution before switching back to X."
 
 i915resolutionResume() {
-    /etc/init.d/915resolution start || return 1
+    local action
+    action=start
+    [ "$DISTRIBUTION" = "gentoo" ] && action=restart
+    /etc/init.d/915resolution $action || return 1
     return 0
 }
 
