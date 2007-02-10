@@ -16,15 +16,6 @@
 
 HIBERNATE_FILEWRITER_TRAIL="/var/run/suspend2_filewriter_image_exists"
 
-get_swap_id() {
-	local line
-	fdisk -l 2>/dev/null | while read line; do
-		case "$line" in
-			/*Linux\ [sS]wap*) echo "${line%% *}"
-		esac
-	done
-}
-
 clear_swap() {
 	local where wason
 	where=$1
@@ -35,15 +26,9 @@ clear_swap() {
 }
 
 check_swap_sig() {
-	local part="$(get_swap_id)"
 	local where what type rest p c
 	while read  where what type rest ; do
 		test "$type" = "swap" || continue
-		c=continue
-		for p in $part ; do
-			test "$p" = "$where" && c=:
-		done
-		$c
 		case "$(dd if=$where bs=1 count=6 skip=4086 2>/dev/null)" in
 			S1SUSP|S2SUSP|pmdisk|[zZ]*)
 				echo -n "$where"

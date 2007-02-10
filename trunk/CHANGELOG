@@ -1,5 +1,7 @@
 1.95
  - Make vcat always transparent (fixes vbetool failures)
+ - Remove restriction from init.d script that swap partitions must be labelled
+   as swap in a partition table (unlike some dm-crypt devices). (Alon Bar-Lev)
 
 1.94
  - Make media player detection a little more robust. (Nicolas Bonifas)
