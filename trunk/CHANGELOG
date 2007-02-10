@@ -1,3 +1,6 @@
+1.95
+ - Make vcat always transparent (fixes vbetool failures)
+
 1.94
  - Make media player detection a little more robust. (Nicolas Bonifas)
  - Fix bogus amarok detection. (Andrew Deason)

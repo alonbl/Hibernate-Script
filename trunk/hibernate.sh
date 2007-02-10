@@ -89,10 +89,12 @@ vcat() {
     v="$1"
     shift
     if [ "$v" -le $VERBOSITY ] ; then
-	cat $@
+	cat "$@"
     else
 	if [ "$v" -le $LOG_VERBOSITY -a "$LOGPIPE" != "cat" ] ; then
-	    cat $@ | $LOGPIPE > /dev/null
+	    cat "$@" | $LOGPIPE > /dev/null
+	else
+	    cat > /dev/null
 	fi
     fi
 }
