@@ -72,7 +72,7 @@ ServicesDetectDistro() {
 	suse|mandrake)
 	    INITDIR=/etc/init.d
 	    ;;
-	debian|redhat|fedora)
+	debian|ubuntu|redhat|fedora)
 	    INITDIR=/etc/init.d
 	    ;;
 	slackware)

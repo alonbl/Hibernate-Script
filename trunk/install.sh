@@ -52,24 +52,22 @@ if [ -f $CONFIG_FILE ] ; then
     echo "  ** You already have a configuration file at $CONFIG_FILE"
     echo "  ** The new version will be installed to ${CONFIG_FILE}.dist"
     echo "  **"
-    cp -a hibernate.conf ${CONFIG_FILE}.dist
-    cp -a ram.conf ${RAM_CONFIG_FILE}.dist
-    cp -a disk.conf ${DISK_CONFIG_FILE}.dist
-    cp -a suspend2.conf ${S2_CONFIG_FILE}.dist
-    cp -a ususpend-ram.conf ${US_CONFIG_FILE}.dist
-    cp -a ususpend-disk.conf ${US_CONFIG_FILE}.dist
-    cp -a ususpend-both.conf ${US_CONFIG_FILE}.dist
-    cp -a common.conf ${COMMON_CONFIG_FILE}.dist
+    ext=.dist
     EXISTING_CONFIG=1
 else
-    cp -a hibernate.conf $CONFIG_FILE
-    cp -a ram.conf $RAM_CONFIG_FILE
-    cp -a disk.conf ${DISK_CONFIG_FILE}
-    cp -a suspend2.conf ${S2_CONFIG_FILE}
-    cp -a ususpend-ram.conf ${US_CONFIG_FILE}
-    cp -a ususpend-disk.conf ${US_CONFIG_FILE}
-    cp -a ususpend-both.conf ${US_CONFIG_FILE}
-    cp -a common.conf ${COMMON_CONFIG_FILE}
+    ext=
+fi
+cp -a hibernate.conf ${CONFIG_FILE}${ext}
+cp -a ram.conf ${RAM_CONFIG_FILE}${ext}
+cp -a disk.conf ${DISK_CONFIG_FILE}${ext}
+cp -a suspend2.conf ${S2_CONFIG_FILE}${ext}
+cp -a ususpend-ram.conf ${US_CONFIG_FILE}${ext}
+cp -a ususpend-disk.conf ${US_CONFIG_FILE}${ext}
+cp -a ususpend-both.conf ${US_CONFIG_FILE}${ext}
+cp -a common.conf ${COMMON_CONFIG_FILE}${ext}
+
+if [ -n "$DISTRIBUTION" ] ; then
+    sed -i -e "s/^# \\(Distribution\\) .*/\1 $DISTRIBUTION/" ${COMMON_CONFIG_FILE}${ext}
 fi
 
 cp -a blacklisted-modules $BLACKLIST

@@ -3,8 +3,9 @@
  - Remove restriction from init.d script that swap partitions must be labelled
    as swap in a partition table (unlike some dm-crypt devices). (Alon Bar-Lev)
  - Call 915resolution restart instead of start on Gentoo. (Alon Bar-Lev)
+ - Promote ubuntu to distribution status.
 
-1.94
+1.94 (10 October 2006)
  - Make media player detection a little more robust. (Nicolas Bonifas)
  - Fix bogus amarok detection. (Andrew Deason)
  - Accomodate affected_cpus for FullSpeedCPU option.
