@@ -107,7 +107,7 @@ NetworkDetectDistro() {
 	    }
 	    NETWORK_CALL_ONCE=1
 	    ;;
-	debian|ubuntu|mandrake|fedora|redhat|ubuntu)
+	debian|ubuntu|mandrake|fedora|redhat)
 	    network_ifup() {
 		/sbin/ifup $*
 	    }
