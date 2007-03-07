@@ -13,7 +13,7 @@ SaveGFXBrightness() {
 	return 1
     fi
     LEVEL="$(while read key value rest; do [ "$key" = current: ] && echo $value; done < $gfx_brightness_acpifile)"
-    if [ -z "$LEVEL" ]; then
+    if [ -z "$LEVEL" ] || [ "$LEVEL" = 0 ]; then
 	vecho 0 "could not determine current brightness level, using default (4)"
 	LEVEL=4
     fi

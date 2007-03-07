@@ -4,6 +4,11 @@
    as swap in a partition table (unlike some dm-crypt devices). (Alon Bar-Lev)
  - Call 915resolution restart instead of start on Gentoo. (Alon Bar-Lev)
  - Promote ubuntu to distribution status.
+ - Fix gfx_brightness in cases the proc file shows a 0
+   (Joey Hess; Debian bug #410750).
+ - Add videodump scriptlet by Joey Hess to dump and reload the video card
+   memory (Debian bug #410751).
+ - Prevent screensaver from activating when --no-suspend is given.
 
 1.94 (10 October 2006)
  - Make media player detection a little more robust. (Nicolas Bonifas)
