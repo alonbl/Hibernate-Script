@@ -1,4 +1,7 @@
 1.95
+ - Add support for renamed swap and file directories in suspend2 2.2.8.4 and
+   later.
+ - Apply hibernate script patches from Christopher Sawtell.
  - Make vcat always transparent (fixes vbetool failures)
  - Remove restriction from init.d script that swap partitions must be labelled
    as swap in a partition table (unlike some dm-crypt devices). (Alon Bar-Lev)
