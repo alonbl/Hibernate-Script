@@ -12,6 +12,8 @@
  - Add videodump scriptlet by Joey Hess to dump and reload the video card
    memory (Debian bug #410751).
  - Prevent screensaver from activating when --no-suspend is given.
+ - Add patch to enable 2ram -p/-s options in a similar way to -f (Enrico
+   Tassi; Debian bug #416967).
 
 1.94 (10 October 2006)
  - Make media player detection a little more robust. (Nicolas Bonifas)
