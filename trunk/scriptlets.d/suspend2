@@ -1,6 +1,18 @@
 # -*- sh -*-
 # vim:ft=sh:ts=8:sw=4:noet
 
+# Load the suspend modules if necessary
+SWSUSP_MODS="suspend_core suspend_block_io suspend_file suspend_swap suspend_compress suspend_userui"
+SWSUSP_RMOD=
+for mod in ${SWSUSP_MODS} ; do
+    /sbin/modprobe -q ${mod} && SWSUSP_RMOD="${mod} ${SWSUSP_RMOD}"
+done
+Swsusp2CleanupSuspModules() {
+    for mod in ${SWSUSP_RMOD} ; do
+	/sbin/modprobe -q -r ${mod}
+    done
+}
+
 # Detect where suspend2 is these days.
 if [ -d "/sys/power/suspend2/" ] ; then
     SWSUSP_ROOT="/sys/power/suspend2"
@@ -92,6 +104,9 @@ Swsusp2ConfigEnabler() {
     AddSuspendHook 97 ChangeToSwsuspVT
     AddSuspendHook 99 DoSwsusp2
     AddResumeHook 97 ChangeFromSwsuspVT
+    if [ -n "${SWSUSP_RMOD}" ] ; then
+        AddResumeHook 01 Swsusp2CleanupSuspModules
+    fi
     USING_SWSUSP2=1
     return 0
 }

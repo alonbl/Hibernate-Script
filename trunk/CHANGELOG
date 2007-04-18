@@ -14,6 +14,9 @@
  - Prevent screensaver from activating when --no-suspend is given.
  - Add patch to enable 2ram -p/-s options in a similar way to -f (Enrico
    Tassi; Debian bug #416967).
+ - Add support for modprobing suspend modules early in the process of checking
+   for Suspend2 support (and rmmod loaded ones post-resume). (Jens Gustedt)
+   Modified by Nigel Cunningham.
 
 1.94 (10 October 2006)
  - Make media player detection a little more robust. (Nicolas Bonifas)
