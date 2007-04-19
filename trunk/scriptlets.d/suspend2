@@ -5,11 +5,14 @@
 SWSUSP_MODS="suspend_core suspend_block_io suspend_file suspend_swap suspend_compress suspend_userui"
 SWSUSP_RMOD=
 for mod in ${SWSUSP_MODS} ; do
-    /sbin/modprobe -q ${mod} && SWSUSP_RMOD="${mod} ${SWSUSP_RMOD}"
+    	/sbin/modprobe -Q --first-time ${mod} && SWSUSP_RMOD="${mod} ${SWSUSP_RMOD}"
 done
+
 Swsusp2CleanupSuspModules() {
+    # rmmod rather than modprobe -r because the later might
+    # remove more modules than we want to remove.
     for mod in ${SWSUSP_RMOD} ; do
-	/sbin/modprobe -q -r ${mod}
+	/sbin/rmmod ${mod}
     done
 }
 
