@@ -5,7 +5,7 @@
 SWSUSP_MODS="suspend_core suspend_block_io suspend_file suspend_swap suspend_compress suspend_userui"
 SWSUSP_RMOD=
 for mod in ${SWSUSP_MODS} ; do
-    	/sbin/modprobe -Q --first-time ${mod} && SWSUSP_RMOD="${mod} ${SWSUSP_RMOD}"
+    	/sbin/modprobe --first-time ${mod} >/dev/null 2>&1  && SWSUSP_RMOD="${mod} ${SWSUSP_RMOD}"
 done
 
 Swsusp2CleanupSuspModules() {
