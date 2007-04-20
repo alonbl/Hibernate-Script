@@ -61,9 +61,9 @@ cp -a hibernate.conf ${CONFIG_FILE}${ext}
 cp -a ram.conf ${RAM_CONFIG_FILE}${ext}
 cp -a disk.conf ${DISK_CONFIG_FILE}${ext}
 cp -a suspend2.conf ${S2_CONFIG_FILE}${ext}
-cp -a ususpend-ram.conf ${US_CONFIG_FILE}${ext}
-cp -a ususpend-disk.conf ${US_CONFIG_FILE}${ext}
-cp -a ususpend-both.conf ${US_CONFIG_FILE}${ext}
+cp -a ususpend-ram.conf ${US_RAM_CONFIG_FILE}${ext}
+cp -a ususpend-disk.conf ${US_DISK_CONFIG_FILE}${ext}
+cp -a ususpend-both.conf ${US_BOTH_CONFIG_FILE}${ext}
 cp -a common.conf ${COMMON_CONFIG_FILE}${ext}
 
 if [ -n "$DISTRIBUTION" ] ; then
