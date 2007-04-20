@@ -2,6 +2,7 @@
 # vim:ft=sh:ts=8:sw=4:noet
 
 # Load the suspend modules if necessary
+# Order is important - dependent modules later than what they depend on.
 SWSUSP_MODS="suspend_core suspend_block_io suspend_file suspend_swap suspend_compress suspend_userui"
 SWSUSP_RMOD=
 for mod in ${SWSUSP_MODS} ; do
