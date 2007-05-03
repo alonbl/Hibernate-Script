@@ -118,6 +118,13 @@ AddResumeHook() {
 }
 RESUME_BITS=""
 
+# AddTerminationHandler <function name>: adds the given function to the chain of
+# functions to handle termination cleanups.
+AddTerminationHandler() {
+    TERMINATION_HANDLERS="$TERMINATIONS_HANDLERS $1"
+}
+TERMINATION_HANDLERS=""
+
 # AddConfigHandler <function name>: adds the given function to the chain of
 # functions to handle extra configuration options.
 AddConfigHandler() {
@@ -324,6 +331,16 @@ BEGIN {
     print
 }'
 
+}
+
+# PluginTermination <params>: queries all loaded scriptlets if they want to
+# handle the given event. Returns 0 if the option was handled, 1 otherwise.
+PluginTermination() {
+    local i
+    for i in $TERMINATION_HANDLERS ; do
+	$i $@ && return 0
+    done
+    return 1
 }
 
 # PluginConfigOption <params>: queries all loaded scriptlets if they want to
@@ -862,6 +879,8 @@ else
 	    } | $LOGPIPE`
     fi
 fi
+
+PluginTermination
 
 echo "Resumed at "`date` | $LOGPIPE > /dev/null
 

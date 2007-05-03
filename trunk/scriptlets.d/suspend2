@@ -1,53 +1,8 @@
 # -*- sh -*-
 # vim:ft=sh:ts=8:sw=4:noet
 
-# Load the suspend modules if necessary
-# Order is important - dependent modules later than what they depend on.
-if [ "${SCRIPTLET_MODE}" != "DOC" ]; then
-	SWSUSP_MODS="suspend_core suspend_block_io suspend_file suspend_swap suspend_compress suspend_userui"
-	SWSUSP_RMOD=
-	for mod in ${SWSUSP_MODS} ; do
-		/sbin/modprobe --first-time ${mod} >/dev/null 2>&1  && SWSUSP_RMOD="${mod} ${SWSUSP_RMOD}"
-	done
-fi
 
-Swsusp2CleanupSuspModules() {
-    # rmmod rather than modprobe -r because the later might
-    # remove more modules than we want to remove.
-    for mod in ${SWSUSP_RMOD} ; do
-	/sbin/rmmod ${mod}
-    done
-}
-
-# Detect where suspend2 is these days.
-if [ -d "/sys/power/suspend2/" ] ; then
-    SWSUSP_ROOT="/sys/power/suspend2"
-elif [ -d "/proc/swsusp/" ] ; then
-    SWSUSP_ROOT="/proc/swsusp"
-elif [ -d "/proc/software_suspend" ] ; then
-    SWSUSP_ROOT="/proc/software_suspend"
-else
-    SWSUSP_ROOT="/proc/suspend2"
-fi
-
-COMPRESSION_ROOT="$SWSUSP_ROOT"
-ENCRYPTION_ROOT="$SWSUSP_ROOT"
-FILEWRITER_ROOT="$SWSUSP_ROOT"
-SWAPWRITER_ROOT="$SWSUSP_ROOT"
-UI_ROOT="$SWSUSP_ROOT"
-STORAGEMAN_ROOT="$SWSUSP_ROOT"
-[ -d "$SWSUSP_ROOT/compression/" ] && COMPRESSION_ROOT="$SWSUSP_ROOT/compression"
-[ -d "$SWSUSP_ROOT/encryption/" ] && ENCRYPTION_ROOT="$SWSUSP_ROOT/encryption"
-[ -d "$SWSUSP_ROOT/filewriter/" ] && FILEWRITER_ROOT="$SWSUSP_ROOT/filewriter"
-[ -d "$SWSUSP_ROOT/swapwriter/" ] && SWAPWRITER_ROOT="$SWSUSP_ROOT/swapwriter"
-[ -d "$SWSUSP_ROOT/file/" ] && FILEWRITER_ROOT="$SWSUSP_ROOT/file"
-[ -d "$SWSUSP_ROOT/swap/" ] && SWAPWRITER_ROOT="$SWSUSP_ROOT/swap"
-[ -d "$SWSUSP_ROOT/user_interface/" ] && UI_ROOT="$SWSUSP_ROOT/user_interface"
-[ -d "$SWSUSP_ROOT/storage_manager/" ] && STORAGEMAN_ROOT="$SWSUSP_ROOT/storage_manager"
-
-SWSUSP_DEFAULT_ALL_SETTINGS_FILE="$SWSUSP_D/swsusp2-all-settings.conf"
-HIBERNATE_FILEWRITER_TRAIL="/var/run/suspend2_filewriter_image_exists"
-
+AddTerminationHandler Swsusp2Termination
 AddConfigHandler Swsusp2ConfigEnabler
 AddOptionHandler Swsusp2OptionHandler
 
@@ -96,10 +51,58 @@ AddOptionHelp "--save-settings [filename] (requires UseSuspend2 on)" "Saves all 
 AddLongOption "bug-report"
 AddOptionHelp "--bug-report (requires UseSuspend2 on)" "Gathers a bunch of information about your machine and writes it to standard output. Please attach this information along with any bug reports to the Software Suspend mailing list."
 
+Swsusp2Termination() {
+    # rmmod rather than modprobe -r because the later might
+    # remove more modules than we want to remove.
+    for mod in ${SWSUSP_RMOD} ; do
+	/sbin/rmmod ${mod}
+    done
+
+    return 0
+}
+
 Swsusp2ConfigEnabler() {
     [ "$1" != "usesuspend2" ] && [ "$1" != "useswsusp2" ] && return 1
     BoolIsOn "$1" "$2" || return 0
     [ -n "$USING_SWSUSP2" ] && return 0
+
+    # Load the suspend modules if necessary
+    # Order is important - dependent modules later than what they depend on.
+    SWSUSP_MODS="suspend_core suspend_block_io suspend_file suspend_swap suspend_compress suspend_userui"
+    SWSUSP_RMOD=
+    for mod in ${SWSUSP_MODS} ; do
+	/sbin/modprobe --first-time "${mod}" >/dev/null 2>&1  && SWSUSP_RMOD="${mod} ${SWSUSP_RMOD}"
+    done
+
+    # Detect where suspend2 is these days.
+    if [ -d "/sys/power/suspend2/" ] ; then
+	SWSUSP_ROOT="/sys/power/suspend2"
+    elif [ -d "/proc/swsusp/" ] ; then
+	SWSUSP_ROOT="/proc/swsusp"
+    elif [ -d "/proc/software_suspend" ] ; then
+	SWSUSP_ROOT="/proc/software_suspend"
+    else
+	SWSUSP_ROOT="/proc/suspend2"
+    fi
+    
+    COMPRESSION_ROOT="$SWSUSP_ROOT"
+    ENCRYPTION_ROOT="$SWSUSP_ROOT"
+    FILEWRITER_ROOT="$SWSUSP_ROOT"
+    SWAPWRITER_ROOT="$SWSUSP_ROOT"
+    UI_ROOT="$SWSUSP_ROOT"
+    STORAGEMAN_ROOT="$SWSUSP_ROOT"
+    [ -d "$SWSUSP_ROOT/compression/" ] && COMPRESSION_ROOT="$SWSUSP_ROOT/compression"
+    [ -d "$SWSUSP_ROOT/encryption/" ] && ENCRYPTION_ROOT="$SWSUSP_ROOT/encryption"
+    [ -d "$SWSUSP_ROOT/filewriter/" ] && FILEWRITER_ROOT="$SWSUSP_ROOT/filewriter"
+    [ -d "$SWSUSP_ROOT/swapwriter/" ] && SWAPWRITER_ROOT="$SWSUSP_ROOT/swapwriter"
+    [ -d "$SWSUSP_ROOT/file/" ] && FILEWRITER_ROOT="$SWSUSP_ROOT/file"
+    [ -d "$SWSUSP_ROOT/swap/" ] && SWAPWRITER_ROOT="$SWSUSP_ROOT/swap"
+    [ -d "$SWSUSP_ROOT/user_interface/" ] && UI_ROOT="$SWSUSP_ROOT/user_interface"
+    [ -d "$SWSUSP_ROOT/storage_manager/" ] && STORAGEMAN_ROOT="$SWSUSP_ROOT/storage_manager"
+    
+    SWSUSP_DEFAULT_ALL_SETTINGS_FILE="$SWSUSP_D/swsusp2-all-settings.conf"
+    HIBERNATE_FILEWRITER_TRAIL="/var/run/suspend2_filewriter_image_exists"
+
     if [ -n "$NO_COMPLAIN_UNSUPPORTED" ] ; then
 	# Just bail silently if we don't detect it.
 	[ -d "$SWSUSP_ROOT" ] || return 0
@@ -110,9 +113,6 @@ Swsusp2ConfigEnabler() {
     AddSuspendHook 97 ChangeToSwsuspVT
     AddSuspendHook 99 DoSwsusp2
     AddResumeHook 97 ChangeFromSwsuspVT
-    if [ -n "${SWSUSP_RMOD}" ] ; then
-        AddResumeHook 01 Swsusp2CleanupSuspModules
-    fi
     USING_SWSUSP2=1
     return 0
 }
