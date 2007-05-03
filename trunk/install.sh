@@ -16,6 +16,8 @@
 [ -z "$US_BOTH_CONFIG_FILE" ]   && US_BOTH_CONFIG_FILE=$CONFIG_DIR/ususpend-both.conf
 [ -z "$US_DISK_CONFIG_FILE" ]   && US_DISK_CONFIG_FILE=$CONFIG_DIR/ususpend-disk.conf
 [ -z "$US_RAM_CONFIG_FILE" ]    && US_RAM_CONFIG_FILE=$CONFIG_DIR/ususpend-ram.conf
+[ -z "$SYSFS_RAM_CONFIG_FILE" ] && SYSFS_RAM_CONFIG_FILE=$CONFIG_DIR/sysfs-ram.conf
+[ -z "$SYSFS_DISK_CONFIG_FILE" ] && SYSFS_DISK_CONFIG_FILE=$CONFIG_DIR/sysfs-disk.conf
 [ -z "$COMMON_CONFIG_FILE" ]	&& COMMON_CONFIG_FILE=$CONFIG_DIR/common.conf
 [ -z "$BLACKLIST" ]     	&& BLACKLIST=$CONFIG_DIR/blacklisted-modules
 [ -z "$LOGROTATE_DIR" ] 	&& LOGROTATE_DIR=${BASE_DIR}/etc/logrotate.d
@@ -48,11 +50,11 @@ mkdir -p $CONFIG_DIR
 # We assume that if hibernate.conf does not exist, no config files do.
 # Let a package management system figure this one out.
 if [ -f $CONFIG_FILE ] ; then
+    ext=.dist
     echo "  **"
     echo "  ** You already have a configuration file at $CONFIG_FILE"
-    echo "  ** The new version will be installed to ${CONFIG_FILE}.dist"
+    echo "  ** The new version will be installed to ${CONFIG_FILE}${ext}"
     echo "  **"
-    ext=.dist
     EXISTING_CONFIG=1
 else
     ext=
@@ -64,6 +66,8 @@ cp -a suspend2.conf ${S2_CONFIG_FILE}${ext}
 cp -a ususpend-ram.conf ${US_RAM_CONFIG_FILE}${ext}
 cp -a ususpend-disk.conf ${US_DISK_CONFIG_FILE}${ext}
 cp -a ususpend-both.conf ${US_BOTH_CONFIG_FILE}${ext}
+cp -a sysfs-ram.conf ${SYSFS_RAM_CONFIG_FILE}${ext}
+cp -a sysfs-disk.conf ${SYSFS_DISK_CONFIG_FILE}${ext}
 cp -a common.conf ${COMMON_CONFIG_FILE}${ext}
 
 if [ -n "$DISTRIBUTION" ] ; then
