@@ -21,7 +21,7 @@ clear_swap() {
 	where=$1
 	wason=
 	swapoff $where 2>/dev/null && wason=yes
-	mkswap $where > /dev/null || echo -n " (failed: $?)"
+	mkswap $where > /dev/null || msg_status " (failed: $?)"
 	[ -n "$wason" ] && swapon $where
 }
 
@@ -31,9 +31,9 @@ check_swap_sig() {
 		test "$type" = "swap" || continue
 		case "$(dd if=$where bs=1 count=6 skip=4086 2>/dev/null)" in
 			S1SUSP|S2SUSP|pmdisk|[zZ]*)
-				echo -n "$where"
+				msg_status "$where"
 				clear_swap $where
-				echo -n ", "
+				msg_status ", "
 		esac
 	done < /etc/fstab
 }
@@ -46,22 +46,59 @@ check_filewriter_sig() {
 	case "`dd \"if=$target\" bs=8 count=1 2>/dev/null`" in
 		HaveImag)
 			/bin/echo -ne "Suspend2\n\0\0" | dd "of=$target" bs=11 count=1 conv=notrunc 2>/dev/null
-			echo -n "$target, "
+			msg_status -n "$target, "
 			rm -f $HIBERNATE_FILEWRITER_TRAIL
 	esac
 }
 
+do_start() {
+	check_swap_sig
+	check_filewriter_sig
+}
+
+do_stop() {
+	:
+}
+
+do_reload() {
+	:
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+msg_status() {
+	echo -n "$1"
+}
+
+msg() {
+	echo "$1"
+}
+
 case "$1" in
 start)
-        echo -n "Invalidating stale software suspend images... "
-        check_swap_sig
-        check_filewriter_sig
-        echo "done."
-        ;;
-stop|restart|force-reload)
-        ;;
+	msg_status "Invalidating stale software suspend images... "
+	do_start
+	msg "done."
+	;;
+stop)
+	do_stop
+	;;
+restart|force-reload)
+	do_reload
+	;;
 *)
-        echo "Usage: /etc/init.d/hibernate {start|stop|restart|force-reload}"
+	msg "Usage: /etc/init.d/hibernate {start|stop|restart|force-reload}"
 esac
 
 exit 0
