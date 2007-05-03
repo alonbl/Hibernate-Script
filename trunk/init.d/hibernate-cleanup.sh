@@ -40,7 +40,7 @@ check_swap_sig() {
 
 check_filewriter_sig() {
 	local target
-	[ -f "$HIBERNATE_FILEWRITER_TRAIL" ] || return
+	[ -f "$HIBERNATE_FILEWRITER_TRAIL" ] || return 0
 	read target < $HIBERNATE_FILEWRITER_TRAIL
 	[ -f "$target" ] || return
 	case "`dd \"if=$target\" bs=8 count=1 2>/dev/null`" in
