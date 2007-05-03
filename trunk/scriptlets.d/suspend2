@@ -3,11 +3,13 @@
 
 # Load the suspend modules if necessary
 # Order is important - dependent modules later than what they depend on.
-SWSUSP_MODS="suspend_core suspend_block_io suspend_file suspend_swap suspend_compress suspend_userui"
-SWSUSP_RMOD=
-for mod in ${SWSUSP_MODS} ; do
-    	/sbin/modprobe --first-time ${mod} >/dev/null 2>&1  && SWSUSP_RMOD="${mod} ${SWSUSP_RMOD}"
-done
+if [ "${SCRIPTLET_MODE}" != "DOC" ]; then
+	SWSUSP_MODS="suspend_core suspend_block_io suspend_file suspend_swap suspend_compress suspend_userui"
+	SWSUSP_RMOD=
+	for mod in ${SWSUSP_MODS} ; do
+		/sbin/modprobe --first-time ${mod} >/dev/null 2>&1  && SWSUSP_RMOD="${mod} ${SWSUSP_RMOD}"
+	done
+fi
 
 Swsusp2CleanupSuspModules() {
     # rmmod rather than modprobe -r because the later might

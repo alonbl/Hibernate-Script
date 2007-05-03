@@ -268,6 +268,7 @@ ProgramManHeader > $PROGRAM_MAN
 ConfigManHeader > $CONFIG_MAN
 
 # Work starts here
+SCRIPTLET_MODE="DOC"
 for i in $TMPF scriptlets.d/* ; do
 	. $i
 done
