@@ -120,7 +120,7 @@ FullSpeedCPUSuspend() {
 	min_freq=`cat $cpu/scaling_min_freq`
 	[ -f "$cpu/scaling_setspeed" ] && setspeed=`cat $cpu/scaling_setspeed`
 	governor=`cat $cpu/scaling_governor`
-	cat <<EOT > $HW_FULLSPEEDCPU_RESTORER
+	cat <<EOT >> $HW_FULLSPEEDCPU_RESTORER
 # Temporary file for hibernate script.
 # If you're reading this then it's probably safe to delete.
 
