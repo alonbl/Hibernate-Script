@@ -1,4 +1,4 @@
-1.95
+1.95 (18 May 2007)
  - Add support for renamed swap and file directories in suspend2 2.2.8.4 and
    later.
  - Apply hibernate script patches from Christopher Sawtell.
@@ -17,6 +17,12 @@
  - Add support for modprobing suspend modules early in the process of checking
    for Suspend2 support (and rmmod loaded ones post-resume). (Jens Gustedt)
    Modified by Nigel Cunningham.
+ - Allow for distribution specific patches. (Alon Bar-Lev)
+ - Don't load kernel modules when installing or doing --help. (Alon Bar-Lev)
+ - Don't return an error if no file trail. (Alon Bar-Lev)
+ - Fix uninstalled conf files and minor name extension issue. (Alon Bar-Lev)
+ - Make FullSpeedCPU restore the speed of all cores, not just the last one.
+   (Michael Gisbers)
 
 1.94 (10 October 2006)
  - Make media player detection a little more robust. (Nicolas Bonifas)
