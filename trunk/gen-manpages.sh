@@ -12,6 +12,10 @@ AddResumeHook() {
 	return 0
 }
 
+AddTerminationHandler() {
+	return 0
+}
+
 AddConfigHandler() {
 	return 0
 }
