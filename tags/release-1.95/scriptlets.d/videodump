@@ -1,0 +1,69 @@
+# -*- sh -*-
+# vim:ft=sh:ts=8:sw=4:noet
+# VideoBumo scriptlet
+#
+# This scriptlet Copyright (C) Cameron Patrick, 2005, Joey Hess 2007 and may be
+# used under the same terms as hibernate-script itself.
+
+AddConfigHandler VideoDumpOptions
+AddConfigHelp "EnableVideoDump <boolean>" "Dump and load video card memory before and after suspending."
+
+# hopefully this is a good choice and nothing else uses it :-/
+VIDEODUMP_VT=62
+VIDEODUMP_ENABLED=
+VIDEODUMP_ID=
+
+VideoDumpSaveState() {
+    # if we're switched off, don't do nuffin
+    [ x"$VIDEODUMP_ENABLED" = "x1" ] || return 0
+
+    # save our previous VT and switch to a new one
+    VIDEODUMP_ORIG_VT=`fgconsole 2>/dev/null` || VIDEODUMP_ORIG_VT=1
+    chvt $VIDEODUMP_VT
+    TERM=linux tput clear 
+    VIDEODUMP_FILE=`mktemp /tmp/tmp.hibernate.XXXXXX`
+
+    VIDEODUMP_ID=`lspci | grep VGA | awk '{ print $1 }' | sed -e 's@0000:@@' -e 's@:@/@'` || true
+    if [ -e "/proc/bus/pci/$VIDEODUMP_ID" ]; then
+	cat "/proc/bus/pci/$VIDEODUMP_ID" > "$VIDEODUMP_FILE"
+    fi
+
+    echo $VIDEODUMP_ID
+    echo $VIDEODUMP_FILE
+
+    return 0
+}
+
+VideoDumpRestoreState() {
+    # if we're switched off, don't do nuffin
+    [ x"$VIDEODUMP_ENABLED" = "x1" ] || return 0
+
+    # Restore a saved state.
+    if [ -n "$VIDEODUMP_FILE" ] && [ -e "/proc/bus/pci/$VIDEODUMP_ID" ]; then
+	cat "$VIDEODUMP_FILE" > /proc/bus/pci/$VIDEODUMP_ID
+	rm -f "$VIDEODUMP_FILE"
+    fi
+
+    # change back to our original VT
+    chvt $VIDEODUMP_ORIG_VT
+}
+
+VideoDumpOptions() {
+    case $1 in
+	enablevideodump)
+	    BoolIsOn "$1" "$2" && VIDEODUMP_ENABLED=1 || return 0
+	    ;;
+	*)
+	    return 1
+    esac
+
+    if [ -z "$VIDEODUMP_HOOKED" ] ; then
+	AddSuspendHook 97 VideoDumpSaveState
+	AddResumeHook 97 VideoDumpRestoreState
+	VIDEODUMP_HOOKED=1
+    fi
+
+    return 0
+}
+
+# $Id: $
