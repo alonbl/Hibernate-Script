@@ -80,7 +80,7 @@ DoUSuspend() {
     if [ -z "$USUSPEND_NO_SUSPEND" ] ; then
 	vecho 1 "$EXE: Running $USUSPEND_PROG_PATH ${FORCE:+$FORCE }..."
 	ARGS=
-	if ["$USUSPEND_PROG" = s2ram ]; then
+	if [ "$USUSPEND_PROG" = s2ram ]; then
 	    [ $USUSPEND_RAM_FORCE -eq 1 ] && ARGS="$ARGS -f"
 	    [ $USUSPEND_RAM_VBESAVE -eq 1 ] && ARGS="$ARGS -s"
 	    [ $USUSPEND_RAM_VBEPOST -eq 1 ] && ARGS="$ARGS -p"
