@@ -2,7 +2,7 @@
 # -*- sh -*-
 # vim:ft=sh:ts=8:sw=4:noet
 
-[ -z "$PREFIX" ]        	&& PREFIX=/usr
+[ -z "$PREFIX" ]        	&& PREFIX=/usr/local
 [ -z "$EXEC_PREFIX" ]   	&& EXEC_PREFIX=$PREFIX
 
 [ -z "$SCRIPT_DEST" ]   	&& SCRIPT_DEST=$BASE_DIR$EXEC_PREFIX/sbin/hibernate
@@ -23,20 +23,6 @@
 [ -z "$LOGROTATE_DIR" ] 	&& LOGROTATE_DIR=${BASE_DIR}/etc/logrotate.d
 
 [ -z "$OLD_SCRIPTLET_DIR" ] && OLD_SCRIPTLET_DIR=$CONFIG_DIR/scriptlets.d
-#
-# This test removed because the installed files are not actually overwritten.
-# Thus the question is redundant and confusing.
-# Test if the script is already installed.
-#if [ -d $CONFIG_DIR ] || [ -f $SCRIPT_DEST ] ; then
-#    echo "Config directory $CONFIG_DIR and/or $SCRIPT_DEST already exist."
-#    echo -n "Are you sure you want to overwrite them? (y/N) "
-#    read REPLY
-#    echo
-#    case $REPLY in
-#	y*|Y*) ;;
-#	*) echo "Aborting!" ; exit 1 ;;
-#    esac
-#fi
 
 (
 set -e
