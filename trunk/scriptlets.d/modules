@@ -10,6 +10,26 @@ AddConfigHelp "LoadModulesFromFile <filename>" "Load default modules after resum
 
 MODULES_BLACKLIST_FILE="/etc/hibernate/blacklisted-modules"
 
+NON_RECURSIVE_MODPROBE=
+
+# xrmmod calls an appropriate program to unload modules. We want to use
+# modprobe -r, if modprobe supports the -N option also (non-recursive).
+# Otherwise, we fallback to rmmod.
+xrmmod() {
+    if [ -n "$NON_RECURSIVE_MODPROBE" ] ; then
+	$NON_RECURSIVE_MODPROBE "$@" > /dev/null 2>&1
+	return $?
+    fi
+
+    if modprobe -r -N > /dev/null 2>&1 ; then
+	NON_RECURSIVE_MODPROBE="modprobe -r -N"
+    else
+	NON_RECURSIVE_MODPROBE="rmmod"
+    fi
+    vecho 3 "Removing modules with $NON_RECURSIVE_MODPROBE."
+    $NON_RECURSIVE_MODPROBE "$@" > /dev/null 2>&1
+}
+
 CheckModuleSupport() {
     [ -f "/proc/modules" ] && return 0
     vecho 1 "Kernel does not have module support compiled in! Module functions disabled."
@@ -64,7 +84,7 @@ ModulesUnload() {
 	    continue
 	fi
 
-	if rmmod `FindModuleDeps $mod` > /dev/null 2>&1 ; then
+	if xrmmod `FindModuleDeps $mod` ; then
 	    vecho 2
 	else
 	    ret=1
@@ -106,7 +126,7 @@ ModulesUnloadAllOnce() {
 		;;
 	    *)
 		vecho 2 "Unloading module $module..."
-		rmmod $module && MOD_UNLOADED="$MOD_UNLOADED $module"
+		xrmmod $module && MOD_UNLOADED="$MOD_UNLOADED $module"
 		;;
 	esac
     done
@@ -233,7 +253,7 @@ ModulesUnloadBlacklist() {
 	local i
 	for i in $deps ; do
 	    vecho 3 "Unloading $i ..."
-	    if rmmod $i > /dev/null 2>&1 ; then
+	    if xrmmod $i ; then
 		MOD_UNLOADED="$MOD_UNLOADED $i"
 	    else
 		failedmods="$failedmods $i"
