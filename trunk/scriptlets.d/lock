@@ -408,7 +408,7 @@ LockCmdlineOptions() {
 }
 
 ShouldLock() {
-    case "/$SWSUSP2_NO_SUSPEND/$USUSPEND_NO_SUSPEND/" in
+    case "/$SWSUSP2_NO_SUSPEND/$USUSPEND_NO_SUSPEND/$SWSUSP2_BUG_REPORT/" in
 	*1*)
 	    vecho 1 'Not locking the screen with --no-suspend/-n'
 	    return 1
