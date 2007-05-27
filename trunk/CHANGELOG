@@ -1,5 +1,7 @@
 1.96 (?? ??? ????)
- - Fix typeo in scriptlets.d/ususpend (Alon Bar-Lev)
+ - Fix typo in scriptlets.d/ususpend (Alon Bar-Lev)
+ - Use modprobe -r -N instead of rmmod (if we have it).
+ - Don't lock screen when doing bug reports.
 
 1.95 (18 May 2007)
  - Add support for renamed swap and file directories in suspend2 2.2.8.4 and
