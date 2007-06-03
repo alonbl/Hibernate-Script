@@ -17,6 +17,9 @@
 ### BEGIN INIT INFO
 # Provides:          hibernate-cleanup
 # Default-Start:     S
+# Default-Stop:
+# Required-Start:
+# Required-Stop:
 # Short-Description: invalidates stale swsusp and Software Suspend 2 image
 # Description:       This script invalidates any stale swsusp and Software Suspend 2 images. It
 #                    searches all swap partitions on your machine, as well as
