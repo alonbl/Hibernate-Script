@@ -58,7 +58,8 @@ CheckLastResume() {
     read last_resume < $LAST_RESUME_FILE
 
     now=`date "+%s"`
-    if [ $now -gt $(($last_resume+$LAST_RESUME_WAIT)) ] ; then
+    if [ $now -gt $(($last_resume+$LAST_RESUME_WAIT)) -o
+		$last_resume -gt $now ] ; then
 	rm -f "$LAST_RESUME_FILE"
 	return 0
     fi

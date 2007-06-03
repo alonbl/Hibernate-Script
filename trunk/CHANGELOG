@@ -1,4 +1,6 @@
 1.96 (?? ??? ????)
+ - Cope with clock going backwards when considering LAST_RESUME_WAIT
+   (Thomas de Schampheleire)
  - Fix typo in scriptlets.d/ususpend (Alon Bar-Lev)
  - Use modprobe -r -N instead of rmmod (if we have it).
  - Don't lock screen when doing bug reports.
