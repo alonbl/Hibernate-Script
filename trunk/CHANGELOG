@@ -3,6 +3,7 @@
  - Use modprobe -r -N instead of rmmod (if we have it).
  - Don't lock screen when doing bug reports.
  - Blacklist the ipw3945 module (Debian bug #427252)
+ - Add LSB headers to init.d/hibernate-cleanup.sh
 
 1.95 (18 May 2007)
  - Add support for renamed swap and file directories in suspend2 2.2.8.4 and

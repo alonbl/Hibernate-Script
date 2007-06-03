@@ -13,6 +13,16 @@
 #
 # On other SysV-based systems, you would do something like:
 #   ln -s ../init.d/hibernate-cleanup.sh /etc/rcS.d/S31hibernate-cleanup.sh
+#
+### BEGIN INIT INFO
+# Provides:          hibernate-cleanup
+# Default-Start:     S
+# Short-Description: invalidates stale swsusp and Software Suspend 2 image
+# Description:       This script invalidates any stale swsusp and Software Suspend 2 images. It
+#                    searches all swap partitions on your machine, as well as
+#                    Suspend2's filewriter files (by way of the hibernate
+#                    script telling it where to find it).
+### END INIT INFO
 
 HIBERNATE_FILEWRITER_TRAIL="/var/run/suspend2_filewriter_image_exists"
 
