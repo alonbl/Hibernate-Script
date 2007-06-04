@@ -8,6 +8,7 @@ AddConfigHelp "USuspendMethod <disk|ram|both>" "Enables use of the uswsusp suspe
 AddConfigHelp "USuspendRamForce <boolean>" "Passes the -f flag to s2ram to force suspending even if the machine is not recognised"
 AddConfigHelp "USuspendRamVbeSave <boolean>" "Passes the -s flag to s2ram to save VBE state before suspending and restore after resume"
 AddConfigHelp "USuspendRamVbePost <boolean>" "Passes the -p flag to s2ram to VBE POST the graphics card after resume"
+AddConfigHelp "USuspendRamVbeMode <boolean>" "Passes the -m flag to s2ram to get VBE mode before suspend and set it after resume"
 
 AddShortOption "n"
 AddLongOption "no-suspend"
@@ -18,6 +19,7 @@ USUSPEND_PROG=s2disk
 USUSPEND_RAM_FORCE=0
 USUSPEND_RAM_VBESAVE=0
 USUSPEND_RAM_VBEPOST=0
+USUSPEND_RAM_VBEMODE=0
 
 USuspendConfigEnabler() {
     case "$1" in
@@ -51,7 +53,10 @@ USuspendConfigEnabler() {
 	ususpendramvbepost)
 	    BoolIsOn "$1" "$2" && USUSPEND_RAM_VBEPOST=1 || return 0
 	    ;;
-	    
+        ususpendramvbemode)
+	    BoolIsOn "$1" "$2" && USUSPEND_RAM_VBEMODE=1 || return 0
+	    ;;
+
 	*) return 1;;
     esac
 
@@ -78,13 +83,14 @@ USuspendOptionHandler() {
 
 DoUSuspend() {
     if [ -z "$USUSPEND_NO_SUSPEND" ] ; then
-	vecho 1 "$EXE: Running $USUSPEND_PROG_PATH ${FORCE:+$FORCE }..."
 	ARGS=
 	if [ "$USUSPEND_PROG" = s2ram ]; then
 	    [ $USUSPEND_RAM_FORCE -eq 1 ] && ARGS="$ARGS -f"
 	    [ $USUSPEND_RAM_VBESAVE -eq 1 ] && ARGS="$ARGS -s"
 	    [ $USUSPEND_RAM_VBEPOST -eq 1 ] && ARGS="$ARGS -p"
+	    [ $USUSPEND_RAM_VBEMODE -eq 1 ] && ARGS="$ARGS -m"
 	fi
+	vecho 1 "$EXE: Running $USUSPEND_PROG_PATH $ARGS ${FORCE:+$FORCE }..."
 	$USUSPEND_PROG_PATH $ARGS 2>&1 | vcat 2 \
 	    || vecho 0 "$EXE: $USUSPEND_PROG_PATH failed."
     else

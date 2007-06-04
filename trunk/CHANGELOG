@@ -1,4 +1,5 @@
 1.96 (?? ??? ????)
+ - Add support for vbe mode for ususpend (Ricardo Salveti)
  - Cope with clock going backwards when considering LAST_RESUME_WAIT
    (Thomas de Schampheleire)
  - Fix typo in scriptlets.d/ususpend (Alon Bar-Lev)
