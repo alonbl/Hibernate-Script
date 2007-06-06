@@ -9,6 +9,7 @@ AddConfigHelp "USuspendRamForce <boolean>" "Passes the -f flag to s2ram to force
 AddConfigHelp "USuspendRamVbeSave <boolean>" "Passes the -s flag to s2ram to save VBE state before suspending and restore after resume"
 AddConfigHelp "USuspendRamVbePost <boolean>" "Passes the -p flag to s2ram to VBE POST the graphics card after resume"
 AddConfigHelp "USuspendRamVbeMode <boolean>" "Passes the -m flag to s2ram to get VBE mode before suspend and set it after resume"
+AddConfigHelp "USuspendRamAcpiSleep <number>" "Passes the -a flag to s2ram to set the acpi_sleep parameter before suspend: 1=s3_bios, 2=s3_mode, 3=both"
 
 AddShortOption "n"
 AddLongOption "no-suspend"
@@ -20,6 +21,7 @@ USUSPEND_RAM_FORCE=0
 USUSPEND_RAM_VBESAVE=0
 USUSPEND_RAM_VBEPOST=0
 USUSPEND_RAM_VBEMODE=0
+USUSPEND_RAM_ACPISLEEP=0
 
 USuspendConfigEnabler() {
     case "$1" in
@@ -53,10 +55,13 @@ USuspendConfigEnabler() {
 	ususpendramvbepost)
 	    BoolIsOn "$1" "$2" && USUSPEND_RAM_VBEPOST=1 || return 0
 	    ;;
-        ususpendramvbemode)
+	ususpendramvbemode)
 	    BoolIsOn "$1" "$2" && USUSPEND_RAM_VBEMODE=1 || return 0
 	    ;;
-
+	ususpendramacpisleep)
+	    USUSPEND_RAM_ACPISLEEP="$2" || return 0
+	    ;;
+	    
 	*) return 1;;
     esac
 
@@ -89,6 +94,7 @@ DoUSuspend() {
 	    [ $USUSPEND_RAM_VBESAVE -eq 1 ] && ARGS="$ARGS -s"
 	    [ $USUSPEND_RAM_VBEPOST -eq 1 ] && ARGS="$ARGS -p"
 	    [ $USUSPEND_RAM_VBEMODE -eq 1 ] && ARGS="$ARGS -m"
+	    [ $USUSPEND_RAM_ACPISLEEP -ne 0 ] && ARGS="$ARGS -a $USUSPEND_RAM_ACPISLEEP"
 	fi
 	vecho 1 "$EXE: Running $USUSPEND_PROG_PATH $ARGS ${FORCE:+$FORCE }..."
 	$USUSPEND_PROG_PATH $ARGS 2>&1 | vcat 2 \

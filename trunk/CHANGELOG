@@ -1,5 +1,4 @@
 1.96 (?? ??? ????)
- - Add support for vbe mode for ususpend (Ricardo Salveti)
  - Cope with clock going backwards when considering LAST_RESUME_WAIT
    (Thomas de Schampheleire)
  - Fix typo in scriptlets.d/ususpend (Alon Bar-Lev)
@@ -7,6 +6,9 @@
  - Don't lock screen when doing bug reports.
  - Blacklist the ipw3945 module (Debian bug #427252)
  - Add LSB headers to init.d/hibernate-cleanup.sh
+ - Add USuspendRamVbeMode and USuspendRamAcpiSleep to pass -m/-a flags to
+   s2ram (mainly for Intel chipsets) (Ricardo Salvetti, Enrico Tassi; Debian
+   bug #427684).
 
 1.95 (18 May 2007)
  - Add support for renamed swap and file directories in suspend2 2.2.8.4 and
