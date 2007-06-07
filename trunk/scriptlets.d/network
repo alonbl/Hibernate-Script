@@ -109,7 +109,7 @@ NetworkDetectDistro() {
 	    ;;
 	debian|ubuntu|mandrake|fedora|redhat)
 	    network_ifup() {
-		/sbin/ifup $*
+		/sbin/ifup $* &
 	    }
 	    network_ifdown() {
 		/sbin/ifdown $*

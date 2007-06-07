@@ -13,6 +13,8 @@
    switches, hibernates, and returns to X on resume, this option waits
    until after the resume, then switches to text mode and then back to X (Joey
    Hess; Debian bug #420400, #420401).
+ - scriptlets.d/network: run ifup in the background on Debian to avoid locking
+   problems (Joey Hess; Debian bug #422539).
 
 1.95 (18 May 2007)
  - Add support for renamed swap and file directories in suspend2 2.2.8.4 and
