@@ -9,6 +9,10 @@
  - Add USuspendRamVbeMode and USuspendRamAcpiSleep to pass -m/-a flags to
    s2ram (mainly for Intel chipsets) (Ricardo Salvetti, Enrico Tassi; Debian
    bug #427684).
+ - Add SwitchToTextModeOnResume option. Unlike SwitchToTextMode, which
+   switches, hibernates, and returns to X on resume, this option waits
+   until after the resume, then switches to text mode and then back to X (Joey
+   Hess; Debian bug #420400, #420401).
 
 1.95 (18 May 2007)
  - Add support for renamed swap and file directories in suspend2 2.2.8.4 and
