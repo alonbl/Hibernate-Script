@@ -25,11 +25,11 @@ AddConfigHelp "Swsusp2AllSettings <params> (requires UseSuspend2 on)" "If specif
 
 AddConfigHelp "Swsusp2AllSettingsFile <filename> (requires UseSuspend2 on)" "If specified, sets all of the settings for Software Suspend 2 and all its plugins at once, from the given file. The parameter should be the path to a file containing the result of \"cat $SWSUSP_ROOT/all_settings > <filename>\"after you have set your desired settings manually."
 
-AddConfigHelp "SuspendDevice <device> (requires UseSuspend2 on)" "If specified, sets the suspend device by writing to the resume2 entry in $SWSUSP_ROOT. This does not automatically set the resuming device - you will need to make sure your bootloader or initrd script does this."
+AddConfigHelp "SuspendDevice <device> (requires UseSuspend2 on)" "If specified, sets the suspend device by writing to the resume[2] entry in $SWSUSP_ROOT. This does not automatically set the resuming device - you will need to make sure your bootloader or initrd script does this."
 
 AddConfigHelp "FilewriterLocation <filename> <size in MB> (requires UseSuspend2 on)" "This option sets up the given filename to act as a destination file for writing the suspend image to, and verifies that it can act as a valid destination. If the file does not exist, the file is created. This option is only relevant if you are using the filewriter plugin for Software Suspend."
 
-AddConfigHelp "VerifyFilewriterResume2 <boolean> (requires UseSuspend2 on)" "When this option is on, you will be prompted if your current kernel command-line does not match the correct resume2 for the filewriter. This option is on by default."
+AddConfigHelp "VerifyFilewriterResume2 <boolean> (requires UseSuspend2 on)" "When this option is on, you will be prompted if your current kernel command-line does not match the correct resume[2] for the filewriter. This option is on by default."
 
 AddConfigHelp "LoadSuspendModules <module name> [...] (requires UseSuspend2 on)" "Loads the given modules before even detecting Software Suspend. This may be required when Software Suspend is compiled as modules that need to be loaded prior to suspending."
 AddConfigHelp "UnloadSuspendModulesAfterResume <boolean> (requires UseSuspend2 on)" "If yes, will unload the Software Suspend modules mentioned above after resuming."
@@ -410,6 +410,9 @@ Swsusp2ConfigSet() {
     [ -n "$SWSUSP_ASYNC_IO_LIMIT" ] && [ -f $SWSUSP_ROOT/async_io_limit ] && \
     	echo $SWSUSP_ASYNC_IO_LIMIT > $SWSUSP_ROOT/async_io_limit
 
+    [ -n "$SWSUSP_RESUME2" ] && [ -f $SWSUSP_ROOT/resume ] && \
+    	echo $SWSUSP_RESUME2 > $SWSUSP_ROOT/resume
+
     [ -n "$SWSUSP_RESUME2" ] && [ -f $SWSUSP_ROOT/resume2 ] && \
     	echo $SWSUSP_RESUME2 > $SWSUSP_ROOT/resume2
 
@@ -663,21 +666,29 @@ EOT
 
     # If we have the resume2 proc entry, we can do some further tests
     # Otherwise, bail gracefully
-    [ -f $SWSUSP_ROOT/resume2 ] || return 0
+    if [ -f $SWSUSP_ROOT/resume2 ]; then
+        RESUME2_FILE=resume2
+    else
+        if [ -f $SWSUSP_ROOT/resume ]; then
+            RESUME2_FILE=resume
+        fi
+    fi
+
+    [ -n $RESUME2_FILE ] || return 0
 
     # If we're going to set resume2, we needn't care about this.
     [ -n "$SWSUSP_RESUME2" ] && return 0
 
     # See if we have been given a resume2 line
-    read REPLY < $SWSUSP_ROOT/resume2
+    read REPLY < $SWSUSP_ROOT/$RESUME2_FILE
     if [ -z "$REPLY" ] ; then
 	cat <<EOT
 You haven't specified a resume2= parameter on your kernel command line
 
-Your GRUB or LILO config should have something like resume2=swap:/dev/hdaX
+Your GRUB or LILO config should have something like $RESUME2_FILE=swap:/dev/hdaX
 where /dev/hdaX is your swap partition. You will then need to either reboot
 after doing so or set it manually (this time only) using:
-    echo swap:/dev/hdaX > $SWSUSP_ROOT/resume2
+    echo swap:/dev/hdaX > $SWSUSP_ROOT/$RESUME2_FILE
 EOT
 	return 2
     fi
@@ -701,7 +712,7 @@ Swsusp2LoadModules() {
     done
     # Ensure we really have loaded the modules (avoid race conditions)
     i=0
-    while ! [ -f $SWSUSP_ROOT/resume2 ] && [ $i -lt 3 ] ; do
+    while ! [ -f $SWSUSP_ROOT/$RESUME2_FILE ] && [ $i -lt 3 ] ; do
 	sleep 1
 	i=$(($i+1))
     done
@@ -779,17 +790,17 @@ Swsusp2SetupFilewriter() {
     [ x"$SWSUSP_FILEWRITER_NOVERIFY" = "x1" ] && return 0
 
     local new_resume2
-    new_resume2="`cat $SWSUSP_ROOT/resume2`"
+    new_resume2="`cat $SWSUSP_ROOT/$RESUME_FILE`"
     if [ -z "$new_resume2" ] ; then
-	vecho 0 "ABORTING: $SWSUSP_ROOT/resume2 did not return a valid result."
+	vecho 0 "ABORTING: $SWSUSP_ROOT/$RESUME_FILE did not return a valid result."
 	return 2 # abort even if forced
     fi
 
     if ! grep "$new_resume2" /proc/cmdline ; then
-	filewriter_target=`cat $SWSUSP_ROOT/resume2`
-	vecho 0 "ABORTING: resume2 is not setup correctly. Unless you have setup your bootloader"
+	filewriter_target=`cat $SWSUSP_ROOT/$RESUME_FILE`
+	vecho 0 "ABORTING: $RESUME_FILE is not setup correctly. Unless you have setup your bootloader"
 	vecho 0 "          correctly, resuming will most likely fail. To correct this, add"
-	vecho 0 "          \"resume2=$filewriter_target\" to your kernel command line in your"
+	vecho 0 "          \"$RESUME_FILE=$filewriter_target\" to your kernel command line in your"
 	vecho 0 "          LILO or GRUB configuration file and reboot."
 	return 2 # abort even if forced
     fi

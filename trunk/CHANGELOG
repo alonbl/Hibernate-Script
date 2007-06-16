@@ -1,4 +1,6 @@
 1.96 (?? ??? ????)
+ - Add support for rename of /sys/power/suspend2/resume2 to .../resume,
+   matching Suspend2 release 2.2.10.2 and later.
  - Cope with clock going backwards when considering LAST_RESUME_WAIT
    (Thomas de Schampheleire)
  - Fix typo in scriptlets.d/ususpend (Alon Bar-Lev)
