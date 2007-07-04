@@ -227,6 +227,8 @@ FindXServer() {
 	    xuser=`/bin/ls -ld /proc/$xpid/ | awk '{print $3}'`
 	    [ -z $xauth ] && [ -n $xhome ] && [ -f $xhome/.Xauthority ] && xauth=$xhome/.Xauthority
 
+	    [ -z $xauth ] && continue
+
 	    XAUTHORITY=$xauth su $xuser -c "$xhost" > /dev/null 2>&1 && break
 
 	   xauth=
