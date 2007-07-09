@@ -15,8 +15,8 @@
    switches, hibernates, and returns to X on resume, this option waits
    until after the resume, then switches to text mode and then back to X (Joey
    Hess; Debian bug #420400, #420401).
- - scriptlets.d/network: run ifup in the background on Debian to avoid locking
-   problems (Joey Hess; Debian bug #422539).
+ - scriptlets.d/network: run ifup in the background on Debian/Ubuntu to avoid
+   locking problems (Joey Hess; Debian bug #422539).
  - scriptlets.d/lock: do not hang in FindXServer when no XAUTHORITY variable
    is set.
 

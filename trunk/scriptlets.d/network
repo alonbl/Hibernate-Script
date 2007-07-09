@@ -107,9 +107,18 @@ NetworkDetectDistro() {
 	    }
 	    NETWORK_CALL_ONCE=1
 	    ;;
-	debian|ubuntu|mandrake|fedora|redhat)
+	debian|ubuntu)
 	    network_ifup() {
-		/sbin/ifup $* &
+		start-stop-daemon --start --background \
+		    --startas /sbin/ifup --name "hibernate_ifup_$1" -- $*
+	    }
+	    network_ifdown() {
+		/sbin/ifdown $*
+	    }
+	    ;;
+	mandrake|fedora|redhat)
+	    network_ifup() {
+		/sbin/ifup $*
 	    }
 	    network_ifdown() {
 		/sbin/ifdown $*
