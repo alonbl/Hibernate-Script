@@ -26,6 +26,7 @@
  - scriptlets/networkmanager: put NM to sleep and wake it up after resume
    (thanks Markus Becker; Debian bug #387456).
  - disable vbetool by default in ram.conf (Debian bug #400688).
+ - brought hibernate.vim up to speed.
 
 1.95 (18 May 2007)
  - Add support for renamed swap and file directories in suspend2 2.2.8.4 and

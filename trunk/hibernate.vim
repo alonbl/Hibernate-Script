@@ -114,6 +114,7 @@ syntax keyword hibernate_conf changegrubmenu contained nextgroup=hibernate_boole
 syntax keyword hibernate_conf grubmenufile contained nextgroup=hibernate_filenames skipwhite
 syntax keyword hibernate_conf alternategrubmenufile contained nextgroup=hibernate_filenames skipwhite
 syntax keyword hibernate_conf backupgrubmenufile contained nextgroup=hibernate_filenames skipwhite
+syntax keyword hibernate_conf remountxfsboot contained nextgroup=hibernate_boolean skipwhite
 
 " hardware_tweaks
 syntax keyword hibernate_conf ibmacpi contained nextgroup=hibernate_boolean skipwhite
@@ -166,6 +167,9 @@ highlight link hibernate_network_auto Constant
 
 syntax keyword hibernate_conf downinterfaces contained nextgroup=hibernate_interfaces,hibernate_network_auto skipwhite
 syntax keyword hibernate_conf upinterfaces contained nextgroup=hibernate_interfaces,hibernate_network_auto skipwhite
+
+" networkmanager
+syntax keyword hibernate_conf enablenmreconnect contained nextgroup=hibernate_boolean skipwhite
 
 " pause_audio
 syntax keyword hibernate_conf muteaudio contained nextgroup=hibernate_boolean skipwhite
@@ -249,7 +253,15 @@ syntax keyword hibernate_conf xsuspendtext contained nextgroup=hibernate_text sk
 syntax keyword hibernate_conf xresumetext contained nextgroup=hibernate_text skipwhite
 syntax keyword hibernate_conf xosdsettings contained nextgroup=hibernate_text skipwhite
 
+" xbacklight
+syntax keyword hibernate_conf backlight contained nextgroup=hibernate_boolean skipwhite
+
+" gaim
+syntax keyword hibernate_conf logoutgaim contained nextgroup=hibernate_boolean skipwhite
+syntax keyword hibernate_conf gaimrestorestatus contained nextgroup=hibernate_boolean skipwhite
+syntax keyword hibernate_conf gaimlogoutmessage contained nextgroup=hibernate_text skipwhite
+syntax keyword hibernate_conf gaimloginmessage contained nextgroup=hibernate_text skipwhite
+
 " Full-line comments:
 syntax match hibernate_comment /^#.*/
 highlight link hibernate_comment Comment
-
