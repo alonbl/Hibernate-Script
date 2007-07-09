@@ -19,6 +19,8 @@
    locking problems (Joey Hess; Debian bug #422539).
  - scriptlets.d/lock: do not hang in FindXServer when no XAUTHORITY variable
    is set.
+ - scriptlets.d/xbacklight: fancy fading on suspend and resume thanks to Joey
+   Hess (Debian bug #430148).
 
 1.95 (18 May 2007)
  - Add support for renamed swap and file directories in suspend2 2.2.8.4 and
