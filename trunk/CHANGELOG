@@ -23,6 +23,8 @@
    Hess (Debian bug #430148).
  - scriptlets.d/gaim: inform running gaim instances of suspend/resume to let
    them go offline/online (thanks Norbert Buchmuller; Debian bug #427376).
+ - scriptlets/networkmanager: put NM to sleep and wake it up after resume
+   (thanks Markus Becker; Debian bug #387456).
 
 1.95 (18 May 2007)
  - Add support for renamed swap and file directories in suspend2 2.2.8.4 and
