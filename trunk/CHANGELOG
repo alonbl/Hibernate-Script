@@ -1,4 +1,5 @@
 1.96 (?? ??? ????)
+ - Stop blacklisting button module after 2.6.21.
  - Fix support for file & swap allocators (rename from $NAMEwriter).
  - Add support for rename of Suspend2 to TuxOnIce.
  - Add support for rename of /sys/power/suspend2/resume2 to .../resume,
