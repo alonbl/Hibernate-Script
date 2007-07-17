@@ -1,3 +1,8 @@
+1.97 (???)
+ - Add USuspendRamUnsureOk config option to instruct s2ram to continue when
+   it's unsure about the system type, thus not requiring -f to be passed
+   (thanks to Andrew Pimlott; Debian bug #433028).
+
 1.96 (16 July 2007)
  - Stop blacklisting button module after 2.6.21.
  - Fix support for file & swap allocators (rename from $NAMEwriter).
