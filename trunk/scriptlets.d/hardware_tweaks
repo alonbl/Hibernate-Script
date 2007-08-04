@@ -148,6 +148,19 @@ FullSpeedCPUResume() {
 }
 
 ###
+## ACPI Video flags
+###
+
+AddConfigHelp "AcpiVideoS3Bios <boolean>" "Sets s3_bios mode, replaces acpi_sleep=s3_bios kernel parameter."
+AddConfigHelp "AcpiVideoS3Mode <boolean>" "Sets s3_mode mode, replaces acpi_sleep=s3_mode kernel parameter."
+
+ACPIVIDEO_FLAGS=0
+
+AcpiVideoFlagsSuspend() {
+    echo "${ACPIVIDEO_FLAGS}" > /proc/sys/kernel/acpi_video_flags
+}
+
+###
 ## Option handler for all of the above:
 ###
 
@@ -197,6 +210,22 @@ HardwareTweaksOptions() {
 		AddSuspendHook 98 FullSpeedCPUSuspend
 		AddResumeHook 98 FullSpeedCPUResume
 		FULLSPEEDCPU_HOOKED=1
+	    fi
+	    ;;
+	acpivideos3bios)
+	    BoolIsOn "$1" "$2" || return 0
+	    ACPIVIDEO_FLAGS=$((${ACPIVIDEO_FLAGS}+1))
+	    if [ -z "$ACPIVIDEOFLAGS_HOOKED" ]; then
+		    AddSuspendHook 12 AcpiVideoFlagsSuspend
+		    ACPIVIDEOFLAGS_HOOKED=1
+	    fi
+	    ;;
+	acpivideos3mode)
+	    BoolIsOn "$1" "$2" || return 0
+	    ACPIVIDEO_FLAGS=$((${ACPIVIDEO_FLAGS}+2))
+	    if [ -z "$ACPIVIDEOFLAGS_HOOKED" ]; then
+		    AddSuspendHook 12 AcpiVideoFlagsSuspend
+		    ACPIVIDEOFLAGS_HOOKED=1
 	    fi
 	    ;;
 	*)
