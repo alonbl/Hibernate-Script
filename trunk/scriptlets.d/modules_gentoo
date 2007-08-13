@@ -16,31 +16,39 @@ GentooModulesAutoload() {
 
     . "${FUNC}"
     # taken from gentoo's /etc/init.d/modules
-    if [ -f /etc/modules.autoload ] && [ ! -L /etc/modules.autoload ] ; then
-	modules_autoload_file= /etc/modules.autoload
-    else
-	local KV="$(uname -r)"
-	local KV_MAJOR="`KV_major "${KV}"`"
-	local KV_MINOR="`KV_minor "${KV}"`"
+    
+    local KV=$(uname -r)
+    local KV_MAJOR=${KV%%.*}
+    local x=${KV#*.}
+    local KV_MINOR=${x%%.*}
+    x=${KV#*.*.}
+    local KV_MICRO=${x%%-*}
 
-	# New support for /etc/modules.autoload/kernel-$KV
-	if [ "$(get_KV)" -ge "$(KV_to_int '2.5.48')" ] && \
-	[ -f /etc/modules.autoload.d/kernel-"${KV_MAJOR}.${KV_MINOR}" ]
-	then
-	    modules_autoload_file="/etc/modules.autoload.d/kernel-${KV_MAJOR}.${KV_MINOR}"
-	elif [ ! -f /etc/modules.autoload.d/kernel-"${KV_MAJOR}.${KV_MINOR}" ]
-	then
-	    ewarn "Missing /etc/modules.autoload.d/kernel-${KV_MAJOR}.${KV_MINOR}"
-	    modules_autoload_file="/etc/modules.autoload.d/kernel-2.4"
-	else
-	    modules_autoload_file="/etc/modules.autoload.d/kernel-2.4"
-	fi
+    local auto=""
+    if [ -f /etc/modules.autoload -a ! -L /etc/modules.autoload ]; then
+	auto=/etc/modules.autoload
+    else
+	local x= f="/etc/modules.autoload.d/kernel"
+	for x in "${KV}" ${KV_MAJOR}.${KV_MINOR}.${KV_MICRO} ${KV_MAJOR}.${KV_MINOR} ; do
+		if [ -f "${f}-${x}.${RC_SOFTLEVEL}" ] ; then
+			auto="${f}-${x}.${RC_SOFTLEVEL}"
+			break
+		fi
+		if [ "${RC_SOFTLEVEL}" = "${RC_BOOTLEVEL}" -a -f "${f}-${x}.${RC_DEFAULTLEVEL}" ] ; then
+			auto="${f}-${x}.${RC_DEFAULTLEVEL}"
+			break
+		fi
+		if [ -f "${f}-${x}" ] ; then
+			auto="${f}-${x}"
+			break
+		fi
+	done
     fi
 
     local MOD
     local args
-    # Loop over every line in $modules_autoload_file.
-    vecho 1 "Loading modules listed $modules_autoload_file"
+    # Loop over every line in $auto.
+    vecho 1 "Loading modules listed $auto"
     while true ; do
 	read MOD args
 	[ $? -ne 0 ] && [ -z "$MOD" ] && break
@@ -49,7 +57,7 @@ GentooModulesAutoload() {
 	esac
 	vecho 1 "Loading $MOD"
 	modprobe ${MOD} ${args}
-    done < $modules_autoload_file
+    done < $auto
 
     return 0
 }

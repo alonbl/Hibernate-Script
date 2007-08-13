@@ -3,6 +3,8 @@
    it's unsure about the system type, thus not requiring -f to be passed
    (thanks to Andrew Pimlott; Debian bug #433028).
  - Add AcpiVideo* to hardware_tweaks (Alon Bar-Lev)
+ - Modify modules_gentoo for baselayout-2, will work with
+   baselayout-1 too (Alon Bar-Lev)
 
 1.96 (16 July 2007)
  - Stop blacklisting button module after 2.6.21.
