@@ -43,7 +43,7 @@ check_swap_sig() {
 	while read  where what type rest ; do
 		test "$type" = "swap" || continue
 		case "$(dd if=$where bs=1 count=6 skip=4086 2>/dev/null)" in
-			S1SUSP|S2SUSP|pmdisk|[zZ]*)
+			S1SUSP|S2SUSP|ULSUSP|pmdisk|[zZ]*)
 				msg_status "$where"
 				clear_swap $where
 				msg_status ", "

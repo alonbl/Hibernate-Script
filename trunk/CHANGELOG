@@ -6,6 +6,7 @@
  - Modify modules_gentoo for baselayout-2, will work with
    baselayout-1 too (Alon Bar-Lev)
  - Modify for splashutils-1.5.1.1 (Alon Bar-Lev)
+ - Add uswsup support to hibernate-cleanup (Alon Bar-Lev)
 
 1.96 (16 July 2007)
  - Stop blacklisting button module after 2.6.21.
