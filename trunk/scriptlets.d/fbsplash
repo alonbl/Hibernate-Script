@@ -35,10 +35,10 @@ FBSplashProgress() {
 FBSplashBegin() {
     [ x"$USE_FBSPLASH" != "x1" ] && return 0
 
-    # check if splash_util exists
-    if ! command -v splash_util > /dev/null 2>&1 ; then
+    # check if fbsplashd exists
+    if ! command -v fbsplashd > /dev/null 2>&1 ; then
 	USE_FBSPLASH=0
-	vecho 1 "'splash_util' utility not found. fbsplash disabled."
+	vecho 1 "'fbsplashd' utility not found. fbsplash disabled."
 	return 0
     fi
 
@@ -52,7 +52,7 @@ FBSplashBegin() {
     # Start up the splash daemon.
     mkdir -p `dirname $FBSPLASH_FIFO`
     rm -f $FBSPLASH_FIFO > /dev/null 2>&1
-    if ! splash_util -t $FBSPLASH_THEME -d -m v ; then
+    if ! fbsplashd --theme $FBSPLASH_THEME --mesg "Suspending..." --effects "fadein" ; then
 	USE_FBSPLASH=0
 	vecho 0 "Splash daemon failed to start. fbsplash disabled."
 	return 0
@@ -76,8 +76,8 @@ FBSplashBegin() {
 }
 
 FBSplashStartResume() {
-    TimedFBSplashCtl "set mode verbose\nset mode silent\n"
-    TimedFBSplashCtl "set message Reloading drivers and applications ...\n"
+    TimedFBSplashCtl "set tty silent 2\nset mode silent\nset theme $FBSPLASH_THEME\nrepaint\n"
+    TimedFBSplashCtl "set message Reloading drivers and applications ...\nrepaint\n"
     FBSPLASH_PROGRESS=0
     FBSplashProgress
 }
@@ -87,11 +87,12 @@ FBSplashStartSuspend() {
 }
 
 FBSplashOff() {
+    TimedFBSplashCtl "set effects fadeout\n"
     TimedFBSplashCtl "exit\n"
 
-    # Gah, this hack shouldn't be required:
-    sleep 0.5
-    TimedFBSplashCtl "exit\n"
+    while killall -0 fbsplashd; do
+    	sleep 1
+    done
 
     [ -n "$SAVED_FBSPLASH_PRINTK_LEVEL" ] && \
 	echo $SAVED_FBSPLASH_PRINTK_LEVEL > /proc/sys/kernel/printk
