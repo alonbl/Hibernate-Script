@@ -42,7 +42,7 @@ shopt > /dev/null 2>&1 && USING_BASH=1
 if [ -z "$NEED_POSIX" ] && [ -z "$TRIED_DASH" ] &&
 	command -v dash > /dev/null 2>&1 ; then
 
-    if [ "`basename $0`" = "$0" ] ; then
+    if [ "${0##*/}" = "$0" ] ; then
 	myself=`command -v $0` || myself=
     elif [ -x "$0" ] ; then
 	myself=$0
@@ -57,7 +57,7 @@ unset TRIED_DASH
 SWSUSP_D="/etc/hibernate"
 SCRIPTLET_PATH="$SWSUSP_D/scriptlets.d /usr/local/share/hibernate/scriptlets.d /usr/share/hibernate/scriptlets.d"
 DEFAULT_CONFIG_FILE="$SWSUSP_D/hibernate.conf"
-EXE=`basename $0`
+EXE="${0##*/}"
 VERSION="1.97"
 
 # Add these to the $PATH just in case.
@@ -493,7 +493,7 @@ CheckImplicitAlternateConfig() {
     [ -n "$CONFIG_FILE" ] && return 0
 
     local self
-    self=`basename $0`
+    self="${0##*/}"
     case $self in
 	hibernate-*) 
 	    CONFIG_FILE="$SWSUSP_D/${self#hibernate-}.conf"
@@ -553,7 +553,7 @@ LoadScriptlets() {
 	    case "$scriptlet" in *~|*.bak) continue ;; esac
 
 	    # Don't source a scriptlet by name more than once.
-	    scriptlet_name="`basename $scriptlet`"
+	    scriptlet_name="${scriptlet##*/}"
 
 	    eval "prev_path=\"\${HAVE_SOURCED_SCRIPTLET_$scriptlet_name}\""
 
