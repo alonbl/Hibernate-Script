@@ -19,7 +19,7 @@ IsBadPPCKernel() {
     # ppc/powerpc prior to 2.6.16.20 oopsed when you try to activate STR this
     # way.
     [ $1 != "mem" ] && return 1
-    case `arch` in
+    case `uname -m` in
 	ppc|ppc64|powerpc)
 	    ;;
 	*)
