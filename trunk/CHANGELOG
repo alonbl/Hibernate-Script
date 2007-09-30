@@ -20,6 +20,8 @@
    backlight was initially below 10% (Debian bug #434825).
  - scriptlets.d/sysfs_power_state: use `uname -m` instead of `arch`; thanks to
    Uwe Herman (Debian bug #436287).
+ - prevent double execution of included configuration files (Debian bug
+   #433965). This also takes care of Debian bug #392712.
 
 1.96 (16 July 2007)
  - Stop blacklisting button module after 2.6.21.

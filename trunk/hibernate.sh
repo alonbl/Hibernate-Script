@@ -687,9 +687,11 @@ ProcessConfigOption() {
 
 # ReadConfigFile: reads in a configuration file from stdin and sets the
 # appropriate variables in the script. Returns 0 on success, exits on errors
+conffiles_read=
 ReadConfigFile() {
     local option params
     local file_name="$1"
+    
     if [ ! -f "${file_name}" ] ; then
 	# Search in /etc/hibernate
 	if [ -f "$SWSUSP_D/$file_name" ] ; then
@@ -700,6 +702,12 @@ ReadConfigFile() {
 	    return 1
 	fi
     fi
+
+    if [ "${conffiles_read#*$file_name}" != "$conffiles_read" ]; then
+  	vecho 2 "$EXE: Skipping already included config file $file_name"
+  	return 0
+    fi
+
     while true ; do
 	# Doing the read this way allows means we don't require a new-line
 	# at the end of the file.
