@@ -218,7 +218,7 @@ FindXServer() {
 	fi
     done
     if [ -z $xuser ] ; then
-        for xpid in `pidof kwrapper ksmserver kdeinit gnome-session fvwm fvwm2 pwm blackbox fluxbox X XFree86 Xorg` ; do
+        for xpid in `pidof kwrapper ksmserver kdeinit gnome-session fvwm fvwm2 pwm blackbox fluxbox WindowMaker X XFree86 Xorg` ; do
 	    # Ensure the process still exists, and we aren't hallucinating.
 	    [ -d "/proc/$xpid/" ] || continue
 
