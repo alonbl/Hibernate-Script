@@ -8,6 +8,7 @@ AddConfigHelp "LockGnomeScreenSaver <boolean>" "Lock all local X11 sessions with
 AddConfigHelp "LockXLock <boolean>" "Lock active X11 session using xlock."
 AddConfigHelp "LockXAutoLock <boolean>" "Lock all local X11 sessions running xautolock."
 AddConfigHelp "LockConsoleAs <username>" "Locks the entire system after resuming, requiring you to enter either <username>'s or root's password to unlock it. (Requires vlock)."
+AddConfigHelp "LockXtrLock <boolean>" "Lock active X11 session using xtrlock."
 
 AddOptionHandler LockCmdlineOptions
 AddLongOption 'lock-console-as:'
@@ -308,6 +309,34 @@ SwitchToLockConsole() {
     return 0
 }
 
+LockXtrlock() {
+    FindXServer || return 0
+    if command -v xtrlock > /dev/null 2>&1 ; then
+    	vecho 1 'Trying xtrlock'
+
+    	## somehow the xdisp & xauth & xuser vars are clobbered
+    	## by the time they reach here (or not exported ?)
+    	local xdisp xuser xauth
+    	xdisp=$DISPLAY
+    	if [ -n "$XUSER" ] && [ -n "$XAUTHORITY" ] ; then
+      	    xuser=$XUSER
+      	    xauth=$XAUTHORITY
+    	elif [ -n "$xhome" ] ; then
+      	    xuser="${xhome##*/}"
+      	    xauth=$xhome/.Xauthority
+    	else
+      	    return 0
+    	fi
+    	vecho 2 "Locking ${xuser}'s xtrlock on display $xdisp using authority file $xauth"
+    	DISPLAY=$xdisp XAUTHORITY=$xauth su $xuser -c "xtrlock &"
+    	if [ $? -ne 0 ] ; then
+      	    vecho 0 "Failed to activate ${xuser}'s xtrlock on $xdisp using authority file $xauth."
+    	fi
+    	return 0
+    fi
+    return 0
+}
+
 LockOptions() {
     case $1 in
 	lockkde)
@@ -381,6 +410,18 @@ LockOptions() {
 		CONSOLELOCK_HOOKED=1
 	    fi
 	    ;;
+
+        lockxtrlock)
+            if BoolIsOn "$1" "$2" ; then
+    	    	LOCK_XTRLOCK=1
+    	    	if [ -z "$XTRLOCK_HOOKED" ]; then
+            	    AddResumeHook 91 LockXtrlock
+            	    XTRLOCK_HOOKED=1
+    	    	fi
+      	    	else
+    	    	LOCK_XTRLOCK=0
+            fi
+            ;;
 
 	*)
 	    return 1

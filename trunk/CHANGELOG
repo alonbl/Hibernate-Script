@@ -7,6 +7,7 @@
    baselayout-1 too (Alon Bar-Lev)
  - Modify for splashutils-1.5.1.1 (Alon Bar-Lev)
  - Add uswsup support to hibernate-cleanup (Alon Bar-Lev)
+ - scriptlets.d/lock now supports XtrLock (Patch by "cg"; Debian bug #427475).
 
 1.96 (16 July 2007)
  - Stop blacklisting button module after 2.6.21.
