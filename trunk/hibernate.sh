@@ -222,8 +222,8 @@ FindXServer() {
 	    # Ensure the process still exists, and we aren't hallucinating.
 	    [ -d "/proc/$xpid/" ] || continue
 
-	    xauth=`awk 'BEGIN{RS="\\000";FS="="}($1 == "XAUTHORITY"){print $2}' < /proc/$xpid/environ`
-	    xhome=`awk 'BEGIN{RS="\\000";FS="="}($1 == "HOME"){print $2}' < /proc/$xpid/environ`
+	    xauth="`get_env_var_of_process XAUTHORITY $xpid`"
+	    xhome="`get_env_var_of_process HOME $xpid`"
 	    xuser=`/bin/ls -ld /proc/$xpid/ | awk '{print $3}'`
 	    [ -z $xauth ] && [ -n $xhome ] && [ -f $xhome/.Xauthority ] && xauth=$xhome/.Xauthority
 
@@ -808,6 +808,14 @@ DoWork() {
 
 ctrlc_handler() {
     SUSPEND_ABORT=1
+}
+
+# Gets the value of the environment variable in the environment space of the
+# processes identified by its PID.
+get_env_var_of_process()
+{
+    local pid="$1" envvar="$2"
+    tr '\0' '\n' </proc/$pid/environ | sed -ne "s/^$envvar=//p"
 }
 
 ############################### MAIN #########################################
