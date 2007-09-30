@@ -21,7 +21,10 @@
  - scriptlets.d/sysfs_power_state: use `uname -m` instead of `arch`; thanks to
    Uwe Herman (Debian bug #436287).
  - prevent double execution of included configuration files (Debian bug
-   #433965). This also takes care of Debian bug #392712.
+   #433965). This also takes care of Debian bug #392712. Thanks to "CSights"
+   and Martin Ziegler for analysing this.
+ - Fix filewriter support for Tux-On-Ice; thanks to Matthias Hensler for the
+   patch.
 
 1.96 (16 July 2007)
  - Stop blacklisting button module after 2.6.21.

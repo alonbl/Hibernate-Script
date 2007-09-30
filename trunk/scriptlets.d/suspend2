@@ -74,9 +74,13 @@ Swsusp2ConfigEnabler() {
 	/sbin/modprobe --first-time "${mod}" >/dev/null 2>&1  && SWSUSP_RMOD="${mod} ${SWSUSP_RMOD}"
     done
 
+    # signature for filewriter
+    FILEWRITER_SIGNATURE="Suspend2"
+
     # Detect where suspend2 is these days.
     if [ -d "/sys/power/tuxonice/" ] ; then
 	SWSUSP_ROOT="/sys/power/tuxonice"
+	FILEWRITER_SIGNATURE="TuxOnIce"
     elif [ -d "/sys/power/suspend2/" ] ; then
 	SWSUSP_ROOT="/sys/power/suspend2"
     elif [ -d "/proc/swsusp/" ] ; then
@@ -748,22 +752,31 @@ Swsusp2SetupFilewriter() {
     if ! [ -e "$SWSUSP_FILEWRITER_LOC" ] ; then
 	vecho 0 "$EXE: Creating $SWSUSP_FILEWRITER_SIZE MB filewriter target."
 	{
-	    echo Suspend2
+	    echo $FILEWRITER_SIGNATURE
 	    dd if=/dev/zero bs=1M count=$SWSUSP_FILEWRITER_SIZE 2>/dev/null
 	} > $SWSUSP_FILEWRITER_LOC
 	sync
     fi
 
     case "`dd \"if=$SWSUSP_FILEWRITER_LOC\" bs=8 count=1 2>/dev/null`" in
-	Suspend2)
+	$FILEWRITER_SIGNATURE)
 	    # We're good to go.
 	    vecho 1 "$EXE: Detected filewriter image ready for use."
+	    ;;
+	Suspend2|TuxOnIce)
+	    # Eeek! This is an incompatible image
+	    # reliably preserve the starting block.
+	    vecho 1 "$EXE: Killing incompatible filewriter image."
+	    if ! /bin/echo -ne "$FILEWRITER_SIGNATURE\n\0\0" | dd "of=$SWSUSP_FILEWRITER_LOC" bs=11 count=1 conv=notrunc 2>/dev/null ; then
+		vecho 0 "$EXE: Failed to kill imcompatible image!"
+		return 2 # Abort even with force
+	    fi
 	    ;;
 	HaveImag)
 	    # Eeek! There's already an image here. Erase it using dd to
 	    # reliably preserve the starting block.
 	    vecho 1 "$EXE: Killing existing filewriter image."
-	    if ! /bin/echo -ne "Suspend2\n\0\0" | dd "of=$SWSUSP_FILEWRITER_LOC" bs=11 count=1 conv=notrunc 2>/dev/null ; then
+	    if ! /bin/echo -ne "$FILEWRITER_SIGNATURE\n\0\0" | dd "of=$SWSUSP_FILEWRITER_LOC" bs=11 count=1 conv=notrunc 2>/dev/null ; then
 		vecho 0 "$EXE: Failed to kill existing image!"
 		return 2 # Abort even with force
 	    fi
@@ -794,17 +807,17 @@ Swsusp2SetupFilewriter() {
     [ x"$SWSUSP_FILEWRITER_NOVERIFY" = "x1" ] && return 0
 
     local new_resume2
-    new_resume2="`cat $SWSUSP_ROOT/$RESUME_FILE`"
+    new_resume2="`cat $SWSUSP_ROOT/$RESUME2_FILE`"
     if [ -z "$new_resume2" ] ; then
-	vecho 0 "ABORTING: $SWSUSP_ROOT/$RESUME_FILE did not return a valid result."
+	vecho 0 "ABORTING: $SWSUSP_ROOT/$RESUME2_FILE did not return a valid result."
 	return 2 # abort even if forced
     fi
 
     if ! grep "$new_resume2" /proc/cmdline ; then
-	filewriter_target=`cat $SWSUSP_ROOT/$RESUME_FILE`
-	vecho 0 "ABORTING: $RESUME_FILE is not setup correctly. Unless you have setup your bootloader"
+	filewriter_target=`cat $SWSUSP_ROOT/$RESUME2_FILE`
+	vecho 0 "ABORTING: $RESUME2_FILE is not setup correctly. Unless you have setup your bootloader"
 	vecho 0 "          correctly, resuming will most likely fail. To correct this, add"
-	vecho 0 "          \"$RESUME_FILE=$filewriter_target\" to your kernel command line in your"
+	vecho 0 "          \"$RESUME2_FILE=$filewriter_target\" to your kernel command line in your"
 	vecho 0 "          LILO or GRUB configuration file and reboot."
 	return 2 # abort even if forced
     fi
