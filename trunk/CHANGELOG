@@ -27,6 +27,7 @@
    patch.
  - Add iwl3945, mac80211, and sky2 modules to blacklisted-modules; thanks to
    Jan Ondrej.
+ - Add anacron to comment for RestartServices (Debian bug #414100).
 
 1.96 (16 July 2007)
  - Stop blacklisting button module after 2.6.21.
