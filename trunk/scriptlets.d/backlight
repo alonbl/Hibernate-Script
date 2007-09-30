@@ -7,14 +7,14 @@ AddConfigHelp "BackLight <boolean>" "This will enable fancy backlight fading usi
 DimBackLight() {
     FindXServer
     Backlight_current=$(xbacklight)
-    if [ "${Backlight_current%.*}" -gt 0 ]; then
+    if [ "${Backlight_current%.*}" -gt 10 ]; then
 	xbacklight -set 10 || true
     fi
     return 0
 }
 
 RestoreBackLight() {
-    if [ "${Backlight_current%.*}" -gt 0 ]; then
+    if [ "${Backlight_current%.*}" -gt 10 ]; then
 	xbacklight -set "$Backlight_current" || true
     fi
     return 0

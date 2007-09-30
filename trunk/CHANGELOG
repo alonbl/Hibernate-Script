@@ -16,6 +16,8 @@
    whether to include these, but there seem to be users and I accidentally
    distributed them in the last release of the Debian package, so I might just
    as well push them upstream now anyway...
+ - patch by Joey Hess which fixes the backlight script to work better if the
+   backlight was initially below 10% (Debian bug #434825).
 
 1.96 (16 July 2007)
  - Stop blacklisting button module after 2.6.21.
