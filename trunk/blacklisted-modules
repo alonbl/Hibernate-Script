@@ -54,7 +54,7 @@ i8042		2.6.10	2.6.99
 intel_mch_agp	2.6.0	2.6.99
 rt2500		2.6.0	2.6.14
 
-button		2.6.9	2.6.21
+button		2.6.9	2.6.22
 speedstep_smi	2.6.12	2.6.99
 
 @ndiswrapper    0.10    0.11
@@ -64,3 +64,8 @@ ath_pci
 
 # #427252
 ipw3945
+
+# suggested by Jan Ondrej.
+iwl3945
+mac80211
+sky2
