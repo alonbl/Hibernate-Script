@@ -11,6 +11,11 @@
  - move get_env_var_of_process function to main script so that it may be
    reused; also make gaim scriptlet use it (Patch by Pascal Dormeau; Debian
    bug #433003).
+ - add scriptlets to make hibernate enable offline mode of sylpheed-claws and
+   galeon; thanks to Norbert Buchmuller (see Debian bug #427376). I was unsure
+   whether to include these, but there seem to be users and I accidentally
+   distributed them in the last release of the Debian package, so I might just
+   as well push them upstream now anyway...
 
 1.96 (16 July 2007)
  - Stop blacklisting button module after 2.6.21.
