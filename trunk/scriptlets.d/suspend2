@@ -768,7 +768,7 @@ Swsusp2SetupFilewriter() {
 	    # reliably preserve the starting block.
 	    vecho 1 "$EXE: Killing incompatible filewriter image."
 	    if ! /bin/echo -ne "$FILEWRITER_SIGNATURE\n\0\0" | dd "of=$SWSUSP_FILEWRITER_LOC" bs=11 count=1 conv=notrunc 2>/dev/null ; then
-		vecho 0 "$EXE: Failed to kill imcompatible image!"
+		vecho 0 "$EXE: Failed to kill incompatible image!"
 		return 2 # Abort even with force
 	    fi
 	    ;;
