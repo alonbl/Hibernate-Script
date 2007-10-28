@@ -3,11 +3,11 @@
 
 AddConfigHandler FBSplashOptions
 AddConfigHelp "FBSplash <boolean>" "Showing script progress using fbsplash. No kernel patches are required, but you will need the fbsplash splashutils package installed (distinct from the bootsplash splashutils package). This will automatically enable SwitchToTextMode too."
-AddConfigHelp "FBSplashTheme <themename>" "FBSplash theme name (default is \"suspend2\")"
+AddConfigHelp "FBSplashTheme <themename>" "FBSplash theme name (default is taken from /proc/cmdline)"
 
 
 # default fbsplash theme config file
-FBSPLASH_THEME="suspend2"
+FBSPLASH_THEME=""
 
 FBSPLASH_FIFO="/lib/splash/cache/.splash"
 
@@ -35,6 +35,8 @@ FBSplashProgress() {
 FBSplashBegin() {
     [ x"$USE_FBSPLASH" != "x1" ] && return 0
 
+    [ -z "$FBSPLASH_THEME" ] && FBSPLASH_THEME="$(grep splash= /proc/cmdline > /dev/null && cat /proc/cmdline | sed 's/.*splash=/splash=/' | sed 's/ .*//' | sed 's/.*theme://' | sed 's/,.*//' || echo default)"
+
     # check if fbsplashd exists
     if ! command -v fbsplashd > /dev/null 2>&1 ; then
 	USE_FBSPLASH=0
@@ -49,17 +51,16 @@ FBSplashBegin() {
 	return 0
     fi
 
-    # Start up the splash daemon.
-    mkdir -p `dirname $FBSPLASH_FIFO`
-    rm -f $FBSPLASH_FIFO > /dev/null 2>&1
-    if ! fbsplashd --theme $FBSPLASH_THEME --mesg "Suspending..." --effects "fadein" ; then
-	USE_FBSPLASH=0
-	vecho 0 "Splash daemon failed to start. fbsplash disabled."
-	return 0
-    fi
     if ! test -p $FBSPLASH_FIFO ; then
 	USE_FBSPLASH=0
 	vecho 0 "Could not talk to splash daemon. fbsplash disabled."
+	return 0
+    fi
+
+    # Start up the splash daemon.
+    if ! fbsplashd --theme $FBSPLASH_THEME --mesg "Suspending..." --effects "fadein" ; then
+	USE_FBSPLASH=0
+	vecho 0 "Splash daemon failed to start. fbsplash disabled."
 	return 0
     fi
     TimedFBSplashCtl "set mode silent\nprogress 0\nset message $@\nrepaint\n"

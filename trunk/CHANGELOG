@@ -1,3 +1,7 @@
+1.98 (? ??????? ????)
+ - Some fbsplash fixups, default theme is taken from cmdline now
+   (Alon Bar-Lev)
+
 1.97 (6 October 2007)
  - Add USuspendRamUnsureOk config option to instruct s2ram to continue when
    it's unsure about the system type, thus not requiring -f to be passed
