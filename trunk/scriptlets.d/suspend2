@@ -211,8 +211,8 @@ Swsusp2ConfigOptions() {
 		vecho 0 "$EXE: Filewriter size is not numeric!"
 		exit 1
 	    fi
-	    AddSuspendHook 06 Swsusp2SetupFilewriter
-	    AddResumeHook 06 Swsusp2CleanupFilewriter
+	    AddSuspendHook 11 Swsusp2SetupFilewriter
+	    AddResumeHook 11 Swsusp2CleanupFilewriter
 	    ;;
 	verifyfilewriterresume2)
 	    BoolIsOn "$1" "$2" && return 0
@@ -691,7 +691,7 @@ EOT
     read REPLY < $SWSUSP_ROOT/$RESUME2_FILE
     if [ -z "$REPLY" ] ; then
 	cat <<EOT
-You haven't specified a resume2= parameter on your kernel command line
+You haven't specified a resume=/resume2= parameter on your kernel command line
 
 Your GRUB or LILO config should have something like $RESUME2_FILE=swap:/dev/hdaX
 where /dev/hdaX is your swap partition. You will then need to either reboot
@@ -799,9 +799,6 @@ Swsusp2SetupFilewriter() {
     # Leave a note so that the file can be cleaned up on a fresh reboot.
     echo "$SWSUSP_FILEWRITER_LOC" > $HIBERNATE_FILEWRITER_TRAIL
     chmod 600 $HIBERNATE_FILEWRITER_TRAIL
-
-    # Don't overwrite the resume2 line now.
-    SWSUSP_RESUME2="$new_resume2"
 
     # Now verify our resume2 is correct unless told otherwise.
     [ x"$SWSUSP_FILEWRITER_NOVERIFY" = "x1" ] && return 0
