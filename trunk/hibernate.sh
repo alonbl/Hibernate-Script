@@ -222,8 +222,8 @@ FindXServer() {
 	    # Ensure the process still exists, and we aren't hallucinating.
 	    [ -d "/proc/$xpid/" ] || continue
 
-	    xauth="`get_env_var_of_process XAUTHORITY $xpid`"
-	    xhome="`get_env_var_of_process HOME $xpid`"
+	    xauth="`get_env_var_of_process $xpid XAUTHORITY`"
+	    xhome="`get_env_var_of_process $xpid HOME`"
 	    xuser=`/bin/ls -ld /proc/$xpid/ | awk '{print $3}'`
 	    [ -z $xauth ] && [ -n $xhome ] && [ -f $xhome/.Xauthority ] && xauth=$xhome/.Xauthority
 
