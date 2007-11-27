@@ -804,6 +804,12 @@ Swsusp2SetupFilewriter() {
     [ x"$SWSUSP_FILEWRITER_NOVERIFY" = "x1" ] && return 0
 
     local new_resume2
+    if [ -f $SWSUSP_ROOT/resume2 ]; then
+        RESUME2_FILE=resume2
+    elif [ -f $SWSUSP_ROOT/resume ]; then
+        RESUME2_FILE=resume
+    fi
+
     new_resume2="`cat $SWSUSP_ROOT/$RESUME2_FILE`"
     if [ -z "$new_resume2" ] ; then
 	vecho 0 "ABORTING: $SWSUSP_ROOT/$RESUME2_FILE did not return a valid result."
