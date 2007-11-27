@@ -573,7 +573,7 @@ DoSuspend() {
 
 # PrintAnErrorString <bit value>: prints a string corresponding to the relevant
 # bit in an error code. These match up with the SUSPEND_* values in
-# include/linux/suspend-debug.h
+# kernel/power/power.h.
 PrintAnErrorString() {
     case "$1" in
 	0) ERROR_TEXT="${ERROR_TEXT}Suspend was aborted (see dmesg).\n"
@@ -586,19 +586,39 @@ PrintAnErrorString() {
 	;;
 	4) ERROR_TEXT="${ERROR_TEXT}Freezing processes failed. Wacky driver problems :( (see dmesg)\n"
 	;;
-	5) ERROR_TEXT="${ERROR_TEXT}Internal error - an unexpected memory allocation occured. Driver problems? (see dmesg)\n"
+	5) ERROR_TEXT="${ERROR_TEXT}Image has been kept as requested.\n"
 	;;
-	6) ERROR_TEXT="${ERROR_TEXT}Image has been kept as requested.\n"
+	6) ERROR_TEXT="${ERROR_TEXT}Suspend would have eaten memory. Yumm....\n"
 	;;
-	7) ERROR_TEXT="${ERROR_TEXT}Suspend would have eaten memory. Yumm....\n"
+	7) ERROR_TEXT="${ERROR_TEXT}Unable to free enough memory.\n"
 	;;
-	8) ERROR_TEXT="${ERROR_TEXT}Unable to free enough memory.\n"
+	8) ERROR_TEXT="${ERROR_TEXT}Failed to acquire power management semaphore.\n"
 	;;
-	9) ERROR_TEXT="${ERROR_TEXT}Failed to setup compression or encryption.\n"
+	9) ERROR_TEXT="${ERROR_TEXT}Some devices refused to suspend (see dmesg).\n"
 	;;
-	10) ERROR_TEXT="${ERROR_TEXT}A suspend is already in progress?\n"
+	10) ERROR_TEXT="${ERROR_TEXT}Extra pages allowance is too small. (see dmesg).\n"
 	;;
-	11) ERROR_TEXT="${ERROR_TEXT}Some devices refused to suspend (see dmesg).\n"
+	11) ERROR_TEXT="${ERROR_TEXT}Unable to meet all constraints when preparing the image. (see dmesg).\n"
+	;;
+	12) ERROR_TEXT="${ERROR_TEXT}Failed to initialise all modules.\n"
+	;;
+	13) ERROR_TEXT="${ERROR_TEXT}Failed to clean up all modules.\n"
+	;;
+	14) ERROR_TEXT="${ERROR_TEXT}Out of memory.\n"
+	;;
+	15) ERROR_TEXT="${ERROR_TEXT}Image error.\n"
+	;;
+	16) ERROR_TEXT="${ERROR_TEXT}Platform preparation failed.\n"
+	;;
+	17) ERROR_TEXT="${ERROR_TEXT}CPU hotplugging failed.\n"
+	;;
+	18) ERROR_TEXT="${ERROR_TEXT}Architecture specific preparation failed.\n"
+	;;
+	19) ERROR_TEXT="${ERROR_TEXT}Needed to resave pages.\n"
+	;;
+	20) ERROR_TEXT="${ERROR_TEXT}Unable to hibernate at the moment.\n"
+	;;
+	21) ERROR_TEXT="${ERROR_TEXT}Notifier chain rejected hibernating.\n"
 	;;
 	*) ERROR_TEXT="${ERROR_TEXT}Unknown error! (see dmesg?)\n"
 	;;
