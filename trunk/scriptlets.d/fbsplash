@@ -91,7 +91,7 @@ FBSplashOff() {
     TimedFBSplashCtl "set effects fadeout\n"
     TimedFBSplashCtl "exit\n"
 
-    while killall -0 fbsplashd; do
+    while killall -q -0 fbsplashd; do
     	sleep 1
     done
 
