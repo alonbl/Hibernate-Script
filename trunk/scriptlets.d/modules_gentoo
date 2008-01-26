@@ -7,57 +7,7 @@ AddConfigHelp "GentooModulesAutoload <boolean>" "Try to load default modules aft
 GentooModulesAutoload() {
     [ x"$MODULES_GENTOO_AUTOLOAD" = "x1" ] || return 0
 
-    FUNC="/etc/init.d/functions.sh"
-
-    if [ ! -e "${FUNC}" ] ; then
-	vecho 1 "'${FUNC}' not found - not running Gentoo? gentoo-modules disabled."
-	return 1
-    fi
-
-    . "${FUNC}"
-    # taken from gentoo's /etc/init.d/modules
-    
-    local KV=$(uname -r)
-    local KV_MAJOR=${KV%%.*}
-    local x=${KV#*.}
-    local KV_MINOR=${x%%.*}
-    x=${KV#*.*.}
-    local KV_MICRO=${x%%-*}
-
-    local auto=""
-    if [ -f /etc/modules.autoload -a ! -L /etc/modules.autoload ]; then
-	auto=/etc/modules.autoload
-    else
-	local x= f="/etc/modules.autoload.d/kernel"
-	for x in "${KV}" ${KV_MAJOR}.${KV_MINOR}.${KV_MICRO} ${KV_MAJOR}.${KV_MINOR} ; do
-		if [ -f "${f}-${x}.${RC_SOFTLEVEL}" ] ; then
-			auto="${f}-${x}.${RC_SOFTLEVEL}"
-			break
-		fi
-		if [ "${RC_SOFTLEVEL}" = "${RC_BOOTLEVEL}" -a -f "${f}-${x}.${RC_DEFAULTLEVEL}" ] ; then
-			auto="${f}-${x}.${RC_DEFAULTLEVEL}"
-			break
-		fi
-		if [ -f "${f}-${x}" ] ; then
-			auto="${f}-${x}"
-			break
-		fi
-	done
-    fi
-
-    local MOD
-    local args
-    # Loop over every line in $auto.
-    vecho 1 "Loading modules listed $auto"
-    while true ; do
-	read MOD args
-	[ $? -ne 0 ] && [ -z "$MOD" ] && break
-	case "${MOD}" in
-	    \#*|"") continue ;;
-	esac
-	vecho 1 "Loading $MOD"
-	modprobe ${MOD} ${args}
-    done < $auto
+    /etc/init.d/modules --nodeps restart
 
     return 0
 }

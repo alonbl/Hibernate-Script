@@ -4,6 +4,7 @@
  - Fix filewriter issue (Alon Bar-Lev).
  - Add some notes about dependencies at common.conf (Alon Bar-Lev).
  - Fixup FindXServer environment settings, Gentoo bug#199806 (Alon Bar-Lev).
+ - Update gentoo module reload to meet openrc (Alon Bar-Lev).
 
 1.97 (6 October 2007)
  - Add USuspendRamUnsureOk config option to instruct s2ram to continue when
