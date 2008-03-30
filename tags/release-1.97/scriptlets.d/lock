@@ -1,0 +1,461 @@
+# -*- sh -*-
+# vim:ft=sh:ts=8:sw=4:noet
+
+AddConfigHandler LockOptions
+AddConfigHelp "LockKDE <boolean>" "Lock all local KDE sessions before suspending."
+AddConfigHelp "LockXScreenSaver <boolean>" "Lock all local X11 sessions with xscreensaver running before suspending."
+AddConfigHelp "LockGnomeScreenSaver <boolean>" "Lock all local X11 sessions with gnome-screensaver running before suspending."
+AddConfigHelp "LockXLock <boolean>" "Lock active X11 session using xlock."
+AddConfigHelp "LockXAutoLock <boolean>" "Lock all local X11 sessions running xautolock."
+AddConfigHelp "LockConsoleAs <username>" "Locks the entire system after resuming, requiring you to enter either <username>'s or root's password to unlock it. (Requires vlock)."
+AddConfigHelp "LockXtrLock <boolean>" "Lock active X11 session using xtrlock."
+
+AddOptionHandler LockCmdlineOptions
+AddLongOption 'lock-console-as:'
+AddOptionHelp '--lock-console-as <username>' 'Uses vlock to lock the entire system after resuming, requirng you to enter the password for the given user to unlock it. This overrides any username given in the configuration file. (Requires vlock)'
+
+LockKDE() {
+    [ x"$LOCK_KDE" != "x1" ] && return 0
+
+    if ! ps ax | grep -q '[d]copserver' ; then
+	vecho 1 'No KDE sessions detected. Not locking KDE.'
+	return 0
+    fi
+
+    if ! command -v dcop > /dev/null 2>&1 ; then
+	# Gentoo and Slackware stash this in a silly place.
+	for i in /usr/kde/*/bin/dcop /opt/kde/bin/dcop ; do
+	    if [ -x "$i" ] ; then
+		PATH=$PATH:${i%%/dcop}
+		export PATH
+		break
+	    fi
+	done
+    fi
+
+    if ! command -v dcop > /dev/null 2>&1 ; then
+	vecho 0 'Cannot lock KDE. `dcop` program not found.'
+	return 1 # abort, unless forced
+    fi
+
+    local avail_sessions
+    local session
+
+    # get all sessions (ignore non local ones!)
+    avail_sessions=`dcop --all-users --list-sessions | grep '.DCOP.*__0'`
+
+    ShouldLock || return 0
+
+    # send the lock command to all sessions
+    for session in $avail_sessions; do
+	# Check first that the session is not already locked, to prevent dcop
+	# from hanging.
+	locked=`dcop --session "$session" --all-users kdesktop KScreensaverIface isBlanked 2>/dev/null`
+	if [ x"$locked" = "xfalse" ] ; then
+	    vecho 1 "Locking session $session"
+	    # /dev/null because dcop warns if it can't connect to X (this is normal!)
+	    dcop --session "$session" --all-users kdesktop KScreensaverIface lock > /dev/null 2>&1
+	else
+	    vecho 2 "Session $session is already locked!"
+	fi
+    done
+
+    # returning 0 because dcop warns if it can't connect to X (this is normal!)
+    return 0
+}
+
+LockXlock() {
+    FindXServer || return 0
+    ShouldLock || return 0
+
+    if command -v xlock > /dev/null 2>&1 ; then
+	vecho 1 'Trying xlock'
+	su $XUSER -c "xlock -mode blank &"
+	return 0
+    fi
+    return 0
+}
+
+LockXScreensaver() {
+    local locked_one
+    locked_one=
+
+    [ x"$LOCK_XSCREENSAVER" != "x1" ] && return 0
+
+    if ! command -v xscreensaver-command > /dev/null 2>&1 ; then
+	vecho 0 'Cannot lock with xscreensaver. `xscreensaver-command` not found.'
+	# Try xlock.
+	LockXlock
+	return 0
+    fi
+
+    ShouldLock || return 0
+
+    local xpid
+    for xpid in `pidof xscreensaver` ; do
+	local xuser xdisp xauth xhome
+	xuser=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "USER"){print $2}' < /proc/$xpid/environ)
+	xdisp=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "DISPLAY"){print $2}' < /proc/$xpid/environ)
+	xauth=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "XAUTHORITY"){print $2}' < /proc/$xpid/environ)
+	if [ -z "$xauth" ] ; then
+	    xhome=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "HOME"){print $2}' < /proc/$xpid/environ)
+	    xauth="$xhome/.Xauthority"
+	fi
+
+	vecho 2 "Locking $xuser's xscreensaver on display $xdisp using authority file $xauth"
+	DISPLAY=$xdisp XAUTHORITY=$xauth su $xuser -c "$(command -v xscreensaver-command) -lock"
+	if [ $? -ne 0 ] ; then
+	    vecho 0 "Failed to activate xscreensaver on $xdisp using authority file $xauth."
+	    DISPLAY=$xdisp XAUTHORITY=$xauth LockXlock && locked_one=1
+	else
+	    locked_one=1
+	fi
+    done
+
+    # Fall back to xlock if nothing worked.
+    [ -z "$locked_one" ] && LockXlock
+
+    # Failing is silly. What would they do about it?
+    return 0
+}
+
+UnlockXScreensaver() {
+    # This function name is kind of bad, it doesn't actually unlock
+    # anything.  It just calls xscreensaver-command -deactivate, which makes
+    # the password prompt appear on the display.
+
+    # FIXME: refactor this code so it looks less obviously like a
+    # cut-n-paste job from LockXScreensaver.
+
+    [ x"$LOCK_XSCREENSAVER" != "x1" ] && return 0
+
+    command -v xscreensaver-command > /dev/null 2>&1 || return
+
+    local xpid
+
+    for xpid in `pidof xscreensaver` ; do
+	local xuser xdisp xauth xhome
+	xuser=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "USER"){print $2}' < /proc/$xpid/environ)
+	xdisp=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "DISPLAY"){print $2}' < /proc/$xpid/environ)
+	xauth=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "XAUTHORITY"){print $2}' < /proc/$xpid/environ)
+	if [ -z "$xauth" ] ; then
+	    xhome=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "HOME"){print $2}' < /proc/$xpid/environ)
+	    xauth="$xhome/.Xauthority"
+	fi
+
+	vecho 2 "Unlocking $xuser's xscreensaver on display $xdisp using authority file $xauth"
+	DISPLAY=$xdisp XAUTHORITY=$xauth su $xuser -c "$(command -v xscreensaver-command) -deactivate"
+    done
+
+    # Failing is silly. What would they do about it?
+    return 0
+}
+
+LockGnomeScreensaver() {
+    local locked_one
+
+    locked_one=
+
+    [ x"$LOCK_GNOMESCREENSAVER" != "x1" ] && return 0
+
+    if ! command -v gnome-screensaver-command > /dev/null 2>&1 ; then
+	vecho 0 'Cannot lock with gnome-screensaver. `gnome-screensaver-command` not found.'
+	# Try xlock.
+	LockXlock
+	return 0
+    fi
+
+    ShouldLock || return 0
+
+    local xpid
+    for xpid in `pidof gnome-screensaver` ; do
+	local xuser xdisp xauth xhome xdbus
+	xuser=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "USER"){print $2}' < /proc/$xpid/environ)
+	xdisp=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "DISPLAY"){print $2}' < /proc/$xpid/environ)
+	xauth=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "XAUTHORITY"){print $2}' < /proc/$xpid/environ)
+	xdbus=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "DBUS_SESSION_BUS_ADDRESS"){print $2"="$3"="$4}' < /proc/$xpid/environ)
+	if [ -z "$xauth" ] ; then
+	    xhome=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "HOME"){print $2}' < /proc/$xpid/environ)
+	    xauth="$xhome/.Xauthority"
+	fi
+
+	vecho 2 "Locking $xuser's gnome-screensaver on display $xdisp using authority file $xauth"
+	DISPLAY=$xdisp XAUTHORITY=$xauth DBUS_SESSION_BUS_ADDRESS=$xdbus su $xuser -c "$(command -v gnome-screensaver-command) --lock"
+	if [ $? -ne 0 ] ; then
+	    vecho 0 "Failed to activate gnome-screensaver on $xdisp using authority file $xauth."
+	    DISPLAY=$xdisp XAUTHORITY=$xauth LockXlock && locked_one=1
+	else
+	    locked_one=1
+	fi
+    done
+
+    # Fall back to xlock if nothing worked.
+    [ -z "$locked_one" ] && LockXlock
+
+    # Failing is silly. What would they do about it?
+    return 0
+}
+
+UnlockGnomeScreensaver() {
+    # This function name is kind of bad, it doesn't actually unlock
+    # anything.  It just calls gnome-screensaver-command --poke, which makes
+    # the password prompt appear on the display.
+
+    # FIXME: refactor this code so it looks less obviously like a
+    # cut-n-paste job from LockXScreensaver :) .
+
+    [ x"$LOCK_GNOMESCREENSAVER" != "x1" ] && return 0
+
+    command -v gnome-screensaver-command > /dev/null 2>&1 || return
+
+    local xpid
+    for xpid in `pidof gnome-screensaver` ; do
+	local xuser xdisp xauth xhome xdbus
+	xuser=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "USER"){print $2}' < /proc/$xpid/environ)
+	xdisp=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "DISPLAY"){print $2}' < /proc/$xpid/environ)
+	xauth=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "XAUTHORITY"){print $2}' < /proc/$xpid/environ)
+	xdbus=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "DBUS_SESSION_BUS_ADDRESS"){print $2"="$3"="$4}' < /proc/$xpid/environ)
+	if [ -z "$xauth" ] ; then
+	    xhome=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "HOME"){print $2}' < /proc/$xpid/environ)
+	    xauth="$xhome/.Xauthority"
+	fi
+
+	vecho 2 "Unlocking $xuser's gnome-screensaver on display $xdisp using authority file $xauth"
+	DISPLAY=$xdisp XAUTHORITY=$xauth DBUS_SESSION_BUS_ADDRESS=$xdbus su $xuser -c "$(command -v gnome-screensaver-command) --poke"
+    done
+
+    # Failing is silly. What would they do about it?
+    return 0
+}
+
+LockXAutoLock() {
+    [ x"$LOCK_XAUTOLOCK" != "x1" ] && return 0
+
+    if ! command -v xautolock > /dev/null 2>&1 ; then
+	vecho 0 'Cannot lock with xautolock. `xautolock` not found.'
+	return
+    fi
+
+    ShouldLock || return 0
+
+    local xpid
+    for xpid in `pidof xautolock` ; do
+	local xuser xdisp xauth xhome
+	xuser=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "USER"){print $2}' < /proc/$xpid/environ)
+	xdisp=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "DISPLAY"){print $2}' < /proc/$xpid/environ)
+	xauth=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "XAUTHORITY"){print $2}' < /proc/$xpid/environ)
+	if [ -z "$xauth" ] ; then
+	    xhome=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "HOME"){print $2}' < /proc/$xpid/environ)
+	    xauth="$xhome/.Xauthority"
+	fi
+
+	vecho 2 "Locking $xuser's xautolock on display $xdisp using authority file $xauth"
+	DISPLAY=$xdisp XAUTHORITY=$xauth su $xuser -c "xautolock -locknow"
+    done
+
+    # Failing is silly. What would they do about it?
+    return 0
+}
+
+LockConsole() {
+    # Prerequistes are tested for in SwitchToLockConsole
+
+    [ -z "$LOCK_CONSOLE_USER" ] && return 0
+
+    ShouldLock || return 0
+
+    # Use vlock to lock all consoles. We must already be at the given console.
+    vecho 1 "Locking all consoles"
+    openvt -wfc $LOCK_DEST_VT -- su - "$LOCK_CONSOLE_USER" -c "TERM=linux tput clear; vlock -a"
+
+    # This will hang until the root password is entered.
+
+    # Switch back to original console
+    vecho 3 "lock: changing console back to $LOCK_ORIGINAL_VT"
+    chvt $LOCK_ORIGINAL_VT
+}
+
+SwitchToLockConsole() {
+    [ -z "$LOCK_CONSOLE_USER" ] && return 0
+
+    if ! command -v openvt > /dev/null 2>&1 ; then
+	vecho 0 'Cannot lock console. `openvt` program not found.'
+	LOCK_CONSOLE_USER=
+	return 1 # abort, unless forced
+    fi
+
+    if ! command -v tput > /dev/null 2>&1 ; then
+	vecho 0 'Cannot lock console. `tput` program not found.'
+	LOCK_CONSOLE_USER=
+	return 1 # abort, unless forced
+    fi
+
+    if ! command -v vlock > /dev/null 2>&1 ; then
+	vecho 0 'Cannot lock console. `vlock` program not found.'
+	LOCK_CONSOLE_USER=
+	return 1 # abort, unless forced
+    fi
+
+    if command -v fgconsole > /dev/null 2>&1 ; then
+	LOCK_ORIGINAL_VT=`fgconsole`
+    else
+	LOCK_ORIGINAL_VT=1
+    fi
+
+    LOCK_DEST_VT=61 # Choose something different - can't afford to have silent bootsplash there
+    vecho 2 "lock: changing console from $LOCK_ORIGINAL_VT to $LOCK_DEST_VT"
+    chvt $LOCK_DEST_VT || return 1
+
+    return 0
+}
+
+LockXtrlock() {
+    FindXServer || return 0
+    if command -v xtrlock > /dev/null 2>&1 ; then
+    	vecho 1 'Trying xtrlock'
+
+    	## somehow the xdisp & xauth & xuser vars are clobbered
+    	## by the time they reach here (or not exported ?)
+    	local xdisp xuser xauth
+    	xdisp=$DISPLAY
+    	if [ -n "$XUSER" ] && [ -n "$XAUTHORITY" ] ; then
+      	    xuser=$XUSER
+      	    xauth=$XAUTHORITY
+    	elif [ -n "$xhome" ] ; then
+      	    xuser="${xhome##*/}"
+      	    xauth=$xhome/.Xauthority
+    	else
+      	    return 0
+    	fi
+    	vecho 2 "Locking ${xuser}'s xtrlock on display $xdisp using authority file $xauth"
+    	DISPLAY=$xdisp XAUTHORITY=$xauth su $xuser -c "xtrlock &"
+    	if [ $? -ne 0 ] ; then
+      	    vecho 0 "Failed to activate ${xuser}'s xtrlock on $xdisp using authority file $xauth."
+    	fi
+    	return 0
+    fi
+    return 0
+}
+
+LockOptions() {
+    case $1 in
+	lockkde)
+	    if BoolIsOn "$1" "$2" ; then
+		LOCK_KDE=1
+		if [ -z "$KDELOCK_HOOKED" ] ; then
+		    AddSuspendHook 91 LockKDE
+		    KDELOCK_HOOKED=1
+		fi
+	    else
+		LOCK_KDE=0
+	    fi
+	    ;;
+	lockxscreensaver)
+	    if BoolIsOn "$1" "$2" ; then 
+		LOCK_XSCREENSAVER=1
+		if [ -z "$XSCREENSAVERLOCK_HOOKED" ]; then
+		    AddSuspendHook 91 LockXScreensaver
+		    AddResumeHook 30 UnlockXScreensaver
+		    XSCREENSAVERLOCK_HOOKED=1
+		fi
+	    else
+		LOCK_XSCREENSAVER=0
+	    fi
+	    ;;
+
+	lockgnomescreensaver)
+	    if BoolIsOn "$1" "$2" ; then
+		LOCK_GNOMESCREENSAVER=1
+		if [ -z "$GNOMESCREENSAVERLOCK_HOOKED" ]; then
+		    AddSuspendHook 91 LockGnomeScreensaver
+		    AddResumeHook 30 UnlockGnomeScreensaver
+		    GNOMESCREENSAVERLOCK_HOOKED=1
+		fi
+	    else
+		LOCK_GNOMESCREENSAVER=0
+	    fi
+	    ;;
+
+        lockxlock)
+            if BoolIsOn "$1" "$2" ; then
+		LOCK_XLOCK=1
+		if [ -z "$XLOCK_HOOKED" ]; then
+		    AddResumeHook 91 LockXlock
+		    XLOCK_HOOKED=1
+		fi
+	    else
+		LOCK_XLOCK=0
+            fi
+            ;;
+
+        lockxautolock)
+            if BoolIsOn "$1" "$2" ; then
+		LOCK_XAUTOLOCK=1
+		if [ -z "$XAUTOLOCK_HOOKED" ]; then
+		    AddResumeHook 91 LockXAutoLock
+		    XAUTOLOCK_HOOKED=1
+		fi
+	    else
+		LOCK_XAUTOLOCK=0
+            fi
+            ;;
+
+	lockconsoleas)
+	    LOCK_CONSOLE_USER="$2"
+
+	    if [ -z "$CONSOLELOCK_HOOKED" ] ; then
+		AddResumeHook 96 LockConsole
+		AddSuspendHook 96 SwitchToLockConsole
+
+		CONSOLELOCK_HOOKED=1
+	    fi
+	    ;;
+
+        lockxtrlock)
+            if BoolIsOn "$1" "$2" ; then
+    	    	LOCK_XTRLOCK=1
+    	    	if [ -z "$XTRLOCK_HOOKED" ]; then
+            	    AddResumeHook 91 LockXtrlock
+            	    XTRLOCK_HOOKED=1
+    	    	fi
+      	    	else
+    	    	LOCK_XTRLOCK=0
+            fi
+            ;;
+
+	*)
+	    return 1
+    esac
+
+    return 0
+}
+
+LockCmdlineOptions() {
+    case $1 in
+	--lock-console-as)
+	    LOCK_CONSOLE_USER="$2"
+
+	    if [ -z "$CONSOLELOCK_HOOKED" ] ; then
+		AddResumeHook 96 LockConsole
+		AddSuspendHook 96 SwitchToLockConsole
+
+		CONSOLELOCK_HOOKED=1
+	    fi
+	    ;;
+	*)
+	    return 1
+    esac
+    return 0
+}
+
+ShouldLock() {
+    case "/$SWSUSP2_NO_SUSPEND/$USUSPEND_NO_SUSPEND/$SWSUSP2_BUG_REPORT/" in
+	*1*)
+	    vecho 1 'Not locking the screen with --no-suspend/-n'
+	    return 1
+	    ;;
+    esac
+    return 0
+}
+
+# $Id$

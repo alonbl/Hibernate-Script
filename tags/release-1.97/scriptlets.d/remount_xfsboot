@@ -1,0 +1,78 @@
+# 
+# remount_xfsboot: hibernate scriptlet to address http://bugs.debian.org/317479
+#
+# This scriptlet will cause hibernate to mount the /boot partition read-only on
+# suspend, if RemountXFSBoot is turned on, /boot is a separate partition
+# using XFS, and hibernate is supposed to change the Grub menu (option
+# ChangeGrubMenu). On resume, it remounts /boot read-write.
+#
+# Copyright © 2006 martin f. krafft <madduck@debian.org>
+# Released under the terms of the Artistic Licence
+#
+# Version: 2006.07.15.1723
+#
+
+AddConfigHandler XFSBootConfigOptions
+AddConfigHelp "RemountXFSBoot <boolean>" "Remount the /boot partition read-only when suspending to prevent against an XFS bug."
+
+AddSuspendHook 59 RemountXFSBootRO
+AddResumeHook 59 RemountXFSBootRW
+
+REMOUNT_XFSBOOT=1
+
+XFSBootConfigOptions()
+{
+    case $1 in
+	remountxfsboot)
+	    ! BoolIsOn "$1" "$2"; REMOUNT_XFSBOOT=$?;;
+	*)
+	    return 1
+	    ;;
+    esac
+    return 0
+}
+
+_XFSBoot_boot_on_xfs()
+{
+    local bootpart_type
+    bootpart_type=$(df -TP /boot | sed -ne 's,^/[^[:space:]]\+[[:space:]]\+\([[:alnum:]]\+\).*,\1,p')
+    test "$bootpart_type" = xfs
+}
+
+_XFSBoot_boot_separate_partition()
+{
+    local rootpart
+    rootpart=$(df -P / | sed -ne 's,^\(/[^[:space:]]\+\).*,\1,p')
+    local bootpart
+    bootpart=$(df -P /boot | sed -ne 's,^\(/[^[:space:]]\+\).*,\1,p')
+    test "$rootpart" != "$bootpart"
+}
+
+RemountXFSBootRO()
+{
+    if [ "$CHANGE_GRUB_MENU" = 1 ] && [ "$REMOUNT_XFSBOOT" = 1 ] \
+	&& _XFSBoot_boot_on_xfs; then
+
+	if _XFSBoot_boot_separate_partition; then
+	    if !  mount -o remount,ro /boot 2>/dev/null; then
+		vecho 0 "$EXE: cannot remount the /boot partition, which is XFS (see http://bugs.debian.org/317479). Exiting..."
+		return 1
+	    fi
+	else
+	    vecho 0 "$EXE: your root partition is on XFS but you do not have a separate /boot partition (see http://bugs.debian.org/317479). Exiting..."
+	    return 1
+	fi
+    fi
+}
+
+RemountXFSBootRW()
+{
+    if [ "$CHANGE_GRUB_MENU" = 1 ] && [ "$REMOUNT_XFSBOOT" = 1 ] \
+    	&& _XFSBoot_boot_on_xfs && _XFSBoot_boot_separate_partition; then
+    
+	mount -o remount,rw /boot \
+	    || vecho 1 "$EXE: failed to remount the /boot partition."
+    fi
+}
+
+# vim:ft=sh:ts=8:sw=4:noet
