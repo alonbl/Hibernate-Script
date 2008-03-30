@@ -12,6 +12,11 @@ if [ -f "$TARBALL" ]; then
   exit 1
 fi
 
+if [ -d .git ] && [ -f .git/config ]; then
+  git archive --prefix=$PREFIX$VERSION/ HEAD | gzip -9 > $TARBALL
+  exit 0
+fi
+
 if [ -d "$TARGETDIR" ]; then
   echo "E: $TARGETDIR already exists." >&2
   exit 1
