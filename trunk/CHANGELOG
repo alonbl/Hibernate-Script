@@ -9,6 +9,8 @@
  - Silent wait for fbsplashd to quit (Alon Bar-Lev).
  - Implement USuspendRamPciSave to allow passing the -v option to s2ram
    (Debian bug#473322).
+ - Implement "USuspendRamRadeontool to allow passing the -r option to s2ram;
+   Debian bug#445974 (Matthijs Kooijman).
  - Work around a bashism when mktemp is not available; Debian bug#464989
    (Morten Werner Forsbring).
  - Remove further bashisms (local variables are initialised on
