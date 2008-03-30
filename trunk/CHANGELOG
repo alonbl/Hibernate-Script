@@ -11,6 +11,8 @@
    (Debian bug#473322).
  - Work around a bashism when mktemp is not available; Debian bug#464989
    (Morten Werner Forsbring).
+ - Remove further bashisms (local variables are initialised on
+   declaration); also Debian bug#464989.
 
 1.97 (6 October 2007)
  - Add USuspendRamUnsureOk config option to instruct s2ram to continue when

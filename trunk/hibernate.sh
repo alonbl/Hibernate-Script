@@ -700,7 +700,7 @@ ProcessConfigOption() {
 conffiles_read=
 ReadConfigFile() {
     local option params
-    local file_name="$1"
+    local file_name; file_name=="$1"
     
     if [ ! -f "${file_name}" ] ; then
 	# Search in /etc/hibernate
@@ -832,7 +832,8 @@ ctrlc_handler() {
 # processes identified by its PID.
 get_env_var_of_process()
 {
-    local pid="$1" envvar="$2"
+    local pid; pid="$1"
+    local envvar; envvar="$2"
     tr '\0' '\n' </proc/$pid/environ | sed -ne "s/^$envvar=//p"
 }
 
