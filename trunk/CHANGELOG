@@ -7,6 +7,8 @@
    bug#464148 (Alon Bar-Lev).
  - Update gentoo module reload to meet openrc (Alon Bar-Lev).
  - Silent wait for fbsplashd to quit (Alon Bar-Lev).
+ - Implement USuspendRamPciSave to allow passing the -v option to s2ram
+   (Debian bug#473322).
 
 1.97 (6 October 2007)
  - Add USuspendRamUnsureOk config option to instruct s2ram to continue when
