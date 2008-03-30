@@ -3,7 +3,8 @@
    (Alon Bar-Lev)
  - Fix filewriter issue (Alon Bar-Lev).
  - Add some notes about dependencies at common.conf (Alon Bar-Lev).
- - Fixup FindXServer environment settings, Gentoo bug#199806 (Alon Bar-Lev).
+ - Fixup FindXServer environment settings, Gentoo bug#199806, Debian
+   bug#464148 (Alon Bar-Lev).
  - Update gentoo module reload to meet openrc (Alon Bar-Lev).
  - Silent wait for fbsplashd to quit (Alon Bar-Lev).
 
