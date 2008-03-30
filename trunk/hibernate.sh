@@ -389,10 +389,20 @@ EnsureHavePrerequisites() {
 	    local CNT
 	    local D
 	    local FN
+	    local RND1
+	    local RND2
 	    CNT=1
+	    if [ -z "$RANDOM" ] ; then
+	    	# A fix for shells that do not have this bash feature
+		RND1=$(dd if=/dev/urandom count=1 2>/dev/null|cksum|cut -c"1-5")
+		RND2=$(dd if=/dev/urandom count=1 2>/dev/null|cksum|cut -c"1-5")
+	    else
+	        RND1=$RANDOM
+		RND2=$RANDOM
+	    fi
 	    while true ; do
 		D=`date +%s`
-		FN=/tmp/tmp.hibernate.$$$D$RANDOM$RANDOM$CNT
+		FN=/tmp/tmp.hibernate.$$$D$RND1$RND2$CNT
 		[ -f $FN ] && continue
 		touch $FN && break
 		CNT=$(($CNT+1))
