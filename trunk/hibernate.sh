@@ -700,7 +700,7 @@ ProcessConfigOption() {
 conffiles_read=
 ReadConfigFile() {
     local option params
-    local file_name; file_name=="$1"
+    local file_name; file_name="$1"
     
     if [ ! -f "${file_name}" ] ; then
 	# Search in /etc/hibernate
