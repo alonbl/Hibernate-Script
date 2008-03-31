@@ -58,7 +58,7 @@ SWSUSP_D="/etc/hibernate"
 SCRIPTLET_PATH="$SWSUSP_D/scriptlets.d /usr/local/share/hibernate/scriptlets.d /usr/share/hibernate/scriptlets.d"
 DEFAULT_CONFIG_FILE="$SWSUSP_D/hibernate.conf"
 EXE="${0##*/}"
-VERSION="1.98"
+VERSION="1.98.1"
 
 # Add these to the $PATH just in case.
 PATH="$PATH:/sbin:/usr/sbin:/usr/local/sbin"
