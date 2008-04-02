@@ -12,7 +12,7 @@ AddConfigHelp "USuspendRamVbePost <boolean>" "Passes the -p flag to s2ram to VBE
 AddConfigHelp "USuspendRamVbeMode <boolean>" "Passes the -m flag to s2ram to get VBE mode before suspend and set it after resume"
 AddConfigHelp "USuspendRamRadeontool <boolean>" "Passes the -r flag to s2ram to let radeontool turn of the backlight before suspending."
 AddConfigHelp "USuspendRamAcpiSleep <number>" "Passes the -a flag to s2ram to set the acpi_sleep parameter before suspend: 1=s3_bios, 2=s3_mode, 3=both"
-AddConfigHelp "USuspendRamPciSave <boolean>" "Passes the -v flag to s2ram to ave the PCI config space of the VGA card before suspend, and restore it on resume"
+AddConfigHelp "USuspendRamPciSave <boolean>" "Passes the -v flag to s2ram to have the PCI config space of the VGA card before suspend, and restore it on resume"
 
 AddShortOption "n"
 AddLongOption "no-suspend"
