@@ -21,8 +21,6 @@ AddConfigHelp "ImageSizeLimit nocache|<NN> (requires UseSuspend2 on)" "If specif
 
 AddConfigHelp "AsyncIOLimit <N> (requires UseSuspend2 on)" "Deprecated since 2.1.5.11 (hence won't do anything if set). Limit the number of I/O operations that Software Suspend 2 will have queued at once. Lowering this value has resolved hangs when reading or writing caches for some people. Try values like 64, 32 and 8."
 
-AddConfigHelp "TuxOnIceAllSettings <params> (requires UseSuspend2 on)" "If specified, sets all of the settings for Software Suspend 2 at once. The parameter should be the contents of $SWSUSP_ROOT/all_settings after you have set your desired settings manually."
-
 AddConfigHelp "SuspendDevice <device> (requires UseSuspend2 on)" "If specified, sets the suspend device by writing to the resume[2] entry in $SWSUSP_ROOT. This does not automatically set the resuming device - you will need to make sure your bootloader or initrd script does this."
 
 AddConfigHelp "FilewriterLocation <filename> <size in MB> (requires UseSuspend2 on)" "This option sets up the given filename to act as a destination file for writing the suspend image to, and verifies that it can act as a valid destination. If the file does not exist, the file is created. This option is only relevant if you are using the filewriter plugin for Software Suspend."
@@ -42,9 +40,6 @@ AddConfigHelp "ProcSetting <entry name> <value> (requires UseSuspend2 on)" "Sets
 
 AddShortOption "n"
 AddLongOption "no-suspend"
-
-AddLongOption "save-settings::"
-AddOptionHelp "--save-settings [filename] (requires UseSuspend2 on)" "Saves all the current settings for Software Suspend 2 into a file (default: $SWSUSP_DEFAULT_ALL_SETTINGS_FILE)"
 
 AddLongOption "bug-report"
 AddOptionHelp "--bug-report (requires UseSuspend2 on)" "Gathers a bunch of information about your machine and writes it to standard output. Please attach this information along with any bug reports to the Software Suspend mailing list."
@@ -139,14 +134,6 @@ TuxOnIceOptionHandler() {
 	-n|--no-suspend)
 	    SWSUSP2_NO_SUSPEND=1
 	    ;;
-	--save-settings)
-	    if [ -n "$2" ] ; then
-		SWSUSP2_SAVE_SETTINGS_FILE="$2"
-	    else
-		SWSUSP2_SAVE_SETTINGS_FILE="$SWSUSP_DEFAULT_ALL_SETTINGS_FILE"
-	    fi
-	    AddSuspendHook 00 TuxOnIceSaveSettings
-	    ;;
 	--bug-report)
 	    SWSUSP2_BUG_REPORT=1
 	    ;;
@@ -176,16 +163,6 @@ TuxOnIceConfigOptions() {
 	    ;;
 	asynciolimit)
 	    SWSUSP_ASYNC_IO_LIMIT=$2
-	    ;;
-	suspend2allsettings|swsusp2allsettings)
-	    SWSUSP_ALL_SETTINGS=$2
-	    ;;
-	suspend2allsettingsfile|swsusp2allsettingsfile)
-	    SWSUSP_ALL_SETTINGS_FILE=$2
-	    if ! [ -r "$SWSUSP_ALL_SETTINGS_FILE" ] ; then
-		echo "$EXE: Cannot read all_settings file $SWSUSP_ALL_SETTINGS_FILE"
-		return 0
-	    fi
 	    ;;
 	suspenddevice)
 	    SWSUSP_RESUME2=$2
@@ -296,17 +273,6 @@ EOT
     return 0
 }
 
-TuxOnIceSaveSettings() {
-    if ! [ -r "$SWSUSP_ROOT/all_settings" ] ; then
-	echo "$EXE: Could not read $SWSUSP_ROOT/all_settings."
-    elif ! cat "$SWSUSP_ROOT/all_settings" > $SWSUSP2_SAVE_SETTINGS_FILE ; then
-	echo "$EXE: Could not save settings. cat failed."
-    else
-	echo "$EXE: Settings saved to $SWSUSP2_SAVE_SETTINGS_FILE."
-    fi
-    return 3
-}
-
 RemoveSwsuspProcCruft() {
     [ -f "$SWSUSP_EXTRA_PROC_SETTINGS" ] && rm -f $SWSUSP_EXTRA_PROC_SETTINGS
     return 0
@@ -380,14 +346,6 @@ TuxOnIceSetupCryptoAPI() {
 }
 
 TuxOnIceConfigSet() {
-    # Apply all settings first before making further changes.
-    [ -n "$SWSUSP_ALL_SETTINGS" ] && [ -f $SWSUSP_ROOT/all_settings ] && \
-    	echo $SWSUSP_ALL_SETTINGS > $SWSUSP_ROOT/all_settings
-
-    [ -n "$SWSUSP_ALL_SETTINGS_FILE" ] && [ -f $SWSUSP_ROOT/all_settings ] && \
-	[ -f "$SWSUSP_ALL_SETTINGS_FILE" ] && \
-    	cat $SWSUSP_ALL_SETTINGS_FILE > $SWSUSP_ROOT/all_settings
-
     if [ "x$SWSUSP_IMAGE_SIZE_LIMIT" = "xnocache" ] ; then
 	local field val units result
 	local total=0 cached=0 buffers=0 free=0
