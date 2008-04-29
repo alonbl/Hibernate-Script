@@ -23,8 +23,6 @@ AddConfigHelp "AsyncIOLimit <N> (requires UseSuspend2 on)" "Deprecated since 2.1
 
 AddConfigHelp "TuxOnIceAllSettings <params> (requires UseSuspend2 on)" "If specified, sets all of the settings for Software Suspend 2 at once. The parameter should be the contents of $SWSUSP_ROOT/all_settings after you have set your desired settings manually."
 
-AddConfigHelp "TuxOnIceAllSettingsFile <filename> (requires UseSuspend2 on)" "If specified, sets all of the settings for Software Suspend 2 and all its plugins at once, from the given file. The parameter should be the path to a file containing the result of \"cat $SWSUSP_ROOT/all_settings > <filename>\"after you have set your desired settings manually."
-
 AddConfigHelp "SuspendDevice <device> (requires UseSuspend2 on)" "If specified, sets the suspend device by writing to the resume[2] entry in $SWSUSP_ROOT. This does not automatically set the resuming device - you will need to make sure your bootloader or initrd script does this."
 
 AddConfigHelp "FilewriterLocation <filename> <size in MB> (requires UseSuspend2 on)" "This option sets up the given filename to act as a destination file for writing the suspend image to, and verifies that it can act as a valid destination. If the file does not exist, the file is created. This option is only relevant if you are using the filewriter plugin for Software Suspend."
