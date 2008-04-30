@@ -6,48 +6,50 @@ AddTerminationHandler TuxOnIceTermination
 AddConfigHandler TuxOnIceConfigEnabler
 AddOptionHandler TuxOnIceOptionHandler
 
-AddConfigHelp "UseSuspend2 <boolean>" "Enable/disable the use of Software Suspend 2 to suspend."
+AddConfigHelp "UseTuxOnIce <boolean>" "Enable/disable the use of TuxOnIce to hibernate."
 
-AddConfigHelp "Reboot <boolean> (requires UseSuspend2 on)" "Controls whether or not Software Suspend 2 should reboot after suspending. Setting this to yes will force a reboot. Setting this to no will force shutting down. Omitting this option will leave rebooting behaviour unchanged."
+AddConfigHelp "Reboot <boolean> (requires UseTuxOnIce on)" "Controls whether or not TuxOnIce should reboot after hibernating. Setting this to yes will force a reboot. Setting this to no will force shutting down. Omitting this option will leave rebooting behaviour unchanged."
 AddShortOption "r::"
 AddLongOption "reboot::"
-AddOptionHelp "-r[0|1], --reboot[=<0|1>] (requires UseSuspend2 on)" "If 0 is specified, disables rebooting after suspend, regardless of the Reboot option in the configuration file. If 1 or omitted, will force a reboot after suspending."
+AddOptionHelp "-r[0|1], --reboot[=<0|1>] (requires UseTuxOnIce on)" "If 0 is specified, disables rebooting after writing the image, regardless of the Reboot option in the configuration file. If 1 or omitted, will force a reboot after writing the image."
 
-AddConfigHelp "EnableEscape <boolean> (requires UseSuspend2 on)" "If specified, allows (or disallows) the use of the escape key to abort a suspend. If this line is not specified, the Escape key's behaviour is unchanged."
+AddConfigHelp "EnableEscape <boolean> (requires UseTuxOnIce on)" "If specified, allows (or disallows) the use of the escape key to abort a hibernation cycle. If this line is not specified, the Escape key's behaviour is unchanged."
 
-AddConfigHelp "DefaultConsoleLevel <N> (requires UseSuspend2 on)" "If specified, sets the default console level. 0 gives a progress bar. 1 gives a progress bar with numbers. 2 or higher give increasing amounts of debugging. If this line is not specified, the default console level is unchanged."
+AddConfigHelp "DefaultConsoleLevel <N> (requires UseTuxOnIce on)" "If specified, sets the default console level. 0 gives a progress bar. 1 gives a progress bar with numbers. 2 or higher give increasing amounts of debugging. If this line is not specified, the default console level is unchanged."
 
-AddConfigHelp "ImageSizeLimit nocache|<NN> (requires UseSuspend2 on)" "If specified, sets an upper limit on the size of the suspend image written (in megabytes). If set to \"nocache\", caches and buffers will not be saved - resulting in a faster suspend and resume at the possible expense of system responsiveness immediately after resuming. If set to 0, no limit is imposed. If this line is not specified, the existing image size limit is unchanged."
+AddConfigHelp "ImageSizeLimit nocache|<NN> (requires UseTuxOnIce on)" "If specified, sets an upper limit on the size of the hibernation image written (in megabytes). If set to \"nocache\", caches and buffers will not be saved - resulting in a faster hibernation and resume at the possible expense of system responsiveness immediately after resuming. If set to 0, no limit is imposed. If this line is not specified, the existing image size limit is unchanged."
 
-AddConfigHelp "AsyncIOLimit <N> (requires UseSuspend2 on)" "Deprecated since 2.1.5.11 (hence won't do anything if set). Limit the number of I/O operations that Software Suspend 2 will have queued at once. Lowering this value has resolved hangs when reading or writing caches for some people. Try values like 64, 32 and 8."
+AddConfigHelp "AsyncIOLimit <N> (requires UseTuxOnIce on)" "Deprecated since 2.1.5.11 (hence won't do anything if set). Limit the number of I/O operations that TuxOnIce will have queued at once. Lowering this value has resolved hangs when reading or writing caches for some people. Try values like 64, 32 and 8."
 
-AddConfigHelp "SuspendDevice <device> (requires UseSuspend2 on)" "If specified, sets the suspend device by writing to the resume[2] entry in $SWSUSP_ROOT. This does not automatically set the resuming device - you will need to make sure your bootloader or initrd script does this."
+AddConfigHelp "SuspendDevice <device> (requires UseTuxOnIce on)" "If specified, sets the hibernation device by writing to the resume[2] entry in $TUXONICE_ROOT. This does not automatically set the resuming device - you will need to make sure your bootloader or initrd script does this."
 
-AddConfigHelp "FilewriterLocation <filename> <size in MB> (requires UseSuspend2 on)" "This option sets up the given filename to act as a destination file for writing the suspend image to, and verifies that it can act as a valid destination. If the file does not exist, the file is created. This option is only relevant if you are using the filewriter plugin for Software Suspend."
+AddConfigHelp "FilewriterLocation <filename> <size in MB> (requires UseTuxOnIce on)" "This option sets up the given filename to act as a destination file for writing the hibernation image to, and verifies that it can act as a valid destination. If the file does not exist, the file is created. This option is only relevant if you are using the filewriter plugin for TuxOnIce."
 
-AddConfigHelp "VerifyFilewriterResume2 <boolean> (requires UseSuspend2 on)" "When this option is on, you will be prompted if your current kernel command-line does not match the correct resume[2] for the filewriter. This option is on by default."
+AddConfigHelp "VerifyFilewriterResume2 <boolean> (requires UseTuxOnIce on)" "When this option is on, you will be prompted if your current kernel command-line does not match the correct resume[2] for the filewriter. This option is on by default."
 
-AddConfigHelp "LoadSuspendModules <module name> [...] (requires UseSuspend2 on)" "Loads the given modules before even detecting Software Suspend. This may be required when Software Suspend is compiled as modules that need to be loaded prior to suspending."
-AddConfigHelp "UnloadSuspendModulesAfterResume <boolean> (requires UseSuspend2 on)" "If yes, will unload the Software Suspend modules mentioned above after resuming."
+AddConfigHelp "LoadSuspendModules <module name> [...] (requires UseTuxOnIce on)" "Loads the given modules before even detecting TuxOnIce. This may be required when TuxOnIce is compiled as modules that need to be loaded prior to hibernating."
+AddConfigHelp "UnloadSuspendModulesAfterResume <boolean> (requires UseTuxOnIce on)" "If yes, will unload the TuxOnIce modules mentioned above after resuming."
 
-AddConfigHelp "PowerdownMethod <0|3|4|5> (requires UseSuspend2 on)" "Allows you to choose what Software Suspend 2 should do after writing its image to disk. 3/4/5 will only work if you have ACPI enabled in your kernel. 3/4/5 correspond to the ACPI states S3 (suspend-to-RAM), S4 (suspend-to-disk), and S5 (power off). Choosing 3 will request your machine to enter the S3 Suspend-to-RAM state if it is supported - this allows you drastically cut the resume time waiting for your BIOS but still consumes power whilst hibernated (though the image is not lost should power run out). Choosing 4 will cause your machine to enter an S4 sleep state which may also reduce the resume time without using any power whilst hibernated. Choosing 5 will cause your machine to switch off after suspending (traditional method) but might still cause your machine to resume when you open the lid. 0 bypasses ACPI and shuts off the machine completely."
+AddConfigHelp "PowerdownMethod <0|3|4|5> (requires UseTuxOnIce on)" "Allows you to choose what TuxOnIce should do after writing its image to disk. 3/4/5 will only work if you have ACPI enabled in your kernel. 3/4/5 correspond to the ACPI states S3 (suspend-to-RAM), S4 (hibernate-to-disk), and S5 (power off). Choosing 3 will request your machine to enter the S3 Suspend-to-RAM state if it is supported - this allows you drastically cut the resume time waiting for your BIOS but still consumes power whilst hibernated (though the image is not lost should power run out). Choosing 4 will cause your machine to enter an S4 sleep state which may also reduce the resume time without using any power whilst hibernated. Choosing 5 will cause your machine to switch off after hibernating (traditional method) but might still cause your machine to resume when you open the lid. 0 bypasses ACPI and shuts off the machine completely."
 
-AddConfigHelp "Compressor none|<compressor name> (requires UseSuspend2 on)" "Sets the compression algorithm to use for compressing the memory image. If set to \"none\", disables compression. Otherwise, the compressor name must be listed in /proc/crypto. This will also try to load the module if not available. (Only for Software Suspend 2.1.9.5 or newer)."
+AddConfigHelp "Compressor none|<compressor name> (requires UseTuxOnIce on)" "Sets the compression algorithm to use for compressing the memory image. If set to \"none\", disables compression. Otherwise, the compressor name must be listed in /proc/crypto. This will also try to load the module if not available. (Only for TuxOnIce.1.9.5 or newer)."
 
-AddConfigHelp "Encryptor none|<encryptor name> (requires UseSuspend2 on)" "Sets the encryption algorithm to use for encrypting the memory image. If set to \"none\", disables encryption. Otherwise, the cipher name must be listed in /proc/crypto. This will also try to load the module if not available. You will probably require more options than just this to fully use encryption. These will be introduced in the next version of hibernate, but for now you can set them using the \"ProcSetting\" option if you know what you are doing. (Only for Software Suspend 2.1.9.5 or newer)."
+AddConfigHelp "Encryptor none|<encryptor name> (requires UseTuxOnIce on)" "Sets the encryption algorithm to use for encrypting the memory image. If set to \"none\", disables encryption. Otherwise, the cipher name must be listed in /proc/crypto. This will also try to load the module if not available. You will probably require more options than just this to fully use encryption. These will be introduced in the next version of hibernate, but for now you can set them using the \"ProcSetting\" option if you know what you are doing. (Only for TuxOnIce.1.9.5 or newer)."
 
-AddConfigHelp "ProcSetting <entry name> <value> (requires UseSuspend2 on)" "Sets the value of $SWSUSP_ROOT/<entry_name> to <value> upon suspending. You can use this setting to set parameters that can't be configured anywhere else in this script. This is executed after all other settings have been set."
+AddConfigHelp "ProcSetting <entry name> <value> (requires UseTuxOnIce on)" "Sets the value of $TUXONICE_ROOT/<entry_name> to <value> upon hibernating. You can use this setting to set parameters that can't be configured anywhere else in this script. This is executed after all other settings have been set."
 
 AddShortOption "n"
 AddLongOption "no-suspend"
 
 AddLongOption "bug-report"
-AddOptionHelp "--bug-report (requires UseSuspend2 on)" "Gathers a bunch of information about your machine and writes it to standard output. Please attach this information along with any bug reports to the Software Suspend mailing list."
+AddOptionHelp "--bug-report (requires UseTuxOnIce on)" "Gathers a bunch of information about your machine and writes it to standard output. Please attach this information along with any bug reports to the TuxOnIce mailing list."
+
+TUXONICE_BINARY_SIG="\xed\xc3\x02\xe9\x98\x56\xe5\x0c"
 
 TuxOnIceTermination() {
     # rmmod rather than modprobe -r because the later might
     # remove more modules than we want to remove.
-    for mod in ${SWSUSP_RMOD} ; do
+    for mod in ${TUXONICE_RMOD} ; do
 	/sbin/rmmod ${mod}
     done
 
@@ -55,72 +57,71 @@ TuxOnIceTermination() {
 }
 
 TuxOnIceConfigEnabler() {
-    [ "$1" != "usesuspend2" ] && [ "$1" != "useswsusp2" ] && return 1
+    [ "$1" != "usesuspend2" ] && [ "$1" != "useswsusp2" ] && [ "$1" != "usetuxonice" ] && return 1
     BoolIsOn "$1" "$2" || return 0
-    [ -n "$USING_SWSUSP2" ] && return 0
+    [ -n "$USING_TUXONICE" ] && return 0
 
-    # Load the suspend modules if necessary
+    # Load the TuxOnIce modules if necessary
     # Order is important - dependent modules later than what they depend on.
-    SWSUSP_MODS="suspend_core suspend_block_io suspend_file suspend_swap suspend_compress suspend_userui tuxonice_core tuxonice_block_io tuxonice_file tuxonice_swap tuxonice_compress tuxonice_userui"
-    SWSUSP_RMOD=
-    for mod in ${SWSUSP_MODS} ; do
-	/sbin/modprobe --first-time "${mod}" >/dev/null 2>&1  && SWSUSP_RMOD="${mod} ${SWSUSP_RMOD}"
+    TUXONICE_MODS="suspend_core suspend_block_io suspend_file suspend_swap suspend_compress suspend_userui tuxonice_core tuxonice_block_io tuxonice_file tuxonice_swap tuxonice_compress tuxonice_userui"
+    TUXONICE_RMOD=
+    for mod in ${TUXONICE_MODS} ; do
+	/sbin/modprobe --first-time "${mod}" >/dev/null 2>&1  && TUXONICE_RMOD="${mod} ${TUXONICE_RMOD}"
     done
 
     # signature for filewriter
     FILEWRITER_SIGNATURE="Suspend2"
 
-    # Detect where suspend2 is these days.
+    # Detect where TuxOnIce is these days.
     if [ -d "/sys/power/tuxonice/" ] ; then
-	SWSUSP_ROOT="/sys/power/tuxonice"
+	TUXONICE_ROOT="/sys/power/tuxonice"
 	FILEWRITER_SIGNATURE="TuxOnIce"
     elif [ -d "/sys/power/suspend2/" ] ; then
-	SWSUSP_ROOT="/sys/power/suspend2"
+	TUXONICE_ROOT="/sys/power/suspend2"
     elif [ -d "/proc/swsusp/" ] ; then
-	SWSUSP_ROOT="/proc/swsusp"
+	TUXONICE_ROOT="/proc/swsusp"
     elif [ -d "/proc/software_suspend" ] ; then
-	SWSUSP_ROOT="/proc/software_suspend"
+	TUXONICE_ROOT="/proc/software_suspend"
     else
-	SWSUSP_ROOT="/proc/suspend2"
+	TUXONICE_ROOT="/proc/suspend2"
     fi
     
-    COMPRESSION_ROOT="$SWSUSP_ROOT"
-    ENCRYPTION_ROOT="$SWSUSP_ROOT"
-    FILEWRITER_ROOT="$SWSUSP_ROOT"
-    SWAPWRITER_ROOT="$SWSUSP_ROOT"
-    UI_ROOT="$SWSUSP_ROOT"
-    STORAGEMAN_ROOT="$SWSUSP_ROOT"
-    [ -d "$SWSUSP_ROOT/compression/" ] && COMPRESSION_ROOT="$SWSUSP_ROOT/compression"
-    [ -d "$SWSUSP_ROOT/encryption/" ] && ENCRYPTION_ROOT="$SWSUSP_ROOT/encryption"
-    [ -d "$SWSUSP_ROOT/filewriter/" ] && FILE_DIR="filewriter"
-    [ -d "$SWSUSP_ROOT/swapwriter/" ] && SWAP_DIR_ROOT="swapwriter"
-    [ -d "$SWSUSP_ROOT/file/" ] && FILE_DIR="file"
-    [ -d "$SWSUSP_ROOT/swap/" ] && SWAP_DIR="swap"
-    [ -d "$SWSUSP_ROOT/user_interface/" ] && UI_ROOT="$SWSUSP_ROOT/user_interface"
-    [ -d "$SWSUSP_ROOT/storage_manager/" ] && STORAGEMAN_ROOT="$SWSUSP_ROOT/storage_manager"
+    COMPRESSION_ROOT="$TUXONICE_ROOT"
+    ENCRYPTION_ROOT="$TUXONICE_ROOT"
+    FILEWRITER_ROOT="$TUXONICE_ROOT"
+    SWAPWRITER_ROOT="$TUXONICE_ROOT"
+    UI_ROOT="$TUXONICE_ROOT"
+    STORAGEMAN_ROOT="$TUXONICE_ROOT"
+    [ -d "$TUXONICE_ROOT/compression/" ] && COMPRESSION_ROOT="$TUXONICE_ROOT/compression"
+    [ -d "$TUXONICE_ROOT/encryption/" ] && ENCRYPTION_ROOT="$TUXONICE_ROOT/encryption"
+    [ -d "$TUXONICE_ROOT/filewriter/" ] && FILE_DIR="filewriter"
+    [ -d "$TUXONICE_ROOT/swapwriter/" ] && SWAP_DIR_ROOT="swapwriter"
+    [ -d "$TUXONICE_ROOT/file/" ] && FILE_DIR="file"
+    [ -d "$TUXONICE_ROOT/swap/" ] && SWAP_DIR="swap"
+    [ -d "$TUXONICE_ROOT/user_interface/" ] && UI_ROOT="$TUXONICE_ROOT/user_interface"
+    [ -d "$TUXONICE_ROOT/storage_manager/" ] && STORAGEMAN_ROOT="$TUXONICE_ROOT/storage_manager"
 
-    [ -n "$FILE_DIR" ] && FILEWRITER_ROOT="$SWSUSP_ROOT/$FILE_DIR"    
-    [ -n "$SWAP_DIR" ] && SWAPWRITER_ROOT="$SWSUSP_ROOT/$SWAP_DIR"    
-    SWSUSP_DEFAULT_ALL_SETTINGS_FILE="$SWSUSP_D/swsusp2-all-settings.conf"
-    HIBERNATE_FILEWRITER_TRAIL="/var/run/suspend2_filewriter_image_exists"
+    [ -n "$FILE_DIR" ] && FILEWRITER_ROOT="$TUXONICE_ROOT/$FILE_DIR"    
+    [ -n "$SWAP_DIR" ] && SWAPWRITER_ROOT="$TUXONICE_ROOT/$SWAP_DIR"    
+    HIBERNATE_FILEWRITER_TRAIL="/var/run/TuxOnIce_filewriter_image_exists"
 
     if [ -n "$NO_COMPLAIN_UNSUPPORTED" ] ; then
 	# Just bail silently if we don't detect it.
-	[ -d "$SWSUSP_ROOT" ] || return 0
+	[ -d "$TUXONICE_ROOT" ] || return 0
     fi
-    UsingSuspendMethod suspend2
+    UsingSuspendMethod TuxOnIce
     AddConfigHandler TuxOnIceConfigOptions
     AddSuspendHook 10 EnsureTuxOnIceCapable
-    AddSuspendHook 97 ChangeToSwsuspVT
+    AddSuspendHook 97 ChangeToTuxOnIceVT
     AddSuspendHook 99 DoTuxOnIce
-    AddResumeHook 97 ChangeFromSwsuspVT
-    USING_SWSUSP2=1
+    AddResumeHook 97 ChangeFromTuxOnIceVT
+    USING_TUXONICE=1
     return 0
 }
 
 TuxOnIceOptionHandler() {
     # Don't parse options if we're not being used.
-    [ -z "$USING_SWSUSP2" ] && return 1
+    [ -z "$USING_TUXONICE" ] && return 1
 
     case $1 in
 	-r|--reboot)
@@ -132,10 +133,10 @@ TuxOnIceOptionHandler() {
 	    fi
 	    ;;
 	-n|--no-suspend)
-	    SWSUSP2_NO_SUSPEND=1
+	    TUXONICE_NO_SUSPEND=1
 	    ;;
 	--bug-report)
-	    SWSUSP2_BUG_REPORT=1
+	    TUXONICE_BUG_REPORT=1
 	    ;;
 	*)
 	    return 1
@@ -159,30 +160,30 @@ TuxOnIceConfigOptions() {
 	    OPT_CONSOLELEVEL=$2
 	    ;;
 	imagesizelimit)
-	    SWSUSP_IMAGE_SIZE_LIMIT=$2
+	    TUXONICE_IMAGE_SIZE_LIMIT=$2
 	    ;;
 	asynciolimit)
-	    SWSUSP_ASYNC_IO_LIMIT=$2
+	    TUXONICE_ASYNC_IO_LIMIT=$2
 	    ;;
 	suspenddevice)
-	    SWSUSP_RESUME2=$2
+	    TUXONICE_RESUME2=$2
 	    ;;
 	filewriterlocation)
-	    SWSUSP_FILEWRITER_LOC=$2
-	    SWSUSP_FILEWRITER_SIZE=$3
-	    if [ -z "$SWSUSP_FILEWRITER_LOC" ] ; then
+	    TUXONICE_FILEWRITER_LOC=$2
+	    TUXONICE_FILEWRITER_SIZE=$3
+	    if [ -z "$TUXONICE_FILEWRITER_LOC" ] ; then
 		vecho 0 "$EXE: Empty filewriter location given!"
 		exit 1
 	    fi
-	    if [ -e "$SWSUSP_FILEWRITER_LOC" ] && [ -d "$SWSUSP_FILEWRITER_LOC" ] ; then
+	    if [ -e "$TUXONICE_FILEWRITER_LOC" ] && [ -d "$TUXONICE_FILEWRITER_LOC" ] ; then
 		vecho 0 "$EXE: Filewriter location given is a directory!"
 		exit 1
 	    fi
-	    if [ -e "$SWSUSP_FILEWRITER_LOC" ] && ! [ -w "$SWSUSP_FILEWRITER_LOC" ] ; then
+	    if [ -e "$TUXONICE_FILEWRITER_LOC" ] && ! [ -w "$TUXONICE_FILEWRITER_LOC" ] ; then
 		vecho 0 "$EXE: Filewriter location is unwritable!"
 		exit 1
 	    fi
-	    if ! IsANumber "$SWSUSP_FILEWRITER_SIZE" ; then
+	    if ! IsANumber "$TUXONICE_FILEWRITER_SIZE" ; then
 		vecho 0 "$EXE: Filewriter size is not numeric!"
 		exit 1
 	    fi
@@ -191,12 +192,12 @@ TuxOnIceConfigOptions() {
 	    ;;
 	verifyfilewriterresume2)
 	    BoolIsOn "$1" "$2" && return 0
-	    SWSUSP_FILEWRITER_NOVERIFY=1
+	    TUXONICE_FILEWRITER_NOVERIFY=1
 	    ;;
 	loadsuspendmodules)
 	    AddSuspendHook 05 TuxOnIceLoadModules
 	    shift
-	    SWSUSP_LOAD_MODULES=$@
+	    TUXONICE_LOAD_MODULES=$@
 	    ;;
 	unloadsuspendmodulesafterresume)
 	    BoolIsOn "$1" "$2" || return 0
@@ -205,7 +206,7 @@ TuxOnIceConfigOptions() {
 	powerdownmethod)
 	    case $2 in
 		[03-5])
-		    SWSUSP_POWERDOWN_METHOD=$2
+		    TUXONICE_POWERDOWN_METHOD=$2
 		    ;;
 		*)
 		    echo "$EXE: Invalid value for $1 ($2). Must be 0 3 4 or 5."
@@ -214,28 +215,28 @@ TuxOnIceConfigOptions() {
 	    esac
 	    ;;
 	compressor|compression)
-	    SWSUSP_COMPRESSOR=$2
+	    TUXONICE_COMPRESSOR=$2
 	    ;;
 	encryptor|encryption)
-	    SWSUSP_ENCRYPTOR=$2
+	    TUXONICE_ENCRYPTOR=$2
 	    ;;
 	procsetting)
 	    if [ -z "$OPT_DRY_RUN" ] ; then
-		if [ -z "$SWSUSP_EXTRA_PROC_SETTINGS" ] ; then
-		    SWSUSP_EXTRA_PROC_SETTINGS=`mktemp /tmp/tmp.hibernate.XXXXXX`
-		    cat <<EOT > $SWSUSP_EXTRA_PROC_SETTINGS
+		if [ -z "$TUXONICE_EXTRA_PROC_SETTINGS" ] ; then
+		    TUXONICE_EXTRA_PROC_SETTINGS=`mktemp /tmp/tmp.hibernate.XXXXXX`
+		    cat <<EOT > $TUXONICE_EXTRA_PROC_SETTINGS
 # Temporary file for hibernate script.
 # If you're reading this then it's probably safe to delete.
 
 EOT
-		    AddResumeHook 00 RemoveSwsuspProcCruft
+		    AddResumeHook 00 RemoveTuxOnIceProcCruft
 		fi
 		shift
 		FILE="$1"
 		shift
-		TARGET="$SWSUSP_ROOT/$FILE"
+		TARGET="$TUXONICE_ROOT/$FILE"
 		if ! [ -f "$TARGET" ] ; then
-		    TARGET="`echo $SWSUSP_ROOT/*/$FILE | awk '{print $1}'`"
+		    TARGET="`echo $TUXONICE_ROOT/*/$FILE | awk '{print $1}'`"
 		    if ! [ -f "$TARGET" ] ; then
 			nfile=$FILE
 			[ $FILE != ${FILE#userui_} ] && \
@@ -253,49 +254,49 @@ EOT
 			    val=$(($1^1))
 			    set -- $val
 			fi
-			TARGET=$SWSUSP_ROOT/$nfile
+			TARGET=$TUXONICE_ROOT/$nfile
 		    fi
 		fi
 		if ! [ -f "$TARGET" ] ; then
-		    vecho 0 "suspend2: No $FILE entry available. Not setting."
+		    vecho 0 "TuxOnIce: No $FILE entry available. Not setting."
 		else
-		    echo "echo \"$*\" > $TARGET" >> $SWSUSP_EXTRA_PROC_SETTINGS
+		    echo "echo \"$*\" > $TARGET" >> $TUXONICE_EXTRA_PROC_SETTINGS
 		fi
 	    fi
 	    ;;
 	*)
 	    return 1
     esac
-    if [ -z "$SWSUSP2_HOOKED" ] ; then
+    if [ -z "$TUXONICE_HOOKED" ] ; then
 	AddSuspendHook 98 TuxOnIceConfigSet
-	SWSUSP2_HOOKED=1
+	TUXONICE_HOOKED=1
     fi
     return 0
 }
 
-RemoveSwsuspProcCruft() {
-    [ -f "$SWSUSP_EXTRA_PROC_SETTINGS" ] && rm -f $SWSUSP_EXTRA_PROC_SETTINGS
+RemoveTuxOnIceProcCruft() {
+    [ -f "$TUXONICE_EXTRA_PROC_SETTINGS" ] && rm -f $TUXONICE_EXTRA_PROC_SETTINGS
     return 0
 }
 
 TuxOnIceSetupCryptoAPI() {
-    SwsuspIsAtLeastVersion $((0x02010905)) || return
+    TuxOnIceIsAtLeastVersion $((0x02010905)) || return
 
-    SWSUSP_MODULES_LOADED=
-    if [ -n "$SWSUSP_COMPRESSOR" ] ; then
-	if [ "$SWSUSP_COMPRESSOR" != "none" ] ; then
-	    if ! grep -q "^name.*: $SWSUSP_COMPRESSOR\$" /proc/crypto ; then
-		modprobe $SWSUSP_COMPRESSOR 2>/dev/null 2>&1
-		if ! grep -q "^name.*: $SWSUSP_COMPRESSOR\$" /proc/crypto ; then
-		    vecho 0 "Warning: Chosen Suspend2 compressor ($SWSUSP_COMPRESSOR) is not available. Compression disabled."
-		    SWSUSP_COMPRESSOR=none
+    TUXONICE_MODULES_LOADED=
+    if [ -n "$TUXONICE_COMPRESSOR" ] ; then
+	if [ "$TUXONICE_COMPRESSOR" != "none" ] ; then
+	    if ! grep -q "^name.*: $TUXONICE_COMPRESSOR\$" /proc/crypto ; then
+		modprobe $TUXONICE_COMPRESSOR 2>/dev/null 2>&1
+		if ! grep -q "^name.*: $TUXONICE_COMPRESSOR\$" /proc/crypto ; then
+		    vecho 0 "Warning: Chosen TuxOnIce compressor ($TUXONICE_COMPRESSOR) is not available. Compression disabled."
+		    TUXONICE_COMPRESSOR=none
 		else
-		    SWSUSP_MODULES_LOADED="$SWSUSP_COMPRESSOR"
+		    TUXONICE_MODULES_LOADED="$TUXONICE_COMPRESSOR"
 		fi
 	    fi
 	fi
-	if [ "$SWSUSP_COMPRESSOR" != "none" ] ; then
-	    compression_algorithm=$SWSUSP_COMPRESSOR
+	if [ "$TUXONICE_COMPRESSOR" != "none" ] ; then
+	    compression_algorithm=$TUXONICE_COMPRESSOR
 	    disable_value=0
 	else
 	    compression_algorithm=""
@@ -313,20 +314,20 @@ TuxOnIceSetupCryptoAPI() {
 	fi
     fi
 
-    if [ -n "$SWSUSP_ENCRYPTOR" ] ; then
-	if [ "$SWSUSP_ENCRYPTOR" != "none" ] ; then
-	    if ! grep -q "^name.*: $SWSUSP_ENCRYPTOR\$" /proc/crypto ; then
-		modprobe $SWSUSP_ENCRYPTOR 2>/dev/null 2>&1
-		if ! grep -q "^name.*: $SWSUSP_ENCRYPTOR\$" /proc/crypto ; then
-		    vecho 0 "Warning: Chosen Suspend2 encryptor ($SWSUSP_ENCRYPTOR) is not available. Encryption disabled."
-		    SWSUSP_ENCRYPTOR=none
+    if [ -n "$TUXONICE_ENCRYPTOR" ] ; then
+	if [ "$TUXONICE_ENCRYPTOR" != "none" ] ; then
+	    if ! grep -q "^name.*: $TUXONICE_ENCRYPTOR\$" /proc/crypto ; then
+		modprobe $TUXONICE_ENCRYPTOR 2>/dev/null 2>&1
+		if ! grep -q "^name.*: $TUXONICE_ENCRYPTOR\$" /proc/crypto ; then
+		    vecho 0 "Warning: Chosen TuxOnIce encryptor ($TUXONICE_ENCRYPTOR) is not available. Encryption disabled."
+		    TUXONICE_ENCRYPTOR=none
 		else
-		    SWSUSP_MODULES_LOADED="$SWSUSP_MODULES_LOADED $SWSUSP_ENCRYPTOR"
+		    TUXONICE_MODULES_LOADED="$TUXONICE_MODULES_LOADED $TUXONICE_ENCRYPTOR"
 		fi
 	    fi
 	fi
-	if [ "$SWSUSP_ENCRYPTOR" != "none" ] ; then
-	    encryption_algorithm=$SWSUSP_ENCRYPTOR
+	if [ "$TUXONICE_ENCRYPTOR" != "none" ] ; then
+	    encryption_algorithm=$TUXONICE_ENCRYPTOR
 	    disable_value=0
 	else
 	    encryption_algorithm=""
@@ -346,7 +347,7 @@ TuxOnIceSetupCryptoAPI() {
 }
 
 TuxOnIceConfigSet() {
-    if [ "x$SWSUSP_IMAGE_SIZE_LIMIT" = "xnocache" ] ; then
+    if [ "x$TUXONICE_IMAGE_SIZE_LIMIT" = "xnocache" ] ; then
 	local field val units result
 	local total=0 cached=0 buffers=0 free=0
 	while read field val units ; do
@@ -357,13 +358,13 @@ TuxOnIceConfigSet() {
 	done < /proc/meminfo
 	result=$((($total-$cached-$buffers-$free+10240)/1024))
 	vecho 2 "Setting image size limit to $result."
-	echo $result > $SWSUSP_ROOT/image_size_limit
+	echo $result > $TUXONICE_ROOT/image_size_limit
     else
-	[ -n "$SWSUSP_IMAGE_SIZE_LIMIT" ] && echo $SWSUSP_IMAGE_SIZE_LIMIT > $SWSUSP_ROOT/image_size_limit
+	[ -n "$TUXONICE_IMAGE_SIZE_LIMIT" ] && echo $TUXONICE_IMAGE_SIZE_LIMIT > $TUXONICE_ROOT/image_size_limit
     fi
 
-    [ -n "$OPT_REBOOT" ] && [ -f "$SWSUSP_ROOT/reboot" ] && \
-	echo $OPT_REBOOT > $SWSUSP_ROOT/reboot
+    [ -n "$OPT_REBOOT" ] && [ -f "$TUXONICE_ROOT/reboot" ] && \
+	echo $OPT_REBOOT > $TUXONICE_ROOT/reboot
 
     [ -n "$OPT_ESCAPE" ] && [ -f $UI_ROOT/enable_escape ] && \
 	echo $OPT_ESCAPE > $UI_ROOT/enable_escape
@@ -371,35 +372,35 @@ TuxOnIceConfigSet() {
     [ -n "$OPT_CONSOLELEVEL" ] && [ -f $UI_ROOT/default_console_level ] && \
 	echo $OPT_CONSOLELEVEL > $UI_ROOT/default_console_level
 
-    [ -n "$SWSUSP_ASYNC_IO_LIMIT" ] && [ -f $SWSUSP_ROOT/async_io_limit ] && \
-    	echo $SWSUSP_ASYNC_IO_LIMIT > $SWSUSP_ROOT/async_io_limit
+    [ -n "$TUXONICE_ASYNC_IO_LIMIT" ] && [ -f $TUXONICE_ROOT/async_io_limit ] && \
+    	echo $TUXONICE_ASYNC_IO_LIMIT > $TUXONICE_ROOT/async_io_limit
 
-    [ -n "$SWSUSP_RESUME2" ] && [ -f $SWSUSP_ROOT/resume ] && \
-    	echo $SWSUSP_RESUME2 > $SWSUSP_ROOT/resume
+    [ -n "$TUXONICE_RESUME2" ] && [ -f $TUXONICE_ROOT/resume ] && \
+    	echo $TUXONICE_RESUME2 > $TUXONICE_ROOT/resume
 
-    [ -n "$SWSUSP_RESUME2" ] && [ -f $SWSUSP_ROOT/resume2 ] && \
-    	echo $SWSUSP_RESUME2 > $SWSUSP_ROOT/resume2
+    [ -n "$TUXONICE_RESUME2" ] && [ -f $TUXONICE_ROOT/resume2 ] && \
+    	echo $TUXONICE_RESUME2 > $TUXONICE_ROOT/resume2
 
-    [ -n "$SWSUSP_POWERDOWN_METHOD" ] && [ -f $SWSUSP_ROOT/powerdown_method ] && \
-	echo $SWSUSP_POWERDOWN_METHOD > $SWSUSP_ROOT/powerdown_method
+    [ -n "$TUXONICE_POWERDOWN_METHOD" ] && [ -f $TUXONICE_ROOT/powerdown_method ] && \
+	echo $TUXONICE_POWERDOWN_METHOD > $TUXONICE_ROOT/powerdown_method
 
     TuxOnIceSetupCryptoAPI
 
-    [ -n "$SWSUSP_EXTRA_PROC_SETTINGS" ] && [ -f "$SWSUSP_EXTRA_PROC_SETTINGS" ] && \
-	. $SWSUSP_EXTRA_PROC_SETTINGS
+    [ -n "$TUXONICE_EXTRA_PROC_SETTINGS" ] && [ -f "$TUXONICE_EXTRA_PROC_SETTINGS" ] && \
+	. $TUXONICE_EXTRA_PROC_SETTINGS
 
     return 0
 }
 
-SwsuspIsAtLeastVersion() {
-    ver=`awk 'BEGIN{FS="[^0-9]"}{print($1*16777216)+($2*65536)+($3*256)+$4}' $SWSUSP_ROOT/version`
+TuxOnIceIsAtLeastVersion() {
+    ver=`awk 'BEGIN{FS="[^0-9]"}{print($1*16777216)+($2*65536)+($3*256)+$4}' $TUXONICE_ROOT/version`
     [ $ver -ge $1 ] && return 0
     return 1
 }
 
 DoTuxOnIce() {
     local error
-    if [ -n "$SWSUSP2_BUG_REPORT" ] ; then
+    if [ -n "$TUXONICE_BUG_REPORT" ] ; then
 	# Dump our debug info now.
 	vecho 0 "System information follows. (Please include with bug reports)."
 	vecho 0 "--- Hibernate script version: $VERSION"
@@ -417,55 +418,55 @@ DoTuxOnIce() {
 	    zcat /proc/config.gz | vcat 0
 	fi
 
-	# Use a freezer test if we can. Otherwise, just don't suspend.
-	if [ -f "$SWSUSP_ROOT/freezer_test" ] ; then
-	    /bin/echo 1 > $SWSUSP_ROOT/freezer_test
+	# Use a freezer test if we can. Otherwise, just don't hibernate.
+	if [ -f "$TUXONICE_ROOT/freezer_test" ] ; then
+	    /bin/echo 1 > $TUXONICE_ROOT/freezer_test
 	    # We'll obtain debug_info from dmesg
 	else
-	    SWSUSP2_NO_SUSPEND=1
-	    if [ -f "$SWSUSP_ROOT/debug_info" ] ; then
-		vecho 0 "--- $SWSUSP_ROOT/debug_info:"
-		vcat 0 $SWSUSP_ROOT/debug_info
+	    TUXONICE_NO_SUSPEND=1
+	    if [ -f "$TUXONICE_ROOT/debug_info" ] ; then
+		vecho 0 "--- $TUXONICE_ROOT/debug_info:"
+		vcat 0 $TUXONICE_ROOT/debug_info
 	    fi
 	fi
 	vecho 1 "$EXE: Performing a freezer_test..."
     fi
-    if [ -z "$SWSUSP2_NO_SUSPEND" ] ; then
-	vecho 1 "$EXE: Activating suspend ..."
+    if [ -z "$TUXONICE_NO_SUSPEND" ] ; then
+	vecho 1 "$EXE: Activating TuxOnIce ..."
 	SaveDmesg
 	error=`DoSuspend`
 	[ -n "$error" ] && [ $error -ne 0 ] && EXIT_CODE=4
-	if ! PrintErrors $error || [ -n "$SWSUSP2_BUG_REPORT" ]; then
+	if ! PrintErrors $error || [ -n "$TUXONICE_BUG_REPORT" ]; then
 	    OutputDmesgChanges
 	fi
 	CleanupDmesg
     else
-	vecho 1 "$EXE: Not actually suspending (--no-suspend given)"
+	vecho 1 "$EXE: Not actually hibernating (--no-suspend given)"
     fi
-    [ -f "$SWSUSP_ROOT/freezer_test" ] && echo 0 > $SWSUSP_ROOT/freezer_test
-    [ -n "$SWSUSP_MODULES_LOADED" ] && rmmod $SWSUSP_MODULES_LOADED 2>/dev/null
+    [ -f "$TUXONICE_ROOT/freezer_test" ] && echo 0 > $TUXONICE_ROOT/freezer_test
+    [ -n "$TUXONICE_MODULES_LOADED" ] && rmmod $TUXONICE_MODULES_LOADED 2>/dev/null
     return 0
 }
 
-ChangeToSwsuspVT() {
-    if [ -n "$SWSUSP_FORCE_CHVT" ] ; then
+ChangeToTuxOnIceVT() {
+    if [ -n "$TUXONICE_FORCE_CHVT" ] ; then
 	if command -v fgconsole > /dev/null 2>&1 ; then
-	    SWSUSP_ORIGINAL_VT=`fgconsole`
+	    TUXONICE_ORIGINAL_VT=`fgconsole`
 	else
-	    SWSUSP_ORIGINAL_VT=1
+	    TUXONICE_ORIGINAL_VT=1
 	fi
-	vecho 3 "suspend2: changing console from $SWSUSP_ORIGINAL_VT to 63"
+	vecho 3 "TuxOnIce: changing console from $TUXONICE_ORIGINAL_VT to 63"
 	chvt 63
-	# Turn off unicode on this VT, as it makes swsusp output ugly.
+	# Turn off unicode on this VT, as it makes TuxOnIce output ugly.
 	/bin/echo -ne '\033%@' > /dev/tty63
     fi
     return 0
 }
 
-ChangeFromSwsuspVT() {
-    if [ -n "$SWSUSP_ORIGINAL_VT" ] ; then
-	vecho 3 "suspend2: changing console back to $SWSUSP_ORIGINAL_VT"
-	chvt $SWSUSP_ORIGINAL_VT
+ChangeFromTuxOnIceVT() {
+    if [ -n "$TUXONICE_ORIGINAL_VT" ] ; then
+	vecho 3 "TuxOnIce: changing console back to $TUXONICE_ORIGINAL_VT"
+	chvt $TUXONICE_ORIGINAL_VT
     fi
     return 0
 }
@@ -494,7 +495,7 @@ OutputDmesgChanges() {
     then
 	# Exit code indicates the diff was useful. Log it (manually for speed).
 	local diff_loglevel=1
-	[ -n "$SWSUSP2_BUG_REPORT" ] && diff_loglevel=0
+	[ -n "$TUXONICE_BUG_REPORT" ] && diff_loglevel=0
 	vecho $diff_loglevel "---- Output from dmesg: ----"
 	vcat $diff_loglevel $DMESG_CMP
 	vecho $diff_loglevel "---- End of dmesg output ----"
@@ -511,17 +512,17 @@ CleanupDmesg() {
     return 0
 }
 
-# DoSuspend: activates the suspend and echo's the error code to be processed by
+# DoSuspend: activates the hibernation cycle and echo's the error code to be processed by
 # PrintErrors. We can't just return it, because error codes may be > 255
 DoSuspend() {
-    if [ -f $SWSUSP_ROOT/do_hibernate ]; then
-	echo > $SWSUSP_ROOT/do_hibernate
-    elif [ -f $SWSUSP_ROOT/do_suspend ] ; then
-	echo > $SWSUSP_ROOT/do_suspend
+    if [ -f $TUXONICE_ROOT/do_hibernate ]; then
+	echo > $TUXONICE_ROOT/do_hibernate
+    elif [ -f $TUXONICE_ROOT/do_suspend ] ; then
+	echo > $TUXONICE_ROOT/do_suspend
     else
-	echo > $SWSUSP_ROOT/activate
+	echo > $TUXONICE_ROOT/activate
     fi
-    read REPLY < $SWSUSP_ROOT/last_result
+    read REPLY < $TUXONICE_ROOT/last_result
     echo $REPLY
 
     return 0
@@ -532,9 +533,9 @@ DoSuspend() {
 # kernel/power/power.h.
 PrintAnErrorString() {
     case "$1" in
-	0) ERROR_TEXT="${ERROR_TEXT}Suspend was aborted (see dmesg).\n"
+	0) ERROR_TEXT="${ERROR_TEXT}TuxOnIce was aborted (see dmesg).\n"
 	;;
-	1) ERROR_TEXT="${ERROR_TEXT}Suspend was aborted by user (see dmesg if unexpected).\n"
+	1) ERROR_TEXT="${ERROR_TEXT}TuxOnIce was aborted by user (see dmesg if unexpected).\n"
 	;;
 	2) ERROR_TEXT="${ERROR_TEXT}No swapspace was available. Try swapon?\n"
 	;;
@@ -544,7 +545,7 @@ PrintAnErrorString() {
 	;;
 	5) ERROR_TEXT="${ERROR_TEXT}Image has been kept as requested.\n"
 	;;
-	6) ERROR_TEXT="${ERROR_TEXT}Suspend would have eaten memory. Yumm....\n"
+	6) ERROR_TEXT="${ERROR_TEXT}TuxOnIce would have eaten memory. Yumm....\n"
 	;;
 	7) ERROR_TEXT="${ERROR_TEXT}Unable to free enough memory.\n"
 	;;
@@ -591,7 +592,7 @@ PrintErrors() {
     code="$1"
     [ -n "$code" ] && [ "$code" -eq 0 ] && return 0
 
-    ERROR_TEXT="${ERROR_TEXT}$EXE: Suspend reported the following errors:\n"
+    ERROR_TEXT="${ERROR_TEXT}$EXE: TuxOnIce reported the following errors:\n"
 
     if [ -z "$code" ] ; then
 	ERROR_TEXT="${ERROR_TEXT}\n - No status was returned. Might be a buggy or incompatible kernel?"
@@ -599,9 +600,10 @@ PrintErrors() {
 	return 1
     fi
 
-    # A special case for "suspend aborted" and "suspend aborted by user"
+    # A special case for "TuxOnIce aborted" and "TuxOnIce aborted by user"
     # because it'd look silly to have both.
-    if [ $(($code&3)) -eq 3 ] ; then
+    aborted=$(($code & 3))
+    if [ $aborted -eq 3 ] ; then
 	ERROR_TEXT="${ERROR_TEXT} - "
 	PrintAnErrorString 1 # aborted by user
 	/bin/echo -ne $ERROR_TEXT
@@ -619,25 +621,25 @@ PrintErrors() {
     return 1
 }
 
-# EnsureTuxOnIceCapable: makes sure we have a swsusp-capable kernel. Stops the
+# EnsureTuxOnIceCapable: makes sure we have a TuxOnIce-capable kernel. Stops the
 # script with an error message if we don't. Also ensure's we have root -
-# (even though the actual suspend might not need it, everything else will)
+# (even though the actual hibernation might not need it, everything else will)
 EnsureTuxOnIceCapable() {
-    # Test for *any* recent swsusp support
+    # Test for *any* recent TuxOnIce support
     local ver
-    if ! [ -d "$SWSUSP_ROOT" ] ; then
+    if ! [ -d "$TUXONICE_ROOT" ] ; then
 	cat <<EOT
-Your kernel does not appear to have Software Suspend 2 support compiled in.
-Please follow the HOWTO linked from http://www.suspend2.net/ for instructions
-on how to compile Software Suspend into your kernel.
+Your kernel does not appear to have TuxOnIce support compiled in.
+Please follow the HOWTO linked from http://www.tuxonice.net/ for instructions
+on how to compile TuxOnIce into your kernel.
 EOT
 	return 2
     fi
 
-    if [ -f "$SWSUSP_ROOT/activate" ] || [ -f "$SWSUSP_ROOT/do_suspend" ] || [ -f "$SWSUSP_ROOT/do_hibernate" ]; then
-	if [ ! -f "$SWSUSP_ROOT/version" ] ; then
+    if [ -f "$TUXONICE_ROOT/activate" ] || [ -f "$TUXONICE_ROOT/do_suspend" ] || [ -f "$TUXONICE_ROOT/do_hibernate" ]; then
+	if [ ! -f "$TUXONICE_ROOT/version" ] ; then
 	    cat <<EOT
-Can not find $SWSUSP_ROOT/version. Have you loaded the suspend_core
+Can not find $TUXONICE_ROOT/version. Have you loaded the tuxonice_core
 module?
 
 EOT
@@ -647,24 +649,24 @@ EOT
 
     # Figure out if we need to handle VT switching ourselves (if version
     # >= 2.0.0.103, and the xhacks scriptlet didn't do it for us)
-    SwsuspIsAtLeastVersion $((0x02000067)) && [ x"$XHACKS_LEAVE_X" != "x1" ] && \
-	SWSUSP_FORCE_CHVT=1
+    TuxOnIceIsAtLeastVersion $((0x02000067)) && [ x"$XHACKS_LEAVE_X" != "x1" ] && \
+	TUXONICE_FORCE_CHVT=1
 
     # If we have the resume2 proc entry, we can do some further tests
     # Otherwise, bail gracefully
-    if [ -f $SWSUSP_ROOT/resume2 ]; then
+    if [ -f $TUXONICE_ROOT/resume2 ]; then
         RESUME2_FILE=resume2
-    elif [ -f $SWSUSP_ROOT/resume ]; then
+    elif [ -f $TUXONICE_ROOT/resume ]; then
         RESUME2_FILE=resume
     fi
 
     [ -n $RESUME2_FILE ] || return 0
 
     # If we're going to set resume2, we needn't care about this.
-    [ -n "$SWSUSP_RESUME2" ] && return 0
+    [ -n "$TUXONICE_RESUME2" ] && return 0
 
     # See if we have been given a resume2 line
-    read REPLY < $SWSUSP_ROOT/$RESUME2_FILE
+    read REPLY < $TUXONICE_ROOT/$RESUME2_FILE
     if [ -z "$REPLY" ] ; then
 	cat <<EOT
 You haven't specified a resume=/resume2= parameter on your kernel command line
@@ -672,7 +674,7 @@ You haven't specified a resume=/resume2= parameter on your kernel command line
 Your GRUB or LILO config should have something like $RESUME2_FILE=swap:/dev/hdaX
 where /dev/hdaX is your swap partition. You will then need to either reboot
 after doing so or set it manually (this time only) using:
-    echo swap:/dev/hdaX > $SWSUSP_ROOT/$RESUME2_FILE
+    echo swap:/dev/hdaX > $TUXONICE_ROOT/$RESUME2_FILE
 EOT
 	return 2
     fi
@@ -683,8 +685,8 @@ TuxOnIceLoadModules() {
     local i
     local ret
     ret=0
-    for i in $SWSUSP_LOAD_MODULES ; do
-	vecho 2 -n "Loading suspend module $i ... "
+    for i in $TUXONICE_LOAD_MODULES ; do
+	vecho 2 -n "Loading TuxOnIce module $i ... "
 	if modprobe $i > /dev/null 2>&1 ; then
 	    vecho 2
 	else
@@ -696,7 +698,7 @@ TuxOnIceLoadModules() {
     done
     # Ensure we really have loaded the modules (avoid race conditions)
     i=0
-    while ! [ -f $SWSUSP_ROOT/$RESUME2_FILE ] && [ $i -lt 3 ] ; do
+    while ! [ -f $TUXONICE_ROOT/$RESUME2_FILE ] && [ $i -lt 3 ] ; do
 	sleep 1
 	i=$(($i+1))
     done
@@ -704,8 +706,8 @@ TuxOnIceLoadModules() {
 }
 
 TuxOnIceUnloadModules() {
-    for i in $SWSUSP_LOAD_MODULES ; do
-	vecho 2 "Unloading suspend module $i ... "
+    for i in $TUXONICE_LOAD_MODULES ; do
+	vecho 2 "Unloading TuxOnIce module $i ... "
 	rmmod `FindModuleDeps $i` > /dev/null 2>&1
     done
     return 0
@@ -725,17 +727,17 @@ TuxOnIceSetupFilewriter() {
 	return 0
     fi
 
-    if ! [ -e "$SWSUSP_FILEWRITER_LOC" ] ; then
-	vecho 0 "$EXE: Creating $SWSUSP_FILEWRITER_SIZE MB filewriter target."
+    if ! [ -e "$TUXONICE_FILEWRITER_LOC" ] ; then
+	vecho 0 "$EXE: Creating $TUXONICE_FILEWRITER_SIZE MB filewriter target."
 	{
 	    echo $FILEWRITER_SIGNATURE
-	    dd if=/dev/zero bs=1M count=$SWSUSP_FILEWRITER_SIZE 2>/dev/null
-	} > $SWSUSP_FILEWRITER_LOC
+	    dd if=/dev/zero bs=1M count=$TUXONICE_FILEWRITER_SIZE 2>/dev/null
+	} > $TUXONICE_FILEWRITER_LOC
 	sync
     fi
 
-    case "`dd \"if=$SWSUSP_FILEWRITER_LOC\" bs=8 count=1 2>/dev/null`" in
-	$FILEWRITER_SIGNATURE)
+    case "`dd \"if=$TUXONICE_FILEWRITER_LOC\" bs=8 count=1 2>/dev/null`" in
+	$FILEWRITER_SIGNATURE|${TUXONICE_BINARY_SIG})
 	    # We're good to go.
 	    vecho 1 "$EXE: Detected filewriter image ready for use."
 	    ;;
@@ -743,7 +745,7 @@ TuxOnIceSetupFilewriter() {
 	    # Eeek! This is an incompatible image
 	    # reliably preserve the starting block.
 	    vecho 1 "$EXE: Killing incompatible filewriter image."
-	    if ! /bin/echo -ne "$FILEWRITER_SIGNATURE\n\0\0" | dd "of=$SWSUSP_FILEWRITER_LOC" bs=11 count=1 conv=notrunc 2>/dev/null ; then
+	    if ! /bin/echo -ne "$FILEWRITER_SIGNATURE\n\0\0" | dd "of=$TUXONICE_FILEWRITER_LOC" bs=11 count=1 conv=notrunc 2>/dev/null ; then
 		vecho 0 "$EXE: Failed to kill incompatible image!"
 		return 2 # Abort even with force
 	    fi
@@ -752,48 +754,48 @@ TuxOnIceSetupFilewriter() {
 	    # Eeek! There's already an image here. Erase it using dd to
 	    # reliably preserve the starting block.
 	    vecho 1 "$EXE: Killing existing filewriter image."
-	    if ! /bin/echo -ne "$FILEWRITER_SIGNATURE\n\0\0" | dd "of=$SWSUSP_FILEWRITER_LOC" bs=11 count=1 conv=notrunc 2>/dev/null ; then
+	    if ! /bin/echo -ne "$FILEWRITER_SIGNATURE\n\0\0" | dd "of=$TUXONICE_FILEWRITER_LOC" bs=11 count=1 conv=notrunc 2>/dev/null ; then
 		vecho 0 "$EXE: Failed to kill existing image!"
 		return 2 # Abort even with force
 	    fi
 	    ;;
 	*)
 	    # Something entirely different. We probably don't want to use this file!
-	    vecho 0 "$EXE: Filewriter image ($SWSUSP_FILEWRITER_LOC) is unrecognised."
-	    vecho 0 "$EXE: I'm not even going to attempt to use this file to suspend to."
+	    vecho 0 "$EXE: Filewriter image ($TUXONICE_FILEWRITER_LOC) is unrecognised."
+	    vecho 0 "$EXE: I'm not even going to attempt to use this file to hibernate to."
 	    vecho 0 "$EXE: Please erase the contents of the existing file if you believe it"
 	    vecho 0 "$EXE: to be safe, otherwise, please specify a new file."
 	    return 2 # Abort even with force
 	    ;;
     esac
 
-    if ! echo "$SWSUSP_FILEWRITER_LOC" > $ft_entry ; then
+    if ! echo "$TUXONICE_FILEWRITER_LOC" > $ft_entry ; then
 	vecho 0 "$EXE: Failed to set filewriter location! Aborting."
 	return 2 # abort even if forced
     fi
 
     # Leave a note so that the file can be cleaned up on a fresh reboot.
-    echo "$SWSUSP_FILEWRITER_LOC" > $HIBERNATE_FILEWRITER_TRAIL
+    echo "$TUXONICE_FILEWRITER_LOC" > $HIBERNATE_FILEWRITER_TRAIL
     chmod 600 $HIBERNATE_FILEWRITER_TRAIL
 
     # Now verify our resume2 is correct unless told otherwise.
-    [ x"$SWSUSP_FILEWRITER_NOVERIFY" = "x1" ] && return 0
+    [ x"$TUXONICE_FILEWRITER_NOVERIFY" = "x1" ] && return 0
 
     local new_resume2
-    if [ -f $SWSUSP_ROOT/resume2 ]; then
+    if [ -f $TUXONICE_ROOT/resume2 ]; then
         RESUME2_FILE=resume2
-    elif [ -f $SWSUSP_ROOT/resume ]; then
+    elif [ -f $TUXONICE_ROOT/resume ]; then
         RESUME2_FILE=resume
     fi
 
-    new_resume2="`cat $SWSUSP_ROOT/$RESUME2_FILE`"
+    new_resume2="`cat $TUXONICE_ROOT/$RESUME2_FILE`"
     if [ -z "$new_resume2" ] ; then
-	vecho 0 "ABORTING: $SWSUSP_ROOT/$RESUME2_FILE did not return a valid result."
+	vecho 0 "ABORTING: $TUXONICE_ROOT/$RESUME2_FILE did not return a valid result."
 	return 2 # abort even if forced
     fi
 
     if ! grep "$new_resume2" /proc/cmdline ; then
-	filewriter_target=`cat $SWSUSP_ROOT/$RESUME2_FILE`
+	filewriter_target=`cat $TUXONICE_ROOT/$RESUME2_FILE`
 	vecho 0 "ABORTING: $RESUME2_FILE is not setup correctly. Unless you have setup your bootloader"
 	vecho 0 "          correctly, resuming will most likely fail. To correct this, add"
 	vecho 0 "          \"$RESUME2_FILE=$filewriter_target\" to your kernel command line in your"
