@@ -69,3 +69,7 @@ ipw3945
 iwl3945
 mac80211
 sky2
+
+#uvcvideo has a bug which I'm working to find at the moment
+#It will sometimes cause an oops at atomic copy time.
+uvcvideo
