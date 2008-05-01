@@ -44,7 +44,13 @@ AddLongOption "no-suspend"
 AddLongOption "bug-report"
 AddOptionHelp "--bug-report (requires UseTuxOnIce on)" "Gathers a bunch of information about your machine and writes it to standard output. Please attach this information along with any bug reports to the TuxOnIce mailing list."
 
-TUXONICE_BINARY_SIG="\xed\xc3\x02\xe9\x98\x56\xe5\x0c"
+if [ -f "/usr/local/share/hibernate/tuxonice-binary-signature.bin" ]; then
+    TUXONICE_BINARY_SIG=`cat /usr/local/share/hibernate/tuxonice-binary-signature.bin`
+elif [ -f "/usr/share/hibernate/tuxonice-binary-signature.bin" ]; then
+    TUXONICE_BINARY_SIG=`cat /usr/share/hibernate/tuxonice-binary-signature.bin`
+else
+     vecho 0 "$EXE:Warning: Tuxonice binary signature file not found."
+fi
 
 TuxOnIceTermination() {
     # rmmod rather than modprobe -r because the later might

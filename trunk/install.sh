@@ -6,6 +6,7 @@
 [ -z "$EXEC_PREFIX" ]   	&& EXEC_PREFIX=$PREFIX
 
 [ -z "$SCRIPT_DEST" ]   	&& SCRIPT_DEST=$BASE_DIR$EXEC_PREFIX/sbin/hibernate
+[ -z "$SHARE_DIR" ] 		&& SHARE_DIR=$BASE_DIR$PREFIX/share/hibernate
 [ -z "$SCRIPTLET_DIR" ] 	&& SCRIPTLET_DIR=$BASE_DIR$PREFIX/share/hibernate/scriptlets.d
 [ -z "$MAN_DIR" ]       	&& MAN_DIR=$BASE_DIR$PREFIX/man
 [ -z "$CONFIG_DIR" ]    	&& CONFIG_DIR=${BASE_DIR}${CONFIG_PREFIX}/etc/hibernate
@@ -77,6 +78,9 @@ mkdir -p $SCRIPTLET_DIR
 for i in scriptlets.d/* ; do
     cp -a $i $SCRIPTLET_DIR
 done
+
+echo "Installing sample binary signature to $SHARE_DIR ..."
+cp -a tuxonice-binary-signature.bin $SHARE_DIR
 
 if [ -d "$LOGROTATE_DIR" ] ; then
     LOGROTATE_TARGET=$LOGROTATE_DIR/hibernate-script
