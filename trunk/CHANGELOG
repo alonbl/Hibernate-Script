@@ -1,3 +1,14 @@
+ - Complete support for the new binary signature
+ - Blacklist uvcvideo for now. Causes an oops at atomic copy under some
+   circumstances (2.6.25).
+ - Change most references to suspend2/Software Suspend etc to TuxOnIce.
+   (Most = not the ones that shouldn't be changed!)
+ - Remove long gone save/load all settings support.
+ - Handle recent kernels returning "<unsupported>" from the cpu freq
+   scaling_setspeed sysfs entry. It was causing the hibernate script
+   to die prematurely.
+ - Fix a minor typo in USuspendRamPCiSave blurp (Madduck)
+
 1.98.1 (31 March 2008)
  - Correct a typo in the way I fixed bashisms in 1.98, which prevented
    hibernate from running at all. Sorry.
