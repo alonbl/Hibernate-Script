@@ -1,3 +1,4 @@
+1.99 (1 May 2008) 
  - Complete support for the new binary signature
  - Blacklist uvcvideo for now. Causes an oops at atomic copy under some
    circumstances (2.6.25).
