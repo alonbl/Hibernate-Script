@@ -1,0 +1,238 @@
+# -*- sh -*-
+# vim:ft=sh:ts=8:sw=4:noet
+
+AddConfigHandler HardwareTweaksOptions
+
+###
+## IBM ACPI
+###
+
+AddConfigHelp "IbmAcpi <boolean>" "Use the ibm_acpi kernel module to signal suspend progress."
+
+# ibm_acpi proc directory
+IBM_ACPI_PROC=/proc/acpi/ibm
+
+# ibm_acpi LED control file
+IBM_ACPI_LED=$IBM_ACPI_PROC/led
+
+# ibm_acpi beep control
+IBM_ACPI_BEEP=$IBM_ACPI_PROC/beep
+
+IbmAcpiLed() {
+    if [ -f "$IBM_ACPI_LED" ] ; then
+	echo $1 $2 > $IBM_ACPI_LED
+    else
+	vecho 1 "File '$IBM_ACPI_LED' not found. Unable to signal LED."
+    fi
+}
+
+IbmAcpiBeep() {
+    if [ -f "$IBM_ACPI_BEEP" ] ; then
+	echo $1 > $IBM_ACPI_BEEP
+    else
+	vecho 1 "File '$IBM_ACPI_BEEP' not found. Unable to emit beep."
+    fi
+}
+
+IbmAcpiStartSuspend() {
+    # blink suspend LED
+    IbmAcpiLed 7 blink
+    return 0 # this shouldn't stop suspending
+}
+
+IbmAcpiEndResume() {
+    # turn off suspend LED
+    IbmAcpiLed 7 off
+
+    # audible failure if another scriplet failed
+    [ $EXIT_CODE -gt 1 ] && IbmAcpiBeep 4
+
+    return 0
+}
+
+###
+## radeontool
+###
+
+AddConfigHelp "RadeonTool <boolean>" "Use radeontool to turn off LCD backlight."
+
+RadeonToolBacklightOff() {
+    if ! command -v radeontool > /dev/null 2>&1 ; then
+	USE_RADEONTOOL=0
+	vecho 1 "'radeontool' utility not found. Radeontool disabled."
+	return 0
+    fi
+
+    radeontool light off || return 1
+
+    return 0
+}
+
+RadeonToolBacklightOn() {
+    [ x"$USE_RADEONTOOL" = "x1" ] || return 0
+
+    radeontool light on || return 1
+
+    return 0
+}
+
+###
+## i915resolution
+###
+
+AddConfigHelp "Runi915resolution <boolean>" "Set to run 915resolution before switching back to X."
+
+i915resolutionResume() {
+    local action
+    action=start
+    [ "$DISTRIBUTION" = "gentoo" ] && action=restart
+    /etc/init.d/915resolution $action || return 1
+    return 0
+}
+
+###
+## cpufreq maximiser
+###
+
+AddConfigHelp "FullSpeedCPU <boolean>" "Sets the CPU to full speed whilst suspending."
+
+FullSpeedCPUSuspend() {
+    local cpu
+    HW_FULLSPEEDCPU_RESTORER=`mktemp /tmp/tmp.hibernate.XXXXXX`
+    for cpu in /sys/devices/system/cpu/*/cpufreq ; do
+	local cpunum min_freq setspeed governor i
+	[ -d $cpu ] || continue
+
+	# Find out if this CPU has been affected already.
+	cpunum=${cpu#/sys/devices/system/cpu/cpu}
+	cpunum=${cpunum%/cpufreq}
+	if IsANumber $cpunum ; then
+	    eval "done_this=\$hw_cpu_${cpunum}_done"
+	    [ "x$done_this" = "xcpudone" ] && continue
+	fi
+	# Mark all affected CPUs as done
+	for i in `cat $cpu/affected_cpus 2>/dev/null` ; do
+	    IsANumber $i && eval "hw_cpu_${i}_done=cpudone"
+	done
+
+	# Backup what we have.
+	max_freq=`cat $cpu/scaling_max_freq`
+	min_freq=`cat $cpu/scaling_min_freq`
+	[ -f "$cpu/scaling_setspeed" ] && setspeed=`cat $cpu/scaling_setspeed`
+	governor=`cat $cpu/scaling_governor`
+	cat <<EOT >> $HW_FULLSPEEDCPU_RESTORER
+# Temporary file for hibernate script.
+# If you're reading this then it's probably safe to delete.
+
+echo $min_freq > $cpu/scaling_min_freq
+echo $governor > $cpu/scaling_governor
+[ -f "$cpu/scaling_setspeed" ] && echo "$setspeed" > $cpu/scaling_setspeed
+EOT
+
+	# Set governor to performance if we've got it
+	grep -q performance $cpu/scaling_available_governors 2>/dev/null && \
+	    echo performance > $cpu/scaling_governor
+	# Set scaling_min_freq to scaling_max_freq
+	echo $max_freq > $cpu/scaling_min_freq
+
+	vecho 2 "Switched to performance, with min freq at $max_freq"
+    done
+    return 0
+}
+
+FullSpeedCPUResume() {
+    [ -f "$HW_FULLSPEEDCPU_RESTORER" ] || return 0
+    . "$HW_FULLSPEEDCPU_RESTORER"
+    rm -f "$HW_FULLSPEEDCPU_RESTORER"
+    return 0
+}
+
+###
+## ACPI Video flags
+###
+
+AddConfigHelp "AcpiVideoS3Bios <boolean>" "Sets s3_bios mode, replaces acpi_sleep=s3_bios kernel parameter."
+AddConfigHelp "AcpiVideoS3Mode <boolean>" "Sets s3_mode mode, replaces acpi_sleep=s3_mode kernel parameter."
+
+ACPIVIDEO_FLAGS=0
+
+AcpiVideoFlagsSuspend() {
+    echo "${ACPIVIDEO_FLAGS}" > /proc/sys/kernel/acpi_video_flags
+}
+
+###
+## Option handler for all of the above:
+###
+
+HardwareTweaksOptions() {
+    case $1 in
+	radeontool)
+	    BoolIsOn "$1" "$2" || return 0
+	    USE_RADEONTOOL=1
+	    if [ -z "$RADEONTOOL_HOOKED" ] ; then
+		AddSuspendHook 98 RadeonToolBacklightOff
+		AddResumeHook 98 RadeonToolBacklightOn
+		RADEONTOOL_HOOKED=1
+
+		# Enable SwitchToTextMode too.
+		XHacksOptions switchtotextmode 1
+	    fi
+	    ;;
+	ibmacpi)
+	    BoolIsOn "$1" "$2" || return 0
+	    if [ -d $IBM_ACPI_PROC ] ; then
+		USE_IBM_ACPI=1
+	    else
+		vecho 1 "Directory '$IBM_ACPI_PROC' not found. IbmAcpi disabled."
+		return 0
+	    fi
+	    if [ -z "$IBM_ACPI_HOOKED" ] ; then
+		# in call order
+		AddSuspendHook 12 IbmAcpiStartSuspend
+		AddResumeHook 12 IbmAcpiEndResume
+		IBM_ACPI_HOOKED=1
+	    fi
+	    ;;
+	runi915resolution)
+	    BoolIsOn "$1" "$2" || return 0
+	    if [ -z "$I915RESOLUTION_HOOKED" ] ; then
+		# Needs to come before xhacks switches back to X.
+		AddResumeHook 98 i915resolutionResume
+		I915RESOLUTION_HOOKED=1
+
+		# Enable SwitchToTextMode too.
+		XHacksOptions switchtotextmode 1
+	    fi
+	    ;;
+	fullspeedcpu)
+	    BoolIsOn "$1" "$2" || return 0
+	    if [ -z "$FULLSPEEDCPU_HOOKED" ] ; then
+		AddSuspendHook 98 FullSpeedCPUSuspend
+		AddResumeHook 98 FullSpeedCPUResume
+		FULLSPEEDCPU_HOOKED=1
+	    fi
+	    ;;
+	acpivideos3bios)
+	    BoolIsOn "$1" "$2" || return 0
+	    ACPIVIDEO_FLAGS=$((${ACPIVIDEO_FLAGS}+1))
+	    if [ -z "$ACPIVIDEOFLAGS_HOOKED" ]; then
+		    AddSuspendHook 12 AcpiVideoFlagsSuspend
+		    ACPIVIDEOFLAGS_HOOKED=1
+	    fi
+	    ;;
+	acpivideos3mode)
+	    BoolIsOn "$1" "$2" || return 0
+	    ACPIVIDEO_FLAGS=$((${ACPIVIDEO_FLAGS}+2))
+	    if [ -z "$ACPIVIDEOFLAGS_HOOKED" ]; then
+		    AddSuspendHook 12 AcpiVideoFlagsSuspend
+		    ACPIVIDEOFLAGS_HOOKED=1
+	    fi
+	    ;;
+	*)
+	    return 1
+    esac
+
+    return 0
+}
+
+# $Id$

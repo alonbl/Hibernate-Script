@@ -1,0 +1,91 @@
+# -*- sh -*-
+# vim:ft=sh:ts=8:sw=4:noet
+
+LOCKFILE="/var/run/hibernate-script.pid"
+LAST_RESUME_FILE="/var/run/hibernate-last-resume"
+LAST_RESUME_WAIT=3
+LOCKFILE_IN_USE=
+
+AddSuspendHook 01 LockFileGet
+AddSuspendHook 01 CheckLastResume
+AddResumeHook 01 LockFilePut
+AddResumeHook 01 NoteLastResume
+
+# Check it before we do anything, and also at point of no return
+AddSuspendHook 01 CheckRunlevel
+AddSuspendHook 98 CheckRunlevel
+
+# LockFileGet: test if a lockfile already exists, and create one if not. If it
+# does exist, returns 1 to indicate the script should abort unless using
+# --force. This code has race conditions. We could probably do something
+# fancier with symlinks if we cared, but the worst that would happen if the
+# race condition was hit, is we suspend twice. Big whoop.
+LockFileGet() {
+    local other_pid
+    if [ -f "$LOCKFILE" ] ; then
+	read other_pid < $LOCKFILE
+	IsANumber $other_pid || other_pid=
+	if [ -n "$other_pid" ] && kill -0 $other_pid > /dev/null 2>&1 ; then
+	    vecho 0 "$EXE: Another hibernate process is already running ($other_pid)."
+	    vecho 0 "$EXE: If this is stale, please remove $LOCKFILE."
+	    return 1 # abort unless forced
+	fi
+	rm -f $LOCKFILE
+    fi
+    echo $$ > $LOCKFILE
+    LOCKFILE_IN_USE=1
+    return 0
+}
+
+# LockFilePut: Remove the lockfile. Only delete one we created.
+LockFilePut() {
+    [ -z "$LOCKFILE_IN_USE" ] && return 0
+
+    local lockfile_pid
+    read lockfile_pid < $LOCKFILE
+    IsANumber $lockfile_pid || return 0
+    [ $$ -eq $lockfile_pid ] && rm -f $LOCKFILE
+    return 0
+}
+
+# CheckLastResume: check we haven't just resumed in the last $LAST_RESUME_WAIT
+# seconds. Some circumstances lead to the script being called more than once
+# (keyboard repeat, or ACPI button bugs).
+CheckLastResume() {
+    [ -f "$LAST_RESUME_FILE" ] || return 0
+
+    local last_resume now
+    read last_resume < $LAST_RESUME_FILE
+
+    now=`date "+%s"`
+    if [ $now -gt $(($last_resume+$LAST_RESUME_WAIT)) ] \
+	    || [ $last_resume -gt $now ] ; then
+	rm -f "$LAST_RESUME_FILE"
+	return 0
+    fi
+
+    vecho 0 "$EXE: Less than $LAST_RESUME_WAIT seconds since last resumed. Not suspending."
+    return 1 # (unless forced)
+}
+
+# NoteLastResume: keep a record of when we last resumed so we can avoid doing
+# it more than once in quick succession.
+NoteLastResume() {
+    [ -f "$LAST_RESUME_FILE" ] && return 0
+    date "+%s" > $LAST_RESUME_FILE
+    return 0
+}
+
+# CheckRunlevel: Verify we're not shutting down or rebooting mid-suspend.
+CheckRunlevel() {
+    [ -z "${RUNLEVEL}" ] && RUNLEVEL=$(/sbin/runlevel | awk '{print $2}')
+    case "${RUNLEVEL}" in
+	0|6) # shutdown ongoing, emergency abort
+	    vecho 0 "System ongoing shutdown by runlevel, aborting hibernation."
+	    return 3
+	    ;;
+    esac
+    return 0
+}
+
+# $Id$
