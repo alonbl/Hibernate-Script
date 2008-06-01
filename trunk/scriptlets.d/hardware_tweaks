@@ -126,7 +126,7 @@ FullSpeedCPUSuspend() {
 
 echo $min_freq > $cpu/scaling_min_freq
 echo $governor > $cpu/scaling_governor
-[ -f "$cpu/scaling_setspeed" ] && echo "$setspeed" > $cpu/scaling_setspeed
+[ -f "$cpu/scaling_setspeed" ] && echo "$setspeed" > $cpu/scaling_setspeed 2>/dev/null
 EOT
 
 	# Set governor to performance if we've got it
