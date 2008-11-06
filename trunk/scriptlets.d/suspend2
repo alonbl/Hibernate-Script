@@ -618,10 +618,10 @@ PrintErrors() {
 
     bit_num=0
     while [ "$code" -ne 0 ] ; do
-	[ $(($code&1)) -eq 1 ] && ERROR_TEXT="${ERROR_TEXT} - " && PrintAnErrorString "$bit_num"
+	[ $(($code & 1)) -eq 1 ] && ERROR_TEXT="${ERROR_TEXT} - " && PrintAnErrorString "$bit_num"
 
-	bit_num=$(($bit_num+1))
-	code=$(($code>>1))
+	bit_num=$(($bit_num + 1))
+	code=$(($code >> 1))
     done
     /bin/echo -ne "$ERROR_TEXT"
     return 1
