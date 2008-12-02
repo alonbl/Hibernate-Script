@@ -2,6 +2,8 @@
  - Redirect stderr to /dev/null when resetting the cpu scaling speed.
  - Fix errors of the type sh: arithmetic expression: expecting primary: "5&1",
    which occured at resume time. sh likes whitespace around operators, it seems.
+ - Remove NVidia from blacklist as of 2.6.25 kernels (seems to be about the time
+   when it became usable).
 
 1.99 (1 May 2008) 
  - Complete support for the new binary signature
