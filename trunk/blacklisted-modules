@@ -74,3 +74,6 @@ sky2
 #uvcvideo has a bug which I'm working to find at the moment
 #It will sometimes cause an oops at atomic copy time.
 uvcvideo
+
+# Suggested by Miklos Aubert 5/2/2009 AEST - TuxOnIce users.
+snd_ice1712
