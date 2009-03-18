@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# This script invalidates any stale swsusp and Software Suspend 2 images. It
-# searches all swap partitions on your machine, as well as Suspend2's
+# This script invalidates any stale swsusp and TuxOnIce images. It
+# searches all swap partitions on your machine, as well as TuxOnIce's
 # filewriter files (by way of the hibernate script telling it where to find
 # it).
 #
@@ -20,14 +20,14 @@
 # Default-Stop:
 # Required-Start:
 # Required-Stop:
-# Short-Description: invalidates stale swsusp and Software Suspend 2 image
-# Description:       This script invalidates any stale swsusp and Software Suspend 2 images. It
+# Short-Description: invalidates stale swsusp and TuxOnIce image
+# Description:       This script invalidates any stale swsusp and TuxOnIce images. It
 #                    searches all swap partitions on your machine, as well as
-#                    Suspend2's filewriter files (by way of the hibernate
+#                    TuxOnIce's filewriter files (by way of the hibernate
 #                    script telling it where to find it).
 ### END INIT INFO
 
-HIBERNATE_FILEWRITER_TRAIL="/var/run/suspend2_filewriter_image_exists"
+HIBERNATE_FILEWRITER_TRAIL="/var/run/tuxonice_filewriter_image_exists"
 
 clear_swap() {
 	local where wason
@@ -58,7 +58,7 @@ check_filewriter_sig() {
 	[ -f "$target" ] || return
 	case "`dd \"if=$target\" bs=8 count=1 2>/dev/null`" in
 		HaveImag)
-			/bin/echo -ne "Suspend2\n\0\0" | dd "of=$target" bs=11 count=1 conv=notrunc 2>/dev/null
+			/bin/echo -ne "TuxOnIce\n\0\0" | dd "of=$target" bs=11 count=1 conv=notrunc 2>/dev/null
 			msg_status -n "$target, "
 			rm -f $HIBERNATE_FILEWRITER_TRAIL
 	esac

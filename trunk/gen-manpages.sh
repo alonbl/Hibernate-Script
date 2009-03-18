@@ -41,7 +41,7 @@ cat <<EOT
 .\" Author: Cameron Patrick <cameron@patrick.wattle.id.au>
 .\" Information on the command line options is automatically generated
 .\" from the hibernate scripts themselves.
-.TH HIBERNATE 8 "$THE_DATE" "Linux Software Suspend" ""
+.TH HIBERNATE 8 "$THE_DATE" "Linux Hibernation" ""
 .SH NAME
 hibernate \- save your computer's state to disk, and then switch it off
 .SH SYNOPSIS
@@ -50,14 +50,14 @@ hibernate \- save your computer's state to disk, and then switch it off
 .SH DESCRIPTION
 .PP
 The hibernate script (or "suspend script") is used to invoke the Linux
-kernel's Software Suspend functionality.
+kernel's Hibernation functionality.
 .PP
 When you hibernate your machine, the contents of your computer's
 memory will be saved to disc, and your computer will switch off.  When
 you switch it back on again, it will resume exactly as it was when you
-hibernated.  This script is designed for Software Suspend 2, which
+hibernated.  This script is designed for TuxOnIce, which
 is not yet included in the main kernel tree and must be downloaded
-from the Software Suspend web site at \fIhttp://www.suspend2.net/\fR,
+from the TuxOnIce web site at \fIhttp://www.tuxonice.net/\fR,
 but can also utilise the vanilla kernel interfaces for swsusp or pmdisk
 (through /proc/acpi/sleep or /sys/power/state).
 Instructions on setting up the kernel can also be found on that web
@@ -119,14 +119,14 @@ on Debian systems) for information on how these work.
 .PP
 Probably lots!
 .PP
-If you have problems with the hibernate script or Software Suspend, the best
-place to ask is on the mailing list - suspend2-users@lists.suspend2.net. You
-will need to subscribe to post. See http://www.suspend2.net/lists
+If you have problems with the hibernate script or TuxOnIce, the best
+place to ask is on the mailing list - tuxonice-users@lists.tuxonice.net. You
+will need to subscribe to post. See http://www.tuxonice.net/lists
 for details.
 .PP
 If the suspend process itself crashes (while "Writing caches", "Reading
 caches", or "Copying original kernel back", etc), then the problem lies with
-Software Suspend 2 itself. See the FAQ at http://www.suspend2.net/ for
+TuxOnIce itself. See the FAQ at http://www.tuxonice.net/ for
 help on debugging.
 .SH AUTHOR
 .PP
@@ -149,7 +149,7 @@ ConfigManHeader() {
 .\" Author: Cameron Patrick <cameron@patrick.wattle.id.au>
 .\" Information on the various options is automatically generated
 .\" from the hibernate scripts themselves.
-.TH HIBERNATE.CONF 5 "$THE_DATE" "Linux Software Suspend" ""
+.TH HIBERNATE.CONF 5 "$THE_DATE" "Linux Hibernation" ""
 .SH NAME
 hibernate.conf \- configuration file for the hibernate script
 .SH SYNOPSIS

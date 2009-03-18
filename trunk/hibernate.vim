@@ -9,7 +9,7 @@
 "   augroup filetypedetect
 "       au BufNewFile,BufRead hibernate.conf set filetype=hibernate
 "       au BufNewFile,BufRead common.conf set filetype=hibernate
-"       au BufNewFile,BufRead suspend2.conf set filetype=hibernate
+"       au BufNewFile,BufRead tuxonice.conf set filetype=hibernate
 "       au BufNewFile,BufRead disk.conf set filetype=hibernate
 "       au BufNewFile,BufRead ram.conf set filetype=hibernate
 "   augroup END
@@ -192,20 +192,20 @@ syntax keyword hibernate_conf stopservices contained nextgroup=hibernate_service
 syntax keyword hibernate_conf startservices contained nextgroup=hibernate_services skipwhite
 syntax keyword hibernate_conf restartservices contained nextgroup=hibernate_services skipwhite
 
-" suspend2
-syntax match hibernate_suspend2allsettings /\d\+\(\s\+\d\+\)\+/ contained skipwhite
-highlight link hibernate_suspend2allsettings Constant
+" tuxonice
+syntax match hibernate_tuxoniceallsettings /\d\+\(\s\+\d\+\)\+/ contained skipwhite
+highlight link hibernate_tuxoniceallsettings Constant
 
 syntax match hibernate_imagesizelimit /\(\d\+\|nocache\)/ contained skipwhite
 highlight link hibernate_imagesizelimit Constant
 
-syntax keyword hibernate_conf usesuspend2 contained nextgroup=hibernate_boolean skipwhite
+syntax keyword hibernate_conf usetuxonice contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf reboot contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf enableescape contained nextgroup=hibernate_boolean skipwhite
 syntax keyword hibernate_conf defaultconsolelevel contained nextgroup=hibernate_integer skipwhite
 syntax keyword hibernate_conf imagesizelimit contained nextgroup=hibernate_imagesizelimit skipwhite
-syntax keyword hibernate_conf suspend2allsettings contained nextgroup=hibernate_suspend2allsettings skipwhite
-syntax keyword hibernate_conf suspend2allsettingsfile contained nextgroup=hibernate_filenames skipwhite
+syntax keyword hibernate_conf tuxoniceallsettings contained nextgroup=hibernate_tuxoniceallsettings skipwhite
+syntax keyword hibernate_conf tuxoniceallsettingsfile contained nextgroup=hibernate_filenames skipwhite
 syntax keyword hibernate_conf suspenddevice contained nextgroup=hibernate_filenames skipwhite
 syntax keyword hibernate_conf filewriterlocation contained nextgroup=hibernate_filewriter_target skipwhite
 syntax keyword hibernate_conf verifyfilewriterresume2 contained nextgroup=hibernate_boolean skipwhite

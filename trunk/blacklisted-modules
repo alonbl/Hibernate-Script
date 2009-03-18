@@ -18,8 +18,8 @@
 # Unversioned modules (modules with no version: line shown in modinfo) are
 # always unloaded if listed, regardless of the version range.
 #
-# This format has some limitations - it does not take into account Software
-# Suspend 2 versions (which may include driver updates).
+# This format has some limitations - it does not take into account
+# TuxOnIce versions (which may include driver updates).
 #
 
 acx100

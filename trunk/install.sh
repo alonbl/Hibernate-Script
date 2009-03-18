@@ -13,7 +13,7 @@
 [ -z "$CONFIG_FILE" ]   	&& CONFIG_FILE=$CONFIG_DIR/hibernate.conf
 [ -z "$RAM_CONFIG_FILE" ]   && RAM_CONFIG_FILE=$CONFIG_DIR/ram.conf
 [ -z "$DISK_CONFIG_FILE" ]  && DISK_CONFIG_FILE=$CONFIG_DIR/disk.conf
-[ -z "$S2_CONFIG_FILE" ]    && S2_CONFIG_FILE=$CONFIG_DIR/suspend2.conf
+[ -z "$S2_CONFIG_FILE" ]    && S2_CONFIG_FILE=$CONFIG_DIR/tuxonice.conf
 [ -z "$US_BOTH_CONFIG_FILE" ]   && US_BOTH_CONFIG_FILE=$CONFIG_DIR/ususpend-both.conf
 [ -z "$US_DISK_CONFIG_FILE" ]   && US_DISK_CONFIG_FILE=$CONFIG_DIR/ususpend-disk.conf
 [ -z "$US_RAM_CONFIG_FILE" ]    && US_RAM_CONFIG_FILE=$CONFIG_DIR/ususpend-ram.conf
@@ -49,7 +49,7 @@ fi
 cp -a hibernate.conf ${CONFIG_FILE}${ext}
 cp -a ram.conf ${RAM_CONFIG_FILE}${ext}
 cp -a disk.conf ${DISK_CONFIG_FILE}${ext}
-cp -a suspend2.conf ${S2_CONFIG_FILE}${ext}
+cp -a tuxonice.conf ${S2_CONFIG_FILE}${ext}
 cp -a ususpend-ram.conf ${US_RAM_CONFIG_FILE}${ext}
 cp -a ususpend-disk.conf ${US_DISK_CONFIG_FILE}${ext}
 cp -a ususpend-both.conf ${US_BOTH_CONFIG_FILE}${ext}

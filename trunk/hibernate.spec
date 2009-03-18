@@ -13,8 +13,8 @@ Summary: activates your computer's suspend functionality
 This package provides a way to activate the suspend functionality in
 the kernel.  Currently it supports anything using the /sys/power/state
 interface (including ACPI suspend and the in-kernel software
-suspend), as well as Software Suspend 2 (which is available as a
-separate kernel patch from www.suspend2.net).
+suspend), as well as TuxOnIce (which is available as a
+separate kernel patch from www.tuxonice.net).
 
 Hibernate can take care of loading and unloading modules, various
 hacks needed to get some video cards to resume properly under X,

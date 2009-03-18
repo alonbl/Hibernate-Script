@@ -5,7 +5,7 @@
 # written by Cameron Patrick.  Based (very loosely) on the lockfile
 # scriptlet.
 
-NEWKERNELFILE="/var/run/suspend2-new-kernel"
+NEWKERNELFILE="/var/run/tuxonice-new-kernel"
 
 AddSuspendHook 01 NewKernelFileCheck
 

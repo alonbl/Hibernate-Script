@@ -1,4 +1,6 @@
 2.00
+ - Change remaining "Software Suspend", "Software Suspend 2" and suspend2
+   references to TuxOnIce.
  - Redirect stderr to /dev/null when resetting the cpu scaling speed.
  - Fix errors of the type sh: arithmetic expression: expecting primary: "5&1",
    which occured at resume time. sh likes whitespace around operators, it seems.

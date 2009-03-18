@@ -7,8 +7,7 @@ PREREQUISITES
 -------------
 A kernel with suspend support of some variety. The currently supported options
 are:
- - Software Suspend 2 - kernel patches are available from
-   http://www.suspend2.net/
+ - TuxOnIce  - kernel patches are available from http://www.tuxonice.net/
  - swsusp support in vanilla 2.6 kernels (through the UseSysfsPowerState disk
    option).
  - S3 (suspend-to-RAM) support in 2.6 kernels (through the
@@ -38,22 +37,21 @@ You will have to merge your changes manually.
 
 AVOIDING DATA LOSS
 ------------------
-If you are using the hibernate script with vanilla swsusp or Software Suspend
-2, then it is strongly recommended that you install the script
-init.d/hibernate-cleanup.sh into /etc/init.d (or the relevant place on your
-distribution), and arrange for it to be run on boot from rcS.d, somewhere
-before enabling swap or clearing out /var/run, but after mounting your
-filesystems (/var in particular).
+If you are using the hibernate script with vanilla swsusp or TuxOnIce, then it
+is strongly recommended that you install the script init.d/hibernate-cleanup.sh
+into /etc/init.d (or the relevant place on your distribution), and arrange for
+it to be run on boot from rcS.d, somewhere before enabling swap or clearing out
+/var/run, but after mounting your filesystems (/var in particular).
 
 This script will invalidate any suspend image on a clean boot so that the image
 cannot be later resumed from (leading to corruption of your filesystems).
 
 Additionally, the hibernate script will look for a particular file before
-suspending (/var/run/suspend2-new-kernel) and if it is detected, will refuse to
+suspending (/var/run/tuxonice-new-kernel) and if it is detected, will refuse to
 suspend.  The idea is that your installation scripts for new kernels create
 this file, which prevents you from hibernating until you have booted your new
 kernel (or you remove the file manually if you know what you are doing). For
-example, kernel packages compiled with the Debian kernel-patch-suspend2 patches
+example, kernel packages compiled with the Debian kernel-patch-tuxonice patches
 do this upon installation.
 
 CONFIGURATION
@@ -116,20 +114,20 @@ MORE SCRIPTLETS
 ---------------
 As the hibernate script is very extensible , some users have written their own
 scriptlets to control certain applications or hardware at suspend and resume
-time. These scriptlets can be found on the Software Suspend 2 Wiki at
-http://wiki.suspend2.net/HibernateScript . These are not supported by the
+time. These scriptlets can be found on the TuxOnIce Wiki at
+http://wiki.tuxonice.net/HibernateScript . These are not supported by the
 hibernate script author, but you should be able to find help either from their
-respective authors or the suspend2-users list.
+respective authors or the tuxonice-users list.
 
 HELP
 ----
-If you have problems with the hibernate script or Software Suspend, the best
-place to ask is on the mailing list - suspend2-users@lists.suspend2.net.  You
-will need to subscribe to post. See http://www.suspend2.net/lists for details.
+If you have problems with the hibernate script or TuxOnIce, the best
+place to ask is on the mailing list - tuxonice-users@lists.tuxonice.net.  You
+will need to subscribe to post. See http://www.tuxonice.net/lists for details.
 
 If the suspend process itself crashes (while "Writing caches", "Reading
 caches", or "Copying original kernel back", etc), then the problem lies with
-Software Suspend 2 itself. See the FAQ at http://www.suspend2.net/ for help on
+TuxOnIce itself. See the FAQ at http://www.tuxonice.net/ for help on
 debugging.
 
 AUTHOR
