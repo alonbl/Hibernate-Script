@@ -17,7 +17,7 @@ PauseAudio() {
 	fi
     done
     # Pause xmms
-    for auuser in $(ps aux | grep -w '[x]mms' | awk '{print $1}' | sort | uniq); do
+    for auuser in $(ps aux | grep -w '[x]mms ' | awk '{print $1}' | sort | uniq); do
 	su $auuser -c 'xmms -u'
     done
     # Pause beep media player
