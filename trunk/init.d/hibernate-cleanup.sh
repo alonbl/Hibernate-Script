@@ -27,7 +27,7 @@
 #                    script telling it where to find it).
 ### END INIT INFO
 
-HIBERNATE_FILEWRITER_TRAIL="/var/run/tuxonice_filewriter_image_exists"
+HIBERNATE_FILEWRITER_TRAIL="/var/run/TuxOnIce_filewriter_image_exists"
 
 clear_swap() {
 	local where wason
