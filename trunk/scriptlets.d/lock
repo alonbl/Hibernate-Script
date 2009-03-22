@@ -10,6 +10,7 @@ AddConfigHelp "LockXLock <boolean>" "Lock active X11 session using xlock."
 AddConfigHelp "LockXAutoLock <boolean>" "Lock all local X11 sessions running xautolock."
 AddConfigHelp "LockConsoleAs <username>" "Locks the entire system after resuming, requiring you to enter either <username>'s or root's password to unlock it. (Requires vlock)."
 AddConfigHelp "LockXtrLock <boolean>" "Lock active X11 session using xtrlock."
+AddConfigHelp "LockEnlightenment17 <boolean>" "Lock enlightenment17 session before suspending."
 
 AddOptionHandler LockCmdlineOptions
 AddLongOption 'lock-console-as:'
@@ -274,6 +275,37 @@ LockXAutoLock() {
     return 0
 }
 
+LockE17() {
+    [ x"$LOCK_E17" != "x1" ] && return 0
+
+    if ! command -v enlightenment_remote > /dev/null 2>&1 ; then
+	vecho 0 'Cannot lock with enlightenment_remote. `enlightenment_remote` not found.'
+	return
+    fi
+
+    ShouldLock || return 0
+
+    local xpid
+    for xpid in `pidof enlightenment` ; do
+	local xuser xdisp xauth xhome
+	xuser=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "USER"){print $2}' < /proc/$xpid/environ)
+	xdisp=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "DISPLAY"){print $2}' < /proc/$xpid/environ)
+	xauth=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "XAUTHORITY"){print $2}' < /proc/$xpid/environ)
+	if [ -z "$xauth" ] ; then
+	    xhome=$(awk 'BEGIN{RS="\\000";FS="="}($1 == "HOME"){print $2}' < /proc/$xpid/environ)
+	    xauth="$xhome/.Xauthority"
+	fi
+
+	vecho 2 "Locking $xuser's e17 on display $xdisp using authority file $xauth"
+	#We need export this wariable to run enlightenment_remote
+	export E_IPC_SOCKET=/tmp/enlightenment-$xuser/disp-$xdisp.0-$xpid
+	DISPLAY=$xdisp XAUTHORITY=$xauth su $xuser -c "enlightenment_remote -lock-desktop"
+    done
+
+    # Failing is silly. What would they do about it?
+    return 0
+}
+
 LockConsole() {
     # Prerequistes are tested for in SwitchToLockConsole
 
@@ -425,6 +457,18 @@ LockOptions() {
 		fi
 	    else
 		LOCK_XAUTOLOCK=0
+            fi
+            ;;
+
+        locke17)
+            if BoolIsOn "$1" "$2" ; then
+                LOCK_E17=1
+                if [ -z "$E17_HOOKED" ]; then
+                    AddResumeHook 91 LockE17
+                    E17_HOOKED=1
+                fi
+            else
+                LOCK_E17=0
             fi
             ;;
 
