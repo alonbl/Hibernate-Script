@@ -1,0 +1,76 @@
+# -*- sh -*-
+# vim:ft=sh:ts=8:sw=4:noet
+
+# This script can be used to clear private data from passphrase caching
+# agents, specifically ssh-agent and gpg-agent.
+
+# Author: Thomas Fischer <fischer@unix-ag.uni-kl.de>
+
+
+AddConfigHandler AgentsClearOptions
+AddConfigHelp "AgentsClearGPG <boolean> " "Clear private data (passphrase) from gpg-agent"
+AddConfigHelp "AgentsClearSSH <boolean> " "Clear private data (passphrase) from ssh-agent"
+
+
+AgentsClearOptions() {
+	case $1 in
+		agentscleargpg)
+			BoolIsOn "$1" "$2" && AddSuspendHook 27 ClearGPGAgents
+		;;
+		agentsclearssh)
+			BoolIsOn "$1" "$2" && AddSuspendHook 27 ClearSSHAgents
+		;;
+		*)
+			return 1
+	esac
+	return 0
+}
+
+
+ClearAgents() {
+	vecho 1 "Clearing agents"
+	ClearSSHAgent
+	ClearGPGAgent	
+}
+
+#==========================================================================
+# ssh-agent
+#--------------------------------------------------------------------------
+
+ClearSSHAgents() {
+	vecho 1 "Clearing ssh-agents"
+
+	# find each running ssh-agent process
+	# ssh-agents are not associated to a tty
+	for clearagentspid in $(pidof ssh-agent) ; do
+		# determine socket
+		clearagentssocket=$(find /proc/$clearagentspid/fd/ -maxdepth 1 -xtype s -exec readlink '{}' ';' | sed -e "s/socket:\[//;s/\]//")
+		# determine socket file
+		clearagentssocketfile=$(netstat --unix -l | gawk '/ '$clearagentssocket' / { print $9 }')
+		# if found file is actually a socket ...
+		if [ -S "${clearagentssocketfile}" ] ; then
+			# then call ssh-add to delete all identities from this agent
+			vecho 2 "SSH_AUTH_SOCK=${clearagentssocketfile} SSH_AGENT_PID=${clearagentspid} /usr/bin/ssh-add -D"
+			SSH_AUTH_SOCK=${clearagentssocketfile} SSH_AGENT_PID=${clearagentspid} /usr/bin/ssh-add -D
+		fi
+	done
+}
+
+
+#==========================================================================
+# gpg-agent
+#--------------------------------------------------------------------------
+
+ClearGPGAgents() {
+	vecho 1 "Clearing gpg-agents"
+
+	# find each running ssh-agent process
+	# ssh-agents are not associated to a tty
+	for clearagentspid in $(ps t - | gawk '/gpg-agent --daemon/ {print $1}') ; do
+		# gpg-agents forget the passphrases when a SIGHUP is sent to them
+		vecho 2 "kill -SIGHUP ${clearagentspid}"
+		kill -SIGHUP ${clearagentspid}
+	done
+}
+
+
