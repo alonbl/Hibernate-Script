@@ -10,8 +10,15 @@ AddConfigHelp "UnmountGraceTime <seconds>" "Time between sending SIGTERM to proc
 FS_UNMOUNT_GRACE=1
 
 FilesystemsUnmount() {
+    local mnt
+    local unmounts
+
     [ -z "$FS_UNMOUNTS" ] && return 0
-    FilesystemsUnmountReal $FS_UNMOUNTS
+    for mnt in $FS_UNMOUNTS ; do
+	unmounts="$unmounts"`awk '($1 == "'$mnt'" || $2 == "'$mnt'" ){print " " $2}' /proc/mounts`
+    done
+    [ -z "$unmounts" ] && return 0
+    FilesystemsUnmountReal $unmounts
     # exit status preserved.
 }
 
