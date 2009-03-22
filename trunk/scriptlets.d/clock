@@ -10,7 +10,7 @@ ClockSave() {
 	    /etc/init.d/hwclock.sh stop > /dev/null 2>&1
 	    ;;
 	*)
-	    if ! /sbin/hwclock --systohc ; then
+	    if ! /sbin/hwclock $DIRECTISA --systohc ; then
 		echo "$EXE: Failed to save system clock - continuing anyway"
 	    fi
 	    ;;
@@ -24,7 +24,7 @@ ClockRestore() {
 	    /etc/init.d/hwclock.sh start > /dev/null 2>&1
 	    ;;
 	*)
-	    if ! /sbin/hwclock --hctosys ; then
+	    if ! /sbin/hwclock $DIRECTISA --hctosys ; then
 		echo "$EXE: Failed to restore system clock."
 	    fi
 	    ;;
@@ -35,6 +35,17 @@ ClockRestore() {
 ClockOptions() {
     local param
     case $1 in
+	directisa)
+    		case "$DISTRIBUTION" in
+		debian|ubuntu)
+			echo "$EXE: Options for hwclock should be set in /etc/init.d/hwclock.sh"
+			exit 1
+			;;
+		*)
+			DIRECTISA="--directisa"
+			;;
+		esac
+		;;
 	saveclock)
 	    param=`echo $2 | tr '[A-Z]' '[a-z]'`
 	    case "$param" in
