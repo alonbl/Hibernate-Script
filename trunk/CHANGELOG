@@ -9,6 +9,7 @@
  - Rename suspend2 files to tuxonice.
  - Apply Archlinux patch for KDE4 locking from
    http://repos.archlinux.org/viewvc.cgi/hibernate-script/repos/extra-i686/add-freedesktop.org-locking.patch?view=markup
+ - Add VirtualBox scriptlet from bug 394
 
 1.99 (1 May 2008) 
  - Complete support for the new binary signature
