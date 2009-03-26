@@ -77,3 +77,8 @@ uvcvideo
 
 # Suggested by Miklos Aubert 5/2/2009 AEST - TuxOnIce users.
 snd_ice1712
+
+# Suggested by Vladimir Skuratovich - TuxOnIce users, 26/3/2009 AEST.
+firewire-core
+firewire-sbp2
+firewire-ohci
