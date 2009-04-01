@@ -1,0 +1,97 @@
+# -*- sh -*-
+# vim:ft=sh:ts=8:sw=4:noet
+
+# $Id$
+
+sylpheedclaws=$(command -v sylpheed-claws)
+
+AddConfigHandler SylpheedClawsOptions
+AddConfigHelp "SylpheedClawsOffline <boolean>" "Changes status of all locally running Sylpheed Claws to offline before suspending, and (optionally) change it to online after resuming."
+AddConfigHelp "SylpheedClawsOnline <boolean>" "Changes status of all locally running Sylpheed Claws to online after resuming."
+
+SylpheedClawsOffline()
+{
+    [ x"$SYLPHEEDCLAWS_OFFLINE" != "x1" ] && return 0
+
+    if [ -z "$sylpheedclaws" ] || [ ! -x "$sylpheedclaws" ]; then
+	vecho 0 'Cannot change status of Sylpheed Claws to offline: `sylpheed-claws` not found.'
+	return 0
+    fi
+
+    local pid i=0
+    for pid in `pidof sylpheed-claws`; do
+	local user display xauthority
+
+	user=$(get_env_var_of_process $pid USER)
+	display=$(get_env_var_of_process $pid DISPLAY)
+	xauthority=$(get_env_var_of_process $pid XAUTHORITY)
+
+	# using this eval-crap to be POSIX-compliant (arrays are nonstandard)
+	eval "SYLPHEEDCLAWS_LOGGED_OUT_SESSIONS_USER_$i='$user'"
+	eval "SYLPHEEDCLAWS_LOGGED_OUT_SESSIONS_DISPLAY_$i='$display'"
+	eval "SYLPHEEDCLAWS_LOGGED_OUT_SESSIONS_XAUTHORITY_$i='$xauthority'"
+	i=`expr $i + 1`
+
+	vecho 2 "Changing status $user's Sylpheed Claws to offline"
+	DISPLAY="$display" XAUTHORITY="$xauthority" su "$user" -c "$sylpheedclaws --offline"
+    done
+
+    return 0
+}
+
+SylpheedClawsOnline()
+{
+    [ x"$SYLPHEEDCLAWS_OFFLINE" != "x1" ] && return 0
+
+    [ x"$SYLPHEEDCLAWS_ONLINE" != "x1" ] && return 0
+
+    if [ -z "$sylpheedclaws" ] || [ ! -x "$sylpheedclaws" ]; then
+	vecho 0 'Cannot change status of Sylpheed Claws to online: `sylpheed-claws` not found.'
+	return 0
+    fi
+
+    local i=0
+    while :; do
+	local user display xauthority
+
+	user=`eval "echo \\\$SYLPHEEDCLAWS_LOGGED_OUT_SESSIONS_USER_$i"`
+	display=`eval "echo \\\$SYLPHEEDCLAWS_LOGGED_OUT_SESSIONS_DISPLAY_$i"`
+	xauthority=`eval "echo \\\$SYLPHEEDCLAWS_LOGGED_OUT_SESSIONS_XAUTHORITY_$i"`
+	i=`expr $i + 1`
+
+	[ -z "$user" ] && break
+
+	vecho 2 "Changing status of $user's Sylpheed Claws to online"
+	DISPLAY="$display" XAUTHORITY="$xauthority" su "$user" -c "$sylpheedclaws --online"
+    done
+
+    return 0
+}
+
+SylpheedClawsOptions()
+{
+    case "$1" in
+	sylpheedclawsoffline)
+	    if BoolIsOn "$1" "$2"; then
+		SYLPHEEDCLAWS_OFFLINE=1
+		if [ -z "$SYLPHEEDCLAWSOFFLINE_HOOKED" ]; then
+		    AddSuspendHook 19 SylpheedClawsOffline
+		    AddResumeHook 19 SylpheedClawsOnline
+		    SYLPHEEDCLAWSOFFLINE_HOOKED=1
+		fi
+	    else
+		SYLPHEEDCLAWS_OFFLINE=0
+	    fi
+	    ;;
+	sylpheedclawsonline)
+	    if BoolIsOn "$1" "$2"; then
+		SYLPHEEDCLAWS_ONLINE=1
+	    else
+		SYLPHEEDCLAWS_ONLINE=0
+	    fi
+	    ;;
+	*)
+	    return 1
+	    ;;
+    esac
+}
