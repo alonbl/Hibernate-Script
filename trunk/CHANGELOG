@@ -1,4 +1,4 @@
-2.00
+2.0
  - Change remaining "Software Suspend", "Software Suspend 2" and suspend2
    references to TuxOnIce.
  - Redirect stderr to /dev/null when resetting the cpu scaling speed.
@@ -6,10 +6,20 @@
    which occured at resume time. sh likes whitespace around operators, it seems.
  - Remove NVidia from blacklist as of 2.6.25 kernels (seems to be about the time
    when it became usable).
+ - Blacklist snd_ice1712.
  - Rename suspend2 files to tuxonice.
  - Apply Archlinux patch for KDE4 locking from
    http://repos.archlinux.org/viewvc.cgi/hibernate-script/repos/extra-i686/add-freedesktop.org-locking.patch?view=markup
  - Add VirtualBox scriptlet from bug 394
+ - Apply fix from bug 245, so amarok's use of xmms plugins doesn't make the
+   hibernate script think xmms is running.
+ - Modify HIBERNATE_FILEWRITER_TRAIL in init.d/hibernate-cleanup.sh to
+   match scriptlets.d/tuxonice.
+ - Add support for locking Enlightenment 17, from bug 400.
+ - Unblacklist iwl3945 and the mac80211 modules, post 2.6.27.
+ - Add pidgin script from bug 322.
+ - Add DirectIsa option for clock scriptlet.
+ - Bump version to 2.0.
 
 1.99 (1 May 2008) 
  - Complete support for the new binary signature
