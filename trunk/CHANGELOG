@@ -1,5 +1,6 @@
 Unreleased
  - Change default compressor to lzo (applies to TuxOnIce 3.0.1 and later)
+ - Remove executable state from virtualbox scriptlet.
 
 2.0
  - Change remaining "Software Suspend", "Software Suspend 2" and suspend2
