@@ -46,16 +46,16 @@ if [ -f $CONFIG_FILE ] ; then
 else
     ext=
 fi
-cp -a hibernate.conf ${CONFIG_FILE}${ext}
-cp -a ram.conf ${RAM_CONFIG_FILE}${ext}
-cp -a disk.conf ${DISK_CONFIG_FILE}${ext}
-cp -a tuxonice.conf ${S2_CONFIG_FILE}${ext}
-cp -a ususpend-ram.conf ${US_RAM_CONFIG_FILE}${ext}
-cp -a ususpend-disk.conf ${US_DISK_CONFIG_FILE}${ext}
-cp -a ususpend-both.conf ${US_BOTH_CONFIG_FILE}${ext}
-cp -a sysfs-ram.conf ${SYSFS_RAM_CONFIG_FILE}${ext}
-cp -a sysfs-disk.conf ${SYSFS_DISK_CONFIG_FILE}${ext}
-cp -a common.conf ${COMMON_CONFIG_FILE}${ext}
+cp -a conf/hibernate.conf ${CONFIG_FILE}${ext}
+cp -a conf/ram.conf ${RAM_CONFIG_FILE}${ext}
+cp -a conf/disk.conf ${DISK_CONFIG_FILE}${ext}
+cp -a conf/tuxonice.conf ${S2_CONFIG_FILE}${ext}
+cp -a conf/ususpend-ram.conf ${US_RAM_CONFIG_FILE}${ext}
+cp -a conf/ususpend-disk.conf ${US_DISK_CONFIG_FILE}${ext}
+cp -a conf/ususpend-both.conf ${US_BOTH_CONFIG_FILE}${ext}
+cp -a conf/sysfs-ram.conf ${SYSFS_RAM_CONFIG_FILE}${ext}
+cp -a conf/sysfs-disk.conf ${SYSFS_DISK_CONFIG_FILE}${ext}
+cp -a conf/common.conf ${COMMON_CONFIG_FILE}${ext}
 
 if [ -n "$DISTRIBUTION" ] ; then
     sed -i -e "s/^# \\(Distribution\\) .*/\1 $DISTRIBUTION/" ${COMMON_CONFIG_FILE}${ext}
