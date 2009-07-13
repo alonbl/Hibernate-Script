@@ -1,0 +1,59 @@
+# -*- sh -*-
+# vim:ft=sh:ts=8:sw=4:noet
+
+###
+## Disconnects Wicd on suspend and connects on resume.
+##
+## Author: Jens Gustedt, modifications by Nigel Cunningham.
+## Credits:
+## 	Based on NetworkManager script from  Markus Becker
+##
+###
+
+AddConfigHandler WICDOptions
+AddConfigHelp "EnableWICDReconnect <boolean>" "Disconnect and reconnect WICD before and after suspending."
+
+WICDFindScripts() {
+	for NAME in /usr/lib/wicd /usr/share/wicd; do
+		if [ -f "${NAME}/autoconnect.py" ]; then
+			WICD_DIR=${NAME}
+		fi
+	done
+}
+
+WICDSuspend() {
+	if [ -z "$WICD_DIR" ]; then
+	    vecho 0 "wicd directory not found, cannot signal Wicd"
+	    return 1
+	fi
+	${WICD_DIR}/suspend.py
+	return 0
+}
+
+WICDResume() {
+	if [ -z "$WICD_DIR" ]; then
+	    vecho 0 "wicd directory not found, cannot signal Wicd"
+	    return 1
+	fi
+	${WICD_DIR}/autoconnect.py
+	return 0
+}
+
+WICDOptions() {
+	case $1 in
+		enablewicdreconnect)
+			WICDFindScripts
+			BoolIsOn "$1" "$2" && WICD_ENABLED=1 || return 0
+			;;
+
+		*)
+		return 1
+	esac
+
+	if [ -z "$WICD_HOOKED" ] ; then
+		AddSuspendHook 61 WICDSuspend
+		AddResumeHook 61 WICDResume
+		WICD_HOOKED=1
+	fi
+	return 0
+}
