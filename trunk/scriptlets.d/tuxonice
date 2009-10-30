@@ -44,7 +44,9 @@ AddLongOption "no-suspend"
 AddLongOption "bug-report"
 AddOptionHelp "--bug-report (requires UseTuxOnIce on)" "Gathers a bunch of information about your machine and writes it to standard output. Please attach this information along with any bug reports to the TuxOnIce mailing list."
 
-if [ -f "/usr/local/share/hibernate/tuxonice-binary-signature.bin" ]; then
+if [ -f "/sys/power/tuxonice/binary_signature" ]; then
+    TUXONICE_BINARY_SIG=`cat /sys/power/tuxonice/binary_signature`
+elif [ -f "/usr/local/share/hibernate/tuxonice-binary-signature.bin" ]; then
     TUXONICE_BINARY_SIG=`cat /usr/local/share/hibernate/tuxonice-binary-signature.bin`
 elif [ -f "/usr/share/hibernate/tuxonice-binary-signature.bin" ]; then
     TUXONICE_BINARY_SIG=`cat /usr/share/hibernate/tuxonice-binary-signature.bin`

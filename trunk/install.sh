@@ -79,9 +79,6 @@ for i in scriptlets.d/* ; do
     cp -a $i $SCRIPTLET_DIR
 done
 
-echo "Installing sample binary signature to $SHARE_DIR ..."
-cp -a tuxonice-binary-signature.bin $SHARE_DIR
-
 if [ -d "$LOGROTATE_DIR" ] ; then
     LOGROTATE_TARGET=$LOGROTATE_DIR/hibernate-script
     echo "Installing logrotate file for hibernate.log to $LOGROTATE_TARGET ..."
