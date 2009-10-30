@@ -675,7 +675,7 @@ EOT
 
     # See if we have been given a resume2 line
     read REPLY < $TUXONICE_ROOT/$RESUME2_FILE
-    if [ -z "$REPLY" ] ; then
+    if [ -z "$REPLY" -a -z "$TUXONICE_FILEWRITER_NOVERIFY" ] ; then
 	cat <<EOT
 You haven't specified a resume=/resume2= parameter on your kernel command line
 
