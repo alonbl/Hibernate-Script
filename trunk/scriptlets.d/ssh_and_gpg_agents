@@ -66,7 +66,7 @@ ClearGPGAgents() {
 
 	# find each running ssh-agent process
 	# ssh-agents are not associated to a tty
-	for clearagentspid in $(ps t - | gawk '/gpg-agent --daemon/ {print $1}') ; do
+	for clearagentspid in $(ps t - | gawk '/[g]pg-agent --daemon/ {print $1}') ; do
 		# gpg-agents forget the passphrases when a SIGHUP is sent to them
 		vecho 2 "kill -SIGHUP ${clearagentspid}"
 		kill -SIGHUP ${clearagentspid}
