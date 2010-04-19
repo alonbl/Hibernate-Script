@@ -713,10 +713,12 @@ ReadConfigFile() {
 	fi
     fi
 
-    if [ "${conffiles_read#*$file_name}" != "$conffiles_read" ]; then
+    if [ -n "$(echo ${conffiles_read} | grep ${file_name})" ]; then
   	vecho 2 "$EXE: Skipping already included config file $file_name"
   	return 0
     fi
+
+    conffiles_read="${conffiles_read} ${file_name}"
 
     while true ; do
 	# Doing the read this way allows means we don't require a new-line
