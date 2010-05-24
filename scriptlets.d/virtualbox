@@ -5,22 +5,31 @@ AddConfigHandler VirtualboxOptions
 AddConfigHelp "SuspendVirtualbox <boolean>" "This will run \"VBoxManage controlvm <VM> savestate\" for each running VM and restore state on resume."
 
 VirtualboxSavestate() {
-    local pid
-    local user
-    local vm
-    local users=""
 
-    for pid in `pidof VirtualBox`; do
-	users="$users $(awk 'BEGIN {RS="\000";FS="="} ($1 == "USER"){print $2}' < /proc/$pid/environ)"
+    SHUTDOWN_USERS=""
+    for i in /tmp/.vbox-*-ipc; do
+	SHUTDOWN_USERS="$SHUTDOWN_USERS $(echo $i|cut -d'-' -f2)"
     done
-    users=$(echo $users | tr ' ' '\n' | sort --unique)
-    for user in $users; do
-	for vm in $(su "$user" -c "VBoxManage -nologo list runningvms"); do
-	    vecho 1 "Suspending vm $vm for user $user"
-	    su "$user" -c "VBoxManage -nologo controlvm $vm savestate"
-	    VIRTUALBOX_STOPPED="$VIRTUALBOX_STOPPED $user:$vm"
-	done
+    
+    VIRTUALBOX_STOPPED=""
+	
+    for user in $SHUTDOWN_USERS; do
+	if [ -d /tmp/.vbox-$user-ipc ]; then
+	    export VBOX_IPC_SOCKETID="$user"
+	    VMS=`VBoxManage --nologo list runningvms 2>/dev/null`
+	    if [ $? -eq 0 -a -n "$VMS" ]; then
+		VMS=`echo "$VMS" | sed -e 's/^".*".*{\(.*\)}/\1/'`
+		vecho 1 "Saving state of remaining VMs from user $user"
+		for vm in $VMS; do
+		    VBoxManage --nologo controlvm $vm savestate
+		    VIRTUALBOX_STOPPED="$VIRTUALBOX_STOPPED $user:$vm"
+		done
+	    fi
+	fi
     done
+    
+    sleep 2.0
+
 
     # Failure is not USUALLY fatal, but storing VM state saves reasonable
     # amount of memory. I say "USUALLY" as I'm not sure if it is virtualbox
