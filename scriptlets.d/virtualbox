@@ -27,9 +27,6 @@ VirtualboxSavestate() {
 	    fi
 	fi
     done
-    
-    sleep 2.0
-
 
     # Failure is not USUALLY fatal, but storing VM state saves reasonable
     # amount of memory. I say "USUALLY" as I'm not sure if it is virtualbox
