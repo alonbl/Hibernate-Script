@@ -27,6 +27,30 @@ VirtualboxSavestate() {
 	    fi
 	fi
     done
+    
+    # Tries to remove the VirtualBox modules 21 times before giving up,
+    # so in practice it sleeps up to 20 seconds. This is done because 
+    # the modules might cause some problems on resume.
+    local counter
+    local lsmod_output
+
+    VIRTUALBOX_RMMODED=""
+    
+    counter=0
+    while [ $counter -le 21 ]
+    do
+      lsmod_output=""
+      lsmod_output=$(lsmod | grep vbox)
+      if [ -n "$lsmod_output" ]
+      then
+        sleep 1s
+        modprobe -r vboxnetadp
+        modprobe -r vboxnetflt
+        modprobe -r vboxdrv
+        VIRTUALBOX_RMMODED="yes"
+      fi
+    counter=$(($counter + 1))
+    done
 
     # Failure is not USUALLY fatal, but storing VM state saves reasonable
     # amount of memory. I say "USUALLY" as I'm not sure if it is virtualbox
@@ -38,6 +62,13 @@ VirtualboxRestorestate() {
     local vmtag
     local user
     local vm
+    
+    # reloads the VirtualBox modules
+    if [ -n "$VIRTUALBOX_RMMODED" ]; then
+      modprobe vboxdrv
+      modprobe vboxnetflt
+      modprobe vboxnetadp
+    fi
 
     for vmtag in $VIRTUALBOX_STOPPED; do
 	user=$(echo $vmtag | cut -d : -f 1)
