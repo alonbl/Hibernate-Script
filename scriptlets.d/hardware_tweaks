@@ -84,9 +84,20 @@ AddConfigHelp "Runi915resolution <boolean>" "Set to run 915resolution before swi
 
 i915resolutionResume() {
     local action
+    local path
+    path=/etc/init.d/915resolution
     action=start
-    [ "$DISTRIBUTION" = "gentoo" ] && action=restart
-    /etc/init.d/915resolution $action || return 1
+    case "$DISTRIBUTION" in
+        arch)
+            path=/etc/rc.d/915resolution
+	    ;;
+	gentoo)
+	    action=restart
+	    ;;
+        *)
+    esac
+
+    $path $action || return 1
     return 0
 }
 

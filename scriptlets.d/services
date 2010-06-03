@@ -75,7 +75,7 @@ ServicesDetectDistro() {
 	debian|ubuntu|redhat|fedora)
 	    INITDIR=/etc/init.d
 	    ;;
-	slackware)
+	slackware|arch)
 	    INITDIR=/etc/rc.d
 	    ;;
     	*)

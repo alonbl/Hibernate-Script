@@ -90,6 +90,14 @@ NetworkConfigOptions() {
 NetworkDetectDistro() {
     # Use either a given $DISTRIBUTION or autodetect one.
     case "$DISTRIBUTION" in
+        arch)
+            network_ifup() {
+                /etc/rc.d/network ifup $1
+            }
+            network_ifdown() {
+                /etc/rc.d/network ifdown $1
+            }
+            ;;
 	gentoo)
 	    network_ifup() {
 	    	[ -x "/etc/init.d/net.$1" ] && /etc/init.d/net.$1 start
