@@ -33,10 +33,7 @@ USuspendConfigEnabler() {
     case "$1" in
 	ususpendmethod)
 	    case "$2" in
-		disk|both) USUSPEND_PROG=s2$2;;
-		ram)
-		    USUSPEND_PROG=s2ram
-		    ;;
+		disk|both|ram) USUSPEND_PROG=s2$2;;
 		*)
 		    vecho 1 "$EXE: Invalid value fo USuspendMethod."
 		    return 2
@@ -104,7 +101,7 @@ USuspendOptionHandler() {
 DoUSuspend() {
     if [ -z "$USUSPEND_NO_SUSPEND" ] ; then
 	ARGS=
-	if [ "$USUSPEND_PROG" = s2ram ]; then
+	if [ "$USUSPEND_PROG" != s2disk ]; then
 	    [ $USUSPEND_RAM_FORCE -eq 1 ] && ARGS="$ARGS --force"
 	    [ $USUSPEND_RAM_VBESAVE -eq 1 ] && ARGS="$ARGS --vbe_save"
 	    [ $USUSPEND_RAM_VBEPOST -eq 1 ] && ARGS="$ARGS --vbe_post"
@@ -127,8 +124,8 @@ EnsureUSuspendCapable() {
 	vecho 0 "$USUSPEND_PROG not installed."
 	return 2
     fi
-    if [ "$USUSPEND_PROG" = s2ram ] && [ $USUSPEND_RAM_FORCE -eq 0 ]; then
-	$USUSPEND_PROG -n >/dev/null
+    if [ "$USUSPEND_PROG" != s2disk ] && [ $USUSPEND_RAM_FORCE -eq 0 ]; then
+	s2ram -n >/dev/null
 	ret=$?
 	case "$ret/$USUSPEND_RAM_UNSUREOK" in
 	    0/*) :;;
