@@ -5,14 +5,14 @@ AddConfigHandler USuspendConfigEnabler
 AddOptionHandler USuspendOptionHandler
 
 AddConfigHelp "USuspendMethod <disk|ram|both>" "Enables use of the uswsusp suspend method of newer kernels (>= 2.6.17rc1)"
-AddConfigHelp "USuspendRamForce <boolean>" "Passes the -f flag to s2ram to force suspending even if the machine is not recognised"
-AddConfigHelp "USuspendRamUnsureOk <boolean>" "Instructs s2ram to continue when it's unsure about the system type, thus not requiring -f to be passed"
-AddConfigHelp "USuspendRamVbeSave <boolean>" "Passes the -s flag to s2ram to save VBE state before suspending and restore after resume"
-AddConfigHelp "USuspendRamVbePost <boolean>" "Passes the -p flag to s2ram to VBE POST the graphics card after resume"
-AddConfigHelp "USuspendRamVbeMode <boolean>" "Passes the -m flag to s2ram to get VBE mode before suspend and set it after resume"
-AddConfigHelp "USuspendRamRadeontool <boolean>" "Passes the -r flag to s2ram to let radeontool turn of the backlight before suspending."
-AddConfigHelp "USuspendRamAcpiSleep <number>" "Passes the -a flag to s2ram to set the acpi_sleep parameter before suspend: 1=s3_bios, 2=s3_mode, 3=both"
-AddConfigHelp "USuspendRamPciSave <boolean>" "Passes the -v flag to s2ram to have the PCI config space of the VGA card before suspend, and restore it on resume"
+AddConfigHelp "USuspendRamForce <boolean>" "Passes the --force flag to s2ram/s2both to force suspending even if the machine is not recognised"
+AddConfigHelp "USuspendRamUnsureOk <boolean>" "Instructs s2ram/s2both to continue when it's unsure about the system type, thus not requiring --force to be passed"
+AddConfigHelp "USuspendRamVbeSave <boolean>" "Passes the --vbe_save flag to s2ram/s2both to save VBE state before suspending and restore after resume"
+AddConfigHelp "USuspendRamVbePost <boolean>" "Passes the --vbe_post flag to s2ram/s2both to VBE POST the graphics card after resume"
+AddConfigHelp "USuspendRamVbeMode <boolean>" "Passes the --vbe_mode flag to s2ram/s2both to get VBE mode before suspend and set it after resume"
+AddConfigHelp "USuspendRamRadeontool <boolean>" "Passes the --radeontool flag to s2ram/s2both to let radeontool turn of the backlight before suspending."
+AddConfigHelp "USuspendRamAcpiSleep <number>" "Passes the --acpi_sleep flag to s2ram/s2both to set the acpi_sleep parameter before suspend: 1=s3_bios, 2=s3_mode, 3=both"
+AddConfigHelp "USuspendRamPciSave <boolean>" "Passes the --pci_save flag to s2ram/s2both to have the PCI config space of the VGA card before suspend, and restore it on resume"
 
 AddShortOption "n"
 AddLongOption "no-suspend"
@@ -105,13 +105,13 @@ DoUSuspend() {
     if [ -z "$USUSPEND_NO_SUSPEND" ] ; then
 	ARGS=
 	if [ "$USUSPEND_PROG" = s2ram ]; then
-	    [ $USUSPEND_RAM_FORCE -eq 1 ] && ARGS="$ARGS -f"
-	    [ $USUSPEND_RAM_VBESAVE -eq 1 ] && ARGS="$ARGS -s"
-	    [ $USUSPEND_RAM_VBEPOST -eq 1 ] && ARGS="$ARGS -p"
-	    [ $USUSPEND_RAM_RADEONTOOL -eq 1 ] && ARGS="$ARGS -r"
-	    [ $USUSPEND_RAM_VBEMODE -eq 1 ] && ARGS="$ARGS -m"
-	    [ $USUSPEND_RAM_ACPISLEEP -ne 0 ] && ARGS="$ARGS -a $USUSPEND_RAM_ACPISLEEP"
-	    [ $USUSPEND_RAM_PCISAVE -eq 1 ] && ARGS="$ARGS -v"
+	    [ $USUSPEND_RAM_FORCE -eq 1 ] && ARGS="$ARGS --force"
+	    [ $USUSPEND_RAM_VBESAVE -eq 1 ] && ARGS="$ARGS --vbe_save"
+	    [ $USUSPEND_RAM_VBEPOST -eq 1 ] && ARGS="$ARGS --vbe_post"
+	    [ $USUSPEND_RAM_RADEONTOOL -eq 1 ] && ARGS="$ARGS --radeontool"
+	    [ $USUSPEND_RAM_VBEMODE -eq 1 ] && ARGS="$ARGS --vbe_mode"
+	    [ $USUSPEND_RAM_ACPISLEEP -ne 0 ] && ARGS="$ARGS --acpi_sleep $USUSPEND_RAM_ACPISLEEP"
+	    [ $USUSPEND_RAM_PCISAVE -eq 1 ] && ARGS="$ARGS --pci_save"
 	fi
 	vecho 1 "$EXE: Running $USUSPEND_PROG_PATH $ARGS..."
 	$USUSPEND_PROG_PATH $ARGS 2>&1 | vcat 2 \
