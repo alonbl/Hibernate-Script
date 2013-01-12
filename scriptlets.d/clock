@@ -10,7 +10,7 @@ ClockSave() {
 	    /etc/init.d/hwclock.sh stop > /dev/null 2>&1
 	    ;;
 	gentoo)
-	    /etc/init.d/clock.sh stop > /dev/null 2>&1
+	    /etc/init.d/hwclock stop > /dev/null 2>&1
 	    ;;
 	*)
 	    if ! /sbin/hwclock $DIRECTISA --systohc ; then
@@ -27,7 +27,7 @@ ClockRestore() {
 	    /etc/init.d/hwclock.sh start > /dev/null 2>&1
 	    ;;
 	gentoo)
-	    /etc/init.d/clock.sh start > /dev/null 2>&1
+	    /etc/init.d/hwclock start > /dev/null 2>&1
 	    ;;
 	*)
 	    if ! /sbin/hwclock $DIRECTISA --hctosys ; then
@@ -44,7 +44,7 @@ ClockOptions() {
 	directisa)
     		case "$DISTRIBUTION" in
 		gentoo)
-			echo "$EXE: Options for hwclock should be set in /etc/init.d/clock.sh"
+			echo "$EXE: Options for hwclock should be set in /etc/conf.d/hwclock"
 			exit 1
 			;;
 		debian|ubuntu)
